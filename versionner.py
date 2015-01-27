@@ -119,10 +119,7 @@ def main():
     args = parse_args(sys.argv[1:])
 
     current = read_current_version(args.file)
-    if not args.command:
-        print(current)
-        sys.exit(0)
-    elif args.command == 'up':
+    if args.command == 'up':
         if args.major:
             new = current.up('major', args.value)
         elif args.patch:
@@ -130,6 +127,8 @@ def main():
         else:
             new = current.up('minor', args.value)
         write_version(args.file, new)
+        current = new
+
     elif args.command == 'set':
         new = Version(current)
         for type_ in Version.VALID_FIELDS:
@@ -137,6 +136,9 @@ def main():
             if value:
                 new = new.set(type_, value)
         write_version(args.file, new)
+        current = new
+
+    print("Current version: %s" % current)
 
 if __name__ == '__main__':
     main()
