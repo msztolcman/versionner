@@ -6,12 +6,25 @@ import sys
 
 import semver
 
+"""
+Versionner tool.
+"""
 
 class Version:
+    """
+    Version of project.
+    """
+
     VALID_FIELDS = ('major', 'minor', 'patch', 'prerelease', 'build')
     VALID_UP_FIELDS = ('major', 'minor', 'patch')
 
     def __init__(self, version_dict=None):
+        """
+        Initialise object
+
+        :param version_dict:Version object (to clone) or dictionary from semver.parse
+        """
+
         if isinstance(version_dict, Version):
             version_dict = {
                 'major': version_dict.major,
@@ -28,6 +41,15 @@ class Version:
         self.build = version_dict.get('build', '')
 
     def up(self, type, value=None):
+        """
+        Increase version and return new instance
+
+        :rtype : Version
+        :param type:one of Version.VALID_UP_FIELDS
+        :param value:int
+        :return: :raise ValueError:
+        """
+
         if type not in self.VALID_UP_FIELDS:
             raise ValueError("Incorrect value of \"type\"")
 
@@ -49,6 +71,15 @@ class Version:
         return version
 
     def set(self, type, value):
+        """
+        Set any field of semver to `value`
+
+        :rtype : Version
+        :param type:type of field (one of Version.VALID_FIELDS)
+        :param value:
+        :return: :raise ValueError:
+        """
+
         if type not in self.VALID_FIELDS:
             raise ValueError("Incorrect value of \"type\"")
 
@@ -60,6 +91,12 @@ class Version:
         return version
 
     def __str__(self):
+        """
+        Return version as string compatible with semver
+
+        :return:str
+        """
+
         version = '.'.join([str(self.major), str(self.minor), str(self.patch)])
         if self.prerelease:
             version += '-' + str(self.prerelease)
@@ -70,16 +107,36 @@ class Version:
 
 
 class VersionFile():
+    """
+    Main file with projects version
+    """
+
     def __init__(self, path):
+        """
+        Initialisation
+
+        :param path:pathlib.Path
+        """
         self._path = path
 
     def read(self):
+        """
+        Read version from version file
+
+        :rtype : Version
+        :return:
+        """
         with self._path.open(mode='r') as fh:
             version = fh.read().strip()
             version = semver.parse(version)
             return Version(version)
 
     def write(self, version):
+        """
+        Save new version into file
+
+        :param version:Version
+        """
         with self._path.open(mode='w') as fh:
             fh.write(str(version))
 
@@ -88,6 +145,13 @@ class VersionFile():
 
 
 def parse_args(args):
+    """
+    Parse input arguments of script.
+
+    :rtype : argparse.Namespace
+    :param args:
+    :return:
+    """
     p = argparse.ArgumentParser(add_help=False)
     p.add_argument('--file', '-f', type=str, default="./VERSION", help="")
     # p.add_argument('--git', '-g', action="store_true", help="")
@@ -132,6 +196,13 @@ def parse_args(args):
 
 
 def main():
+    """
+    Main script
+
+    :param args:
+    :return:
+    """
+
     args = parse_args(sys.argv[1:])
 
     file = VersionFile(args.file)
