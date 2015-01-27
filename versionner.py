@@ -10,6 +10,8 @@ import semver
 Versionner tool.
 """
 
+__version__ = (pathlib.Path(__file__).parent / 'VERSION').open(mode="r").readline().strip()
+
 class Version:
     """
     Version of project.
@@ -152,30 +154,48 @@ def parse_args(args):
     :param args:
     :return:
     """
-    p = argparse.ArgumentParser(add_help=False)
-    p.add_argument('--file', '-f', type=str, default="./VERSION", help="")
+    prog = pathlib.Path(sys.argv[0]).parts[-1].replace('.py', '')
+    version = "%%(prog)s %s" %__version__
+    p = argparse.ArgumentParser(prog=prog, description='Manipulate version of project')
+    p.add_argument('--file', '-f', type=str, default="./VERSION",
+        help="path to file where version is saved")
+    p.add_argument('--version', '-v', action="version", version=version)
     # p.add_argument('--git', '-g', action="store_true", help="")
 
     sub = p.add_subparsers()
 
-    p_up = sub.add_parser('up')
-    p_up.add_argument('value', nargs='?', type=int, help="")
+    p_init = sub.add_parser('init',
+        help="Create new version file")
+    p_init.add_argument('value', nargs='?', default='0.1.0', type=str,
+        help="Initial version")
+
+    p_up = sub.add_parser('up',
+        help="Increase version")
+    p_up.add_argument('value', nargs='?', type=int,
+        help="Increase version by this value (default: 1)")
 
     p_up_gr = p_up.add_mutually_exclusive_group()
-    p_up_gr.add_argument('--major', '-j', action="store_true", help="")
-    p_up_gr.add_argument('--minor', '-n', action="store_true", help="")
-    p_up_gr.add_argument('--patch', '-p', action="store_true", help="")
+    p_up_gr.add_argument('--major', '-j', action="store_true",
+        help="increase major part of version")
+    p_up_gr.add_argument('--minor', '-n', action="store_true",
+        help="increase minor part of version (default)")
+    p_up_gr.add_argument('--patch', '-p', action="store_true",
+        help="increase patch part of version")
 
-    p_set = sub.add_parser('set')
-    p_set.add_argument('--major', '-j', type=int, help="")
-    p_set.add_argument('--minor', '-n', type=int, help="")
-    p_set.add_argument('--patch', '-p', type=int, help="")
-    p_set.add_argument('--prerelease', '-r', type=str, help="")
-    p_set.add_argument('--build', '-b', type=str, help="")
-    p_set.add_argument('value', nargs='?', type=str, help="")
-
-    p_init = sub.add_parser('init')
-    p_init.add_argument('value', nargs='?', default='0.1.0', type=str, help="")
+    p_set = sub.add_parser('set',
+        help="Set version to specified one")
+    p_set.add_argument('--major', '-j', type=int,
+        help="set major part of version to MAJOR")
+    p_set.add_argument('--minor', '-n', type=int,
+        help="set minor part of version to MINOR")
+    p_set.add_argument('--patch', '-p', type=int,
+        help="set patch part of version to PATCH")
+    p_set.add_argument('--prerelease', '-r', type=str,
+        help="set prerelease part of version to PRERELEASE")
+    p_set.add_argument('--build', '-b', type=str,
+        help="set build part of version to BUILD")
+    p_set.add_argument('value', nargs='?', type=str,
+        help="set version to this value")
 
     args = p.parse_args(args)
     args.file = pathlib.Path(args.file).absolute()
