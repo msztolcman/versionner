@@ -75,7 +75,7 @@ class VersionFile():
 
     def read(self):
         with self._path.open(mode='r') as fh:
-            version = fh.read().strip();
+            version = fh.read().strip()
             version = semver.parse(version)
             return Version(version)
 
@@ -148,6 +148,7 @@ def main():
         current = new
 
     print("Current version: %s" % current)
+
 
 if __name__ == '__main__':
     main()
