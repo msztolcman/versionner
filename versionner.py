@@ -195,7 +195,7 @@ def parse_args(args):
     return args
 
 
-def main():
+def main(args):
     """
     Main script
 
@@ -203,7 +203,7 @@ def main():
     :return:
     """
 
-    args = parse_args(sys.argv[1:])
+    args = parse_args(args)
 
     file = VersionFile(args.file)
     if args.command == 'up':
@@ -243,4 +243,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    main(sys.argv[1:])
