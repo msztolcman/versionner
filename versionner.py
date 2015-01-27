@@ -110,6 +110,9 @@ def parse_args(args):
     p_set.add_argument('--build', '-b', type=str, help="")
     p_set.add_argument('value', nargs='?', type=str, help="")
 
+    p_init = sub.add_parser('init')
+    p_init.add_argument('value', nargs='?', default='0.1.0', type=str, help="")
+
     args = p.parse_args(args)
     args.file = pathlib.Path(args.file).absolute()
 
@@ -118,6 +121,10 @@ def parse_args(args):
         args.command = 'set'
     elif hasattr(args, 'major'):
         args.command = 'up'
+    elif hasattr(args, 'value'):
+        args.command = 'init'
+        if args.file.exists():
+            p.error("Version file \"%s\" already exists" % args.file)
     else:
         args.command = None
 
@@ -128,8 +135,8 @@ def main():
     args = parse_args(sys.argv[1:])
 
     file = VersionFile(args.file)
-    current = file.read()
     if args.command == 'up':
+        current = file.read()
         if args.major:
             new = current.up('major', args.value)
         elif args.patch:
@@ -140,6 +147,7 @@ def main():
         current = new
 
     elif args.command == 'set':
+        current = file.read()
         if args.value:
             parsed = semver.parse(args.value)
             new = Version(parsed)
@@ -152,6 +160,13 @@ def main():
 
         file.write(new)
         current = new
+
+    elif args.command == 'init':
+        parsed = semver.parse(args.value)
+        current = Version(parsed)
+        file.write(current)
+    else:
+        current = file.read()
 
     print("Current version: %s" % current)
 
