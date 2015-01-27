@@ -108,6 +108,7 @@ def parse_args(args):
     p_set.add_argument('--patch', '-p', type=int, help="")
     p_set.add_argument('--prerelease', '-r', type=str, help="")
     p_set.add_argument('--build', '-b', type=str, help="")
+    p_set.add_argument('value', nargs='?', type=str, help="")
 
     args = p.parse_args(args)
     args.file = pathlib.Path(args.file).absolute()
@@ -139,11 +140,16 @@ def main():
         current = new
 
     elif args.command == 'set':
-        new = Version(current)
-        for type_ in Version.VALID_FIELDS:
-            value = getattr(args, type_)
-            if value:
-                new = new.set(type_, value)
+        if args.value:
+            parsed = semver.parse(args.value)
+            new = Version(parsed)
+        else:
+            new = Version(current)
+            for type_ in Version.VALID_FIELDS:
+                value = getattr(args, type_)
+                if value:
+                    new = new.set(type_, value)
+
         file.write(new)
         current = new
 
