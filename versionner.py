@@ -55,6 +55,8 @@ class Version:
         version = Version(self)
         setattr(version, type, value)
 
+        semver.parse(str(version))
+
         return version
 
     def __str__(self):
