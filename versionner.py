@@ -67,6 +67,24 @@ class Version:
         return version
 
 
+class VersionFile():
+    def __init__(self, path):
+        self._path = path
+
+    def read(self):
+        with self._path.open(mode='r') as fh:
+            version = fh.read().strip();
+            version = semver.parse(version)
+            return Version(version)
+
+    def write(self, version):
+        with self._path.open(mode='w') as fh:
+            fh.write(str(version))
+
+    def __str__(self):
+        return str(self._path)
+
+
 def parse_args(args):
     p = argparse.ArgumentParser(add_help=False)
     p.add_argument('--file', '-f', type=str, default="./VERSION", help="")
@@ -103,22 +121,11 @@ def parse_args(args):
     return args
 
 
-def read_current_version(path):
-    with path.open(mode='r') as fh:
-        version = fh.read().strip();
-        version = semver.parse(version)
-        return Version(version)
-
-
-def write_version(path, version):
-    with path.open(mode='w') as fh:
-        fh.write(str(version))
-
-
 def main():
     args = parse_args(sys.argv[1:])
 
-    current = read_current_version(args.file)
+    file = VersionFile(args.file)
+    current = file.read()
     if args.command == 'up':
         if args.major:
             new = current.up('major', args.value)
@@ -126,7 +133,7 @@ def main():
             new = current.up('patch', args.value)
         else:
             new = current.up('minor', args.value)
-        write_version(args.file, new)
+        file.write(new)
         current = new
 
     elif args.command == 'set':
@@ -135,7 +142,7 @@ def main():
             value = getattr(args, type_)
             if value:
                 new = new.set(type_, value)
-        write_version(args.file, new)
+        file.write(new)
         current = new
 
     print("Current version: %s" % current)
