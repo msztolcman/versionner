@@ -113,13 +113,13 @@ So, there are three commands: `init`, `up` and `set`. We want to look at this:
 Installation
 ------------
 
-`subst` should work on any platform where [Python](http://python.org) is available, it means Linux, Windows, MacOS X etc. 
+`versionner` should work on any platform where [Python](http://python.org) is available, it means Linux, Windows, MacOS X etc. 
 
 To install, go to [GitHub releases](https://github.com/mysz/versionner/releases), download newest release, unpack and put somewhere in `PATH` (ie. `~/bin` or `/usr/local/bin`).
 
 If You want to install newest unstable version, then just copy file to your PATH, for example:
 
-    curl https://raw.github.com/mysz/subst/master/versionner.py > /usr/local/bin/versionner
+    curl https://raw.github.com/mysz/versionner/master/versionner.py > /usr/local/bin/versionner
 
 or:
 
