@@ -8,6 +8,9 @@ import semver
 
 
 class Version:
+    VALID_FIELDS = ('major', 'minor', 'patch', 'prerelease', 'build')
+    VALID_UP_FIELDS = ('major', 'minor', 'patch')
+
     def __init__(self, version_dict=None):
         if isinstance(version_dict, Version):
             version_dict = {
@@ -25,7 +28,7 @@ class Version:
         self.build = version_dict.get('build', '')
 
     def up(self, type, value=None):
-        if type not in ('major', 'minor', 'patch'):
+        if type not in self.VALID_UP_FIELDS:
             raise ValueError("Incorrect value of \"type\"")
 
         if not value:
@@ -46,7 +49,7 @@ class Version:
         return version
 
     def set(self, type, value):
-        if type not in ('major', 'minor', 'patch', 'prerelease', 'build'):
+        if type not in self.VALID_FIELDS:
             raise ValueError("Incorrect value of \"type\"")
 
         version = Version(self)
@@ -129,7 +132,7 @@ def main():
         write_version(args.file, new)
     elif args.command == 'set':
         new = Version(current)
-        for type_ in ('major', 'minor', 'patch', 'prerelease', 'build'):
+        for type_ in Version.VALID_FIELDS:
             value = getattr(args, type_)
             if value:
                 new = new.set(type_, value)
