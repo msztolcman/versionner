@@ -9,7 +9,7 @@ import semver
 
 class Version:
     def __init__(self, version_dict=None):
-        if issubclass(version_dict.__class__, Version):
+        if isinstance(version_dict, Version):
             version_dict = {
                 'major': version_dict.major,
                 'minor': version_dict.minor,
