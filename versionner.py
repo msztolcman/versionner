@@ -101,9 +101,9 @@ def parse_args(args):
     p_up_gr.add_argument('--patch', '-p', action="store_true", help="")
 
     p_set = sub.add_parser('set')
-    p_set.add_argument('--major', '-j', type=str, help="")
-    p_set.add_argument('--minor', '-n', type=str, help="")
-    p_set.add_argument('--patch', '-p', type=str, help="")
+    p_set.add_argument('--major', '-j', type=int, help="")
+    p_set.add_argument('--minor', '-n', type=int, help="")
+    p_set.add_argument('--patch', '-p', type=int, help="")
     p_set.add_argument('--prerelease', '-r', type=str, help="")
     p_set.add_argument('--build', '-b', type=str, help="")
 
