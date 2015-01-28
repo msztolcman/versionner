@@ -130,6 +130,7 @@ It allows you also to modify other files specified in configuration.
     [project]
     file = ./VERSION
     date_format = %Y-%m-%d
+    up_part = patch
     
     [file:some/folder/some_file.py]
     enabled = true

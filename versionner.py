@@ -20,6 +20,7 @@ __version__ = '0.3.0'
 PROJECT_FILENAME = '.versionner.rc'
 DEFAULT_VERSION_FILE = './VERSION'
 DEFAULT_DATE_FORMAT = '%Y-%m-%d'
+DEFAULT_UP_PART = 'minor'
 
 
 class Version:
@@ -219,10 +220,11 @@ class ProjectConfig:
 
         :return:
         """
-        self.version_file = None
-        self.date_format = ''
+        self.version_file = DEFAULT_VERSION_FILE
+        self.date_format = DEFAULT_DATE_FORMAT
         self.files = []
         self.create_git_tag = False
+        self.up_part = DEFAULT_UP_PART
 
         cfg = configparser.ConfigParser(interpolation=None)
         if not cfg.read(PROJECT_FILENAME):
@@ -237,6 +239,8 @@ class ProjectConfig:
                 self.date_format = project['date_format']
             if 'create_git_tag' in project:
                 self.create_git_tag = project['create_git_tag']
+            if 'up_part' in project:
+                self.up_part = project['up_part']
 
         ## project files configuration
         for section in cfg.sections():
@@ -264,14 +268,14 @@ def parse_args(args, **defaults):
     :return:
     """
     prog = pathlib.Path(sys.argv[0]).parts[-1].replace('.py', '')
-    version = "%%(prog)s %s" %__version__
+    version = "%%(prog)s %s" % __version__
     p = argparse.ArgumentParser(prog=prog, description='Manipulate version of project')
     p.add_argument('--file', '-f', dest='version_file', type=str,
-        default=defaults.get('version_file', DEFAULT_VERSION_FILE) or DEFAULT_VERSION_FILE,
+        default=defaults.get('version_file', DEFAULT_VERSION_FILE),
         help="path to file where version is saved")
     p.add_argument('--version', '-v', action="version", version=version)
     p.add_argument('--date-format', type=str,
-        default=defaults.get('date_format', DEFAULT_DATE_FORMAT) or DEFAULT_DATE_FORMAT,
+        default=defaults.get('date_format', DEFAULT_DATE_FORMAT),
         help="Date format used in project files")
     # p.add_argument('--git', '-g', action="store_true", help="")
 
@@ -288,12 +292,13 @@ def parse_args(args, **defaults):
         help="Increase version by this value (default: 1)")
 
     p_up_gr = p_up.add_mutually_exclusive_group()
+    up_part = defaults.get('up_part', DEFAULT_UP_PART) or DEFAULT_UP_PART
     p_up_gr.add_argument('--major', '-j', action="store_true",
-        help="increase major part of version")
+        help="increase major part of version" + (" (project default)" if up_part == 'major' else ""))
     p_up_gr.add_argument('--minor', '-n', action="store_true",
-        help="increase minor part of version (default)")
+        help="increase minor part of version" + (" (project default)" if up_part == 'minor' else ""))
     p_up_gr.add_argument('--patch', '-p', action="store_true",
-        help="increase patch part of version")
+        help="increase patch part of version" + (" (project default)" if up_part == 'patch' else ""))
 
     p_set = sub.add_parser('set',
         help="Set version to specified one")
@@ -409,7 +414,8 @@ def main():
     """
 
     project_cfg = ProjectConfig()
-    args = parse_args(sys.argv[1:], version_file=project_cfg.version_file, date_format=project_cfg.date_format)
+    args = parse_args(sys.argv[1:], version_file=project_cfg.version_file, date_format=project_cfg.date_format,
+        up_part=project_cfg.up_part)
 
     version_file = VersionFile(args.version_file)
 
@@ -419,10 +425,12 @@ def main():
 
         if args.major:
             new = current.up('major', args.value)
+        elif args.minor:
+            new = current.up('minor', args.value)
         elif args.patch:
             new = current.up('patch', args.value)
         else:
-            new = current.up('minor', args.value)
+            new = current.up(project_cfg.up_part, args.value)
 
         version_file.write(new)
         current = new
