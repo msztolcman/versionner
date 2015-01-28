@@ -231,8 +231,8 @@ class ProjectConfig:
             return
 
         ## project configuration
-        if 'project' in cfg:
-            project = cfg['project']
+        if 'versionner' in cfg:
+            project = cfg['versionner']
             if 'file' in project:
                 self.version_file = project['file']
             if 'date_format' in project:

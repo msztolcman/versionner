@@ -1,4 +1,4 @@
-[project]
+[versionner]
 file = ./VERSION
 ;up_part= patch
 
