@@ -21,6 +21,7 @@ PROJECT_FILENAME = '.versionner.rc'
 DEFAULT_VERSION_FILE = './VERSION'
 DEFAULT_DATE_FORMAT = '%Y-%m-%d'
 
+
 class Version:
     """
     Version of project.
