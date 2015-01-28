@@ -6,7 +6,7 @@ versionner
 Current stable version
 ----------------------
 
-0.4.1
+0.4.2
 
 Features
 --------
@@ -153,11 +153,19 @@ read into memory and matched against `search`.
 Installation
 ------------
 
-`versionner` should work on any platform where [Python](http://python.org) is available, it means Linux, Windows, MacOS X etc. 
+`versionner` should work on any platform where [Python](http://python.org)
+is available, it means Linux, Windows, MacOS X etc. 
 
-To install, go to [GitHub releases](https://github.com/mysz/versionner/releases), download newest release, unpack and put somewhere in `PATH` (ie. `~/bin` or `/usr/local/bin`).
+Simplest way is to use Python's built-in package system:
 
-If You want to install newest unstable version, then just copy file to your PATH, for example:
+    pip install versionner
+
+In other case, you can go also to [GitHub releases](https://github.com/mysz/versionner/releases),
+download newest release, unpack and put somewhere in `PATH` (ie. `~/bin`
+or `/usr/local/bin`).
+
+If You want to install newest unstable version, then just copy file to your
+PATH, for example:
 
     curl https://raw.github.com/mysz/versionner/master/versionner.py > /usr/local/bin/versionner
 
@@ -175,9 +183,11 @@ Marcin Sztolcman <marcin@urzenia.net>
 Contact
 -------
 
-If you like or dislike this software, please do not hesitate to tell me about this me via email (marcin@urzenia.net).
+If you like or dislike this software, please do not hesitate to tell me about
+this me via email (marcin@urzenia.net).
 
-If you find bug or have an idea to enhance this tool, please use GitHub's [issues](https://github.com/mysz/versionner/issues).
+If you find bug or have an idea to enhance this tool, please use GitHub's
+[issues](https://github.com/mysz/versionner/issues).
 
 License
 -------
@@ -205,6 +215,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ChangeLog
 ---------
+
+### v0.4.2
+
+* published on pypi
 
 ### v0.4.1
 
