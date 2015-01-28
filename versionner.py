@@ -6,6 +6,7 @@ import configparser
 import os.path
 import pathlib
 import re
+import shutil
 import sys
 import tempfile
 import time
@@ -16,7 +17,7 @@ import semver
 Versionner tool.
 """
 
-__version__ = '0.4.0'
+__version__ = '0.4.1'
 
 RC_FILENAME = '.versionner.rc'
 DEFAULT_VERSION_FILE = './VERSION'
@@ -407,6 +408,7 @@ def update_project_files(args, cfg, version):
 
             fh_out.close()
 
+            shutil.copystat(project_file.filename, fh_out.name)
             pathlib.Path(fh_out.name).rename(project_file.filename)
 
     return counters

@@ -6,7 +6,7 @@ versionner
 Current stable version
 ----------------------
 
-0.4.0
+0.4.1
 
 Features
 --------
@@ -205,6 +205,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ChangeLog
 ---------
+
+### v0.4.1
+
+* copy file permissions to new one when updating project files
 
 ### v0.4.0
 
