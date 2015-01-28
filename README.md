@@ -8,19 +8,18 @@ Current stable version
 
 0.3.0
 
-But why?
+Features
 --------
 
-You can change version manually. But:
-
-* manual changes are prone to errors. And `versionner` guards the compliance
-    with [Semantic Versioning](http://semver.org/).
+* `versionner` guards the compliance with [Semantic Versioning](http://semver.org/).
+* `versionner` is error proof (manual changes are error-prone).
 * it's easier to write: `versionner up` instead of open editor, edit and
     save changes ;)
 * `versionner` updates also project files (like README or sth)
+* it's [very easy to install](#Installation)
 
 Some examples
----------------------
+-------------
 
 Some examples:
 
