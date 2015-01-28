@@ -6,7 +6,7 @@ versionner
 Current stable version
 ----------------------
 
-0.2.0
+0.3.0
 
 But why?
 --------
@@ -16,7 +16,8 @@ You can change version manually. But:
 * manual changes are prone to errors. And `versionner` guards the compliance
     with [Semantic Versioning](http://semver.org/).
 * it's easier to write: `versionner up` instead of open editor, edit and
-    save changes ;) 
+    save changes ;)
+* `versionner` updates also project files (like README or sth)
 
 Some examples
 ---------------------
@@ -51,7 +52,9 @@ Everything is in help :) Just execute:
 Look at result:
 
     % versionner --help
-    usage: versionner [-h] [--file FILE] [--version] {init,up,set} ...
+    usage: versionner [-h] [--file VERSION_FILE] [--version]
+                      [--date-format DATE_FORMAT]
+                      {init,up,set} ...
     
     Manipulate version of project
     
@@ -63,8 +66,11 @@ Look at result:
     
     optional arguments:
       -h, --help            show this help message and exit
-      --file FILE, -f FILE  path to file where version is saved
+      --file VERSION_FILE, -f VERSION_FILE
+                            path to file where version is saved
       --version, -v         show program's version number and exit
+      --date-format DATE_FORMAT
+                            Date format used in project files
       
 So, there are three commands: `init`, `up` and `set`. We want to look at this:
 
@@ -109,6 +115,39 @@ So, there are three commands: `init`, `up` and `set`. We want to look at this:
                             set prerelease part of version to PRERELEASE
       --build BUILD, -b BUILD
                             set build part of version to BUILD
+
+Project configuration
+---------------------
+
+In your project, you can also create `.versionner.rc` file in your project
+root. This file allows you to modify default settings of `versionner` for
+current project.
+
+It allows you also to modify other files specified in configuration.
+
+`.versionner.rc` is INI file in format:
+
+    [project]
+    file = ./VERSION
+    date_format = %Y-%m-%d
+    
+    [file:some_file.py]
+    enabled = true
+    search = ^\s*__version__\s*=.*$
+    replace = __version__ = '%(version)s'
+    date_format = %Y-%m-%d
+    match = line
+    search_flags = 
+    encoding = utf-8
+
+Data in '[project]' section are default data for whole project.
+
+Data in '[file:X]' section are for single file from project. You can 
+specify here that file 'X' have version string (key: `enabled`), has
+encoding `encoding` and we have to search for it (`search`) and replace
+it with value of `replace`. If `match` is 'line', then `search` is matched
+line by line, and for 'file' whole file is read into memory and matched
+against `search`.
 
 Installation
 ------------
@@ -166,6 +205,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ChangeLog
 ---------
 
-### v0.2.0
+### v0.3.0
 
 * in progress
