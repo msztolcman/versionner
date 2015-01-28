@@ -227,31 +227,31 @@ class Config:
         self.git_tag = False
         self.up_part = DEFAULT_UP_PART
 
-        cfg = configparser.ConfigParser(interpolation=None)
+        cfg_handler = configparser.ConfigParser(interpolation=None)
 
         cfg_files = [
             str(pathlib.Path(os.path.expanduser('~')) / RC_FILENAME),
             str(pathlib.Path() / RC_FILENAME)
         ]
-        if not cfg.read(cfg_files):
+        if not cfg_handler.read(cfg_files):
             return
 
         ## global configuration
-        if 'versionner' in cfg:
-            global_cfg = cfg['versionner']
-            if 'file' in global_cfg:
-                self.version_file = global_cfg['file']
-            if 'date_format' in global_cfg:
-                self.date_format = global_cfg['date_format']
-            if 'git_tag' in global_cfg:
-                self.git_tag = global_cfg['git_tag']
-            if 'up_part' in global_cfg:
-                self.up_part = global_cfg['up_part']
+        if 'versionner' in cfg_handler:
+            cfg = cfg_handler['versionner']
+            if 'file' in cfg:
+                self.version_file = cfg['file']
+            if 'date_format' in cfg:
+                self.date_format = cfg['date_format']
+            if 'git_tag' in cfg:
+                self.git_tag = cfg['git_tag']
+            if 'up_part' in cfg:
+                self.up_part = cfg['up_part']
 
         ## project files configuration
-        for section in cfg.sections():
+        for section in cfg_handler.sections():
             if section.startswith('file:'):
-                project_file = FileConfig(section[5:], cfg[section])
+                project_file = FileConfig(section[5:], cfg_handler[section])
 
                 if not project_file.date_format:
                     project_file.date_format = self.date_format
