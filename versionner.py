@@ -17,7 +17,7 @@ Versionner tool.
 
 __version__ = '0.3.0'
 
-PROJECT_FILENAME = '.versionner.rc'
+RC_FILENAME = '.versionner.rc'
 DEFAULT_VERSION_FILE = './VERSION'
 DEFAULT_DATE_FORMAT = '%Y-%m-%d'
 DEFAULT_UP_PART = 'minor'
@@ -227,7 +227,7 @@ class ProjectConfig:
         self.up_part = DEFAULT_UP_PART
 
         cfg = configparser.ConfigParser(interpolation=None)
-        if not cfg.read(PROJECT_FILENAME):
+        if not cfg.read(RC_FILENAME):
             return
 
         ## project configuration
