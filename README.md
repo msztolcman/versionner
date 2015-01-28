@@ -23,6 +23,12 @@ Some examples
 
 Some examples:
 
+    # initialise new file with version 0.1.0
+    % versionner init
+    
+    # initialise new file with version 1.0.0
+    % versionner init 1.0.0
+
     # prints current version info
     % versionner
     
