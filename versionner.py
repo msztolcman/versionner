@@ -158,7 +158,7 @@ class VersionFile():
         return str(self._path)
 
 
-class ProjectFileConfig:
+class FileConfig:
     """
     Single project file configuration
     """
@@ -210,21 +210,21 @@ class ProjectFileConfig:
             raise ValueError("Unknown encoding: \"%s\"" % self.encoding)
 
 
-class ProjectConfig:
+class Config:
     """
-    Project configuration
+    Configuration
     """
 
     def __init__(self):
         """
-        Evaluate project configuration
+        Evaluate configuration
 
         :return:
         """
         self.version_file = DEFAULT_VERSION_FILE
         self.date_format = DEFAULT_DATE_FORMAT
         self.files = []
-        self.create_git_tag = False
+        self.git_tag = False
         self.up_part = DEFAULT_UP_PART
 
         cfg = configparser.ConfigParser(interpolation=None)
@@ -236,22 +236,22 @@ class ProjectConfig:
         if not cfg.read(cfg_files):
             return
 
-        ## project configuration
+        ## global configuration
         if 'versionner' in cfg:
-            project = cfg['versionner']
-            if 'file' in project:
-                self.version_file = project['file']
-            if 'date_format' in project:
-                self.date_format = project['date_format']
-            if 'create_git_tag' in project:
-                self.create_git_tag = project['create_git_tag']
-            if 'up_part' in project:
-                self.up_part = project['up_part']
+            global_cfg = cfg['versionner']
+            if 'file' in global_cfg:
+                self.version_file = global_cfg['file']
+            if 'date_format' in global_cfg:
+                self.date_format = global_cfg['date_format']
+            if 'git_tag' in global_cfg:
+                self.git_tag = global_cfg['git_tag']
+            if 'up_part' in global_cfg:
+                self.up_part = global_cfg['up_part']
 
         ## project files configuration
         for section in cfg.sections():
             if section.startswith('file:'):
-                project_file = ProjectFileConfig(section[5:], cfg[section])
+                project_file = FileConfig(section[5:], cfg[section])
 
                 if not project_file.date_format:
                     project_file.date_format = self.date_format
@@ -419,7 +419,7 @@ def main():
     :return:
     """
 
-    project_cfg = ProjectConfig()
+    project_cfg = Config()
     args = parse_args(sys.argv[1:], version_file=project_cfg.version_file, date_format=project_cfg.date_format,
         up_part=project_cfg.up_part)
 
