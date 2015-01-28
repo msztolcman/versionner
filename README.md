@@ -115,18 +115,19 @@ So, there are three commands: `init`, `up` and `set`. We want to look at this:
       --build BUILD, -b BUILD
                             set build part of version to BUILD
 
-Project configuration
+Configuration
 ---------------------
 
-In your project, you can also create `.versionner.rc` file in your project
-root. This file allows you to modify default settings of `versionner` for
-current project.
+Configuration is both: user-wide and project-wide.
+
+User-wide is stored in `~/.versionner.rc` file, and project-wide is stored in
+`<PROJECT_ROOT>/.versionner.rc`. Projects' configuration is superior to user-wide.
 
 It allows you also to modify other files specified in configuration.
 
 `.versionner.rc` is INI file in format:
 
-    [project]
+    [versionner]
     file = ./VERSION
     date_format = %Y-%m-%d
     up_part = patch
