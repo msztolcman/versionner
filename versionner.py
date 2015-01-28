@@ -15,7 +15,7 @@ import semver
 Versionner tool.
 """
 
-__version__ = (pathlib.Path(__file__).parent / 'VERSION').open(mode="r").readline().strip()
+__version__ = '0.3.0'
 
 PROJECT_FILENAME = '.versionner.rc'
 DEFAULT_VERSION_FILE = './VERSION'
