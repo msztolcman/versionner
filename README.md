@@ -131,7 +131,7 @@ It allows you also to modify other files specified in configuration.
     file = ./VERSION
     date_format = %Y-%m-%d
     
-    [file:some_file.py]
+    [file:some/folder/some_file.py]
     enabled = true
     search = ^\s*__version__\s*=.*$
     replace = __version__ = '%(version)s'
@@ -142,12 +142,12 @@ It allows you also to modify other files specified in configuration.
 
 Data in '[project]' section are default data for whole project.
 
-Data in '[file:X]' section are for single file from project. You can 
-specify here that file 'X' have version string (key: `enabled`), has
-encoding `encoding` and we have to search for it (`search`) and replace
-it with value of `replace`. If `match` is 'line', then `search` is matched
-line by line, and for 'file' whole file is read into memory and matched
-against `search`.
+Data in '[file:some/folder/some_file.py]' section are for single file from
+project. You can specify here that file 'some/folder/some_file.py' have
+version string (key: `enabled`), has encoding `encoding` and we have to
+search for it (`search`) and replace it with value of `replace`. If `match` is
+'line', then `search` is matched line by line, and for 'file' whole file is
+read into memory and matched against `search`.
 
 Installation
 ------------
