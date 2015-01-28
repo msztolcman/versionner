@@ -1,8 +1,13 @@
 #!/usr/bin/env python
 
 import argparse
+import codecs
+import configparser
 import pathlib
+import re
 import sys
+import tempfile
+import time
 
 import semver
 
@@ -11,6 +16,10 @@ Versionner tool.
 """
 
 __version__ = (pathlib.Path(__file__).parent / 'VERSION').open(mode="r").readline().strip()
+
+PROJECT_FILENAME = '.versionner.rc'
+DEFAULT_VERSION_FILE = './VERSION'
+DEFAULT_DATE_FORMAT = '%Y-%m-%d'
 
 class Version:
     """
@@ -146,7 +155,106 @@ class VersionFile():
         return str(self._path)
 
 
-def parse_args(args):
+class ProjectFileConfig:
+    """
+    Single project file configuration
+    """
+
+    def __init__(self, filename, cfg):
+        """
+        Evaluate single file configuration
+
+        :param filename:
+        :param cfg:
+        """
+        self.filename = filename
+        self.file = pathlib.Path(filename)
+        self.enabled = cfg.getboolean('enabled', True)
+        self.search = cfg['search']
+        self.replace = cfg['replace']
+        self.date_format = cfg.get('date_format', None)
+        self.match = cfg.get('match', 'line')
+        self.search_flags = 0
+        self.encoding = cfg.get('encoding', 'utf-8')
+
+        search_flags = cfg.get('search_flags', '')
+        if search_flags:
+            search_flags = re.split('\s*,\s*', search_flags)
+            for search_flag in search_flags:
+                self.search_flags |= getattr(re, search_flag.upper())
+
+    def validate(self):
+        """
+        Validate current file configuration
+
+        :raise ValueError:
+        """
+        if not self.file.exists():
+            raise ValueError("File \"%s\" doesn't exists")
+
+        if not self.search:
+            raise ValueError("Search cannot be empty")
+
+        if not self.replace:
+            raise ValueError("Replace cannot be empty")
+
+        if self.match not in ('file', 'line'):
+            raise ValueError("Match must be one of: file, line")
+
+        try:
+            codecs.lookup(self.encoding)
+        except LookupError:
+            raise ValueError("Unknown encoding: \"%s\"" % self.encoding)
+
+
+class ProjectConfig:
+    """
+    Project configuration
+    """
+
+    def __init__(self):
+        """
+        Evaluate project configuration
+
+        :return:
+        """
+        self.version_file = None
+        self.date_format = ''
+        self.files = []
+        self.create_git_tag = False
+
+        cfg = configparser.ConfigParser(interpolation=None)
+        if not cfg.read(PROJECT_FILENAME):
+            return
+
+        ## project configuration
+        if 'project' in cfg:
+            project = cfg['project']
+            if 'file' in project:
+                self.version_file = project['file']
+            if 'date_format' in project:
+                self.date_format = project['date_format']
+            if 'create_git_tag' in project:
+                self.create_git_tag = project['create_git_tag']
+
+        ## project files configuration
+        for section in cfg.sections():
+            if section.startswith('file:'):
+                project_file = ProjectFileConfig(section[5:], cfg[section])
+
+                if not project_file.date_format:
+                    project_file.date_format = self.date_format
+
+                if project_file.enabled:
+                    try:
+                        project_file.validate()
+                    except ValueError as ex:
+                        print("Incorrect configuration for file \"%s\": %s" % (project_file.filename, ex.args[0]))
+                    else:
+                        self.files.append(project_file)
+
+
+def parse_args(args, **defaults):
     """
     Parse input arguments of script.
 
@@ -157,9 +265,13 @@ def parse_args(args):
     prog = pathlib.Path(sys.argv[0]).parts[-1].replace('.py', '')
     version = "%%(prog)s %s" %__version__
     p = argparse.ArgumentParser(prog=prog, description='Manipulate version of project')
-    p.add_argument('--file', '-f', type=str, default="./VERSION",
+    p.add_argument('--file', '-f', dest='version_file', type=str,
+        default=defaults.get('version_file', DEFAULT_VERSION_FILE) or DEFAULT_VERSION_FILE,
         help="path to file where version is saved")
     p.add_argument('--version', '-v', action="version", version=version)
+    p.add_argument('--date-format', type=str,
+        default=defaults.get('date_format', DEFAULT_DATE_FORMAT) or DEFAULT_DATE_FORMAT,
+        help="Date format used in project files")
     # p.add_argument('--git', '-g', action="store_true", help="")
 
     sub = p.add_subparsers()
@@ -198,21 +310,93 @@ def parse_args(args):
         help="set version to this value")
 
     args = p.parse_args(args)
-    args.file = pathlib.Path(args.file).absolute()
+    args.version_file = pathlib.Path(args.version_file).absolute()
 
     ## TODO: how can I do that better?
     if hasattr(args, 'build'):
         args.command = 'set'
+        if not args.version_file.exists():
+            p.error("Version file \"%s\" doesn't exists" % args.version_file)
+
     elif hasattr(args, 'major'):
         args.command = 'up'
+        if not args.version_file.exists():
+            p.error("Version file \"%s\" doesn't exists" % args.version_file)
+
     elif hasattr(args, 'value'):
         args.command = 'init'
-        if args.file.exists():
-            p.error("Version file \"%s\" already exists" % args.file)
+        if args.version_file.exists():
+            p.error("Version file \"%s\" already exists" % args.version_file)
+
     else:
         args.command = None
 
     return args
+
+
+def update_project_files(args, cfg, version):
+    """
+    Update version string in project files
+
+    :rtype : dict
+    :param args:script arguments
+    :param cfg:project configuration
+    :param version:current version
+    :return:dict :raise ValueError:
+    """
+    counters = {'files': 0, 'changes': 0}
+
+    for project_file in cfg.files:
+        if not project_file.file.exists():
+            print("File \"%s\" not found" % project_file.filename, file=sys.stderr)
+            continue
+
+        ## prepare data
+        date_format = project_file.date_format or args.date_format
+
+        rxp = re.compile(project_file.search, project_file.search_flags)
+        replace = project_file.replace % {
+            "date": time.strftime(date_format),
+            "major": version.major,
+            "minor": version.minor,
+            "patch": version.patch,
+            "prerelease": version.prerelease,
+            "version": str(version),
+            "build": version.build,
+        }
+
+        ## update project files
+        with \
+                project_file.file.open(mode="r", encoding=project_file.encoding) as fh_in, \
+                tempfile.NamedTemporaryFile(mode="w", encoding=project_file.encoding, delete=False) as fh_out:
+            if project_file.match == 'line':
+                changes = 0
+                for line in fh_in:
+                    (line, cnt) = rxp.subn(replace, line)
+                    if cnt:
+                        changes += cnt
+                    fh_out.write(line)
+
+                if changes:
+                    counters['files'] += 1
+                    counters['changes'] += changes
+
+            elif project_file.match == 'file':
+                data = fh_in.read()
+                (data, cnt) = rxp.subn(replace, data)
+                if cnt:
+                    counters['files'] += 1
+                    counters['changes'] += cnt
+                fh_out.write(data)
+
+            else:
+                raise ValueError("Unknown match type: \"%s\"" % project_file.match)
+
+            fh_out.close()
+
+            pathlib.Path(fh_out.name).rename(project_file.filename)
+
+    return counters
 
 
 def main(args):
@@ -223,22 +407,30 @@ def main(args):
     :return:
     """
 
-    args = parse_args(args)
+    project_cfg = ProjectConfig()
+    args = parse_args(args, version_file=project_cfg.version_file, date_format=project_cfg.date_format)
 
-    file = VersionFile(args.file)
+    version_file = VersionFile(args.version_file)
+
+    quant = None
     if args.command == 'up':
-        current = file.read()
+        current = version_file.read()
+
         if args.major:
             new = current.up('major', args.value)
         elif args.patch:
             new = current.up('patch', args.value)
         else:
             new = current.up('minor', args.value)
-        file.write(new)
+
+        version_file.write(new)
         current = new
 
+        quant = update_project_files(args, project_cfg, current)
+
     elif args.command == 'set':
-        current = file.read()
+        current = version_file.read()
+
         if args.value:
             parsed = semver.parse(args.value)
             new = Version(parsed)
@@ -249,17 +441,22 @@ def main(args):
                 if value:
                     new = new.set(type_, value)
 
-        file.write(new)
+        version_file.write(new)
         current = new
+
+        quant = update_project_files(args, project_cfg, current)
 
     elif args.command == 'init':
         parsed = semver.parse(args.value)
         current = Version(parsed)
-        file.write(current)
+        version_file.write(current)
+
     else:
-        current = file.read()
+        current = version_file.read()
 
     print("Current version: %s" % current)
+    if quant:
+        print('Changed %(files)s files (%(changes)s changes)' % quant)
 
 
 if __name__ == '__main__':
