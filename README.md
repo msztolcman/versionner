@@ -11,12 +11,12 @@ Current stable version
 Features
 --------
 
-* `versionner` guards the compliance with [Semantic Versioning](http://semver.org/).
-* `versionner` is error proof (manual changes are error-prone).
+* `versionner` guards the compliance with [Semantic Versioning](http://semver.org/)
+* manual changes are error-prone, `versionner` is error proof
 * it's easier to write: `versionner up` instead of open editor, edit and
     save changes ;)
 * `versionner` updates also project files (like README or sth)
-* it's [very easy to install](#Installation)
+* it's [very easy to install](#installation)
 
 Some examples
 -------------

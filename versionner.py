@@ -233,6 +233,7 @@ class Config:
             str(pathlib.Path(os.path.expanduser('~')) / RC_FILENAME),
             str(pathlib.Path() / RC_FILENAME)
         ]
+
         if not cfg_handler.read(cfg_files):
             return
 
