@@ -3,6 +3,7 @@
 import argparse
 import codecs
 import configparser
+import os.path
 import pathlib
 import re
 import sys
@@ -227,7 +228,12 @@ class ProjectConfig:
         self.up_part = DEFAULT_UP_PART
 
         cfg = configparser.ConfigParser(interpolation=None)
-        if not cfg.read(RC_FILENAME):
+
+        cfg_files = [
+            str(pathlib.Path(os.path.expanduser('~')) / RC_FILENAME),
+            str(pathlib.Path() / RC_FILENAME)
+        ]
+        if not cfg.read(cfg_files):
             return
 
         ## project configuration
