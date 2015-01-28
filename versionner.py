@@ -277,11 +277,11 @@ def parse_args(args, **defaults):
     version = "%%(prog)s %s" % __version__
     p = argparse.ArgumentParser(prog=prog, description='Manipulate version of project')
     p.add_argument('--file', '-f', dest='version_file', type=str,
-        default=defaults.get('version_file', DEFAULT_VERSION_FILE),
+        default=defaults.get('version_file'),
         help="path to file where version is saved")
     p.add_argument('--version', '-v', action="version", version=version)
     p.add_argument('--date-format', type=str,
-        default=defaults.get('date_format', DEFAULT_DATE_FORMAT),
+        default=defaults.get('date_format'),
         help="Date format used in project files")
     # p.add_argument('--git', '-g', action="store_true", help="")
 
@@ -298,7 +298,7 @@ def parse_args(args, **defaults):
         help="Increase version by this value (default: 1)")
 
     p_up_gr = p_up.add_mutually_exclusive_group()
-    up_part = defaults.get('up_part', DEFAULT_UP_PART) or DEFAULT_UP_PART
+    up_part = defaults.get('up_part', defaults.get('up_part'))
     p_up_gr.add_argument('--major', '-j', action="store_true",
         help="increase major part of version" + (" (project default)" if up_part == 'major' else ""))
     p_up_gr.add_argument('--minor', '-n', action="store_true",
