@@ -6,7 +6,7 @@ versionner
 Current stable version
 ----------------------
 
-0.3.0
+0.4.0
 
 Features
 --------
@@ -206,6 +206,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ChangeLog
 ---------
 
-### v0.3.0
+### v0.4.0
 
-* in progress
+* first public version
