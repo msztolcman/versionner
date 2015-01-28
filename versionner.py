@@ -399,7 +399,7 @@ def update_project_files(args, cfg, version):
     return counters
 
 
-def main(args):
+def main():
     """
     Main script
 
@@ -408,7 +408,7 @@ def main(args):
     """
 
     project_cfg = ProjectConfig()
-    args = parse_args(args, version_file=project_cfg.version_file, date_format=project_cfg.date_format)
+    args = parse_args(sys.argv[1:], version_file=project_cfg.version_file, date_format=project_cfg.date_format)
 
     version_file = VersionFile(args.version_file)
 
@@ -460,4 +460,4 @@ def main(args):
 
 
 if __name__ == '__main__':
-    main(sys.argv[1:])
+    main()
