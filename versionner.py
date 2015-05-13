@@ -6,7 +6,9 @@ import argparse
 import codecs
 import configparser
 import os.path
+import pkg_resources
 import pathlib
+import platform
 import re
 import shutil
 import subprocess
@@ -29,6 +31,11 @@ DEFAULT_DATE_FORMAT = '%Y-%m-%d'
 DEFAULT_UP_PART = 'minor'
 DEFAULT_TAG_TIMEOUT = 5
 DEFAULT_INIT_VERSION = '0.1.0'
+
+
+if pkg_resources.parse_version(platform.python_version()) < pkg_resources.parse_version('3.3.0'):
+    print("Sorry, Python 3 is required")
+    sys.exit(1)
 
 
 class Version:
