@@ -24,7 +24,7 @@ setup(
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
         'Topic :: Utilities',
-        'Topic:: Software Development',
+        'Topic :: Software Development',
         'Topic :: Software Development :: Documentation',
         'Topic :: Software Development :: Version Control',
         'Programming Language :: Python :: 3.3',
