@@ -1,13 +1,9 @@
+from versionner import utils
+utils.validate_python_version()
+
 from codecs import open
 from os import path
-from pkg_resources import parse_version
 from setuptools import setup, find_packages
-import platform
-import sys
-
-if parse_version(platform.python_version()) < parse_version('3.3.0'):
-    print("Sorry, Python 3 is required")
-    sys.exit(1)
 
 
 BASE_DIR = path.abspath(path.dirname(__file__))
@@ -45,8 +41,8 @@ setup(
 
     entry_points={
         'console_scripts': [
-            'ver=versionner:main',
-            'versionner=versionner:main',
+            'ver=versionner.cli:main',
+            'versionner=versionner.cli:main',
         ],
     },
 )

@@ -8,7 +8,7 @@ engine = git
 tag = yes
 tag_params =
 
-[file:versionner.py]
+[file:versionner/__init__.py]
 enabled = true
 match = line
 search = ^\s*__version__\s*=.*$
