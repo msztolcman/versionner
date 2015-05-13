@@ -494,7 +494,7 @@ def main():
             sys.exit(1)
 
     print("Current version: %s" % current)
-    if args.git_tag:
+    if args.command in ('up', 'set', 'init') and args.git_tag:
         try:
             git_tag(current, args.git_tag_param)
         except:
