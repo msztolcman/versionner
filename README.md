@@ -182,19 +182,6 @@ Simplest way is to use Python's built-in package system:
 
     pip install versionner
 
-In other case, you can go also to [GitHub releases](https://github.com/mysz/versionner/releases),
-download newest release, unpack and put somewhere in `PATH` (ie. `~/bin`
-or `/usr/local/bin`).
-
-If You want to install newest unstable version, then just copy file to your
-PATH, for example:
-
-    curl https://raw.github.com/mysz/versionner/master/versionner.py > /usr/local/bin/versionner
-
-or:
-
-    wget https://raw.github.com/mysz/versionner/master/versionner.py -O /usr/local/bin/versionner
-
 Voila!
 
 Authors
