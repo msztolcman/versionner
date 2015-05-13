@@ -20,6 +20,7 @@ import semver
 import versionner
 from versionner import config
 from versionner import version
+from versionner import vcs
 
 
 def parse_args(args, **defaults):
@@ -251,8 +252,8 @@ def main():
     elif args.get_command() == 'tag':
         try:
             current = version_file.read()
-            vcs = vcs.VCS(args.vcs_engine)
-            vcs.create_tag(current, args.vcs_tag_params)
+            vcs_handler = vcs.VCS(args.vcs_engine)
+            vcs_handler.create_tag(current, args.vcs_tag_params)
         except FileNotFoundError:
             print('Version file not found', file=sys.stderr)
             sys.exit(1)
