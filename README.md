@@ -22,6 +22,11 @@ Features
 * it's [very easy to install](#installation)
 * and it's all in one command...
 
+Python version
+--------------
+
+`versionner` works only with Python 3.3+. Older versions are unsupported.
+
 Some examples
 -------------
 
