@@ -240,7 +240,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ChangeLog
 ---------
 
-### v0.5.0
+### v1.0.0
 
 * added `tag` command (creates vcs (only git currently) tag)
 * versionner's app now is called 'ver', 'versionner' is deprecated
