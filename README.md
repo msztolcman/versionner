@@ -161,6 +161,7 @@ It allows you also to modify other files specified in configuration.
     file = ./VERSION
     date_format = %Y-%m-%d
     up_part = patch
+    ;default_init_version = 1.0.0
     
     [vcs]
     engine = git
@@ -243,6 +244,7 @@ ChangeLog
 
 * added `tag` command (creates vcs (only git currently) tag)
 * versionner's app now is called 'ver', 'versionner' is deprecated
+* ability to set default value for `init` command in `.versionner.rc`
 
 ### v0.4.3
 

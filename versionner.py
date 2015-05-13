@@ -26,6 +26,7 @@ DEFAULT_VERSION_FILE = './VERSION'
 DEFAULT_DATE_FORMAT = '%Y-%m-%d'
 DEFAULT_UP_PART = 'minor'
 DEFAULT_TAG_TIMEOUT = 5
+DEFAULT_INIT_VERSION = '0.1.0'
 
 
 class Version:
@@ -222,7 +223,7 @@ class Config:
     Configuration
     """
 
-    __slots__ = 'version_file date_format files vcs_engine vcs_tag_params up_part'.split()
+    __slots__ = 'version_file date_format files vcs_engine vcs_tag_params up_part default_init_version'.split()
 
     def __init__(self):
         """
@@ -232,6 +233,7 @@ class Config:
         """
         self.version_file = DEFAULT_VERSION_FILE
         self.date_format = DEFAULT_DATE_FORMAT
+        self.default_init_version = DEFAULT_INIT_VERSION
         self.files = []
         self.vcs_engine = 'git'
         self.vcs_tag_params = []
@@ -256,6 +258,8 @@ class Config:
                 self.date_format = cfg['date_format']
             if 'up_part' in cfg:
                 self.up_part = cfg['up_part']
+            if 'default_init_version' in cfg:
+                self.default_init_version = cfg['default_init_version']
 
         if 'vcs' in cfg_handler:
             cfg = cfg_handler['vcs']
@@ -345,7 +349,7 @@ def parse_args(args, **defaults):
 
     p_init = sub.add_parser('init',
         help="Create new version file")
-    p_init.add_argument('value', nargs='?', default='0.1.0', type=str,
+    p_init.add_argument('value', nargs='?', default=defaults.get('default_init_version'), type=str,
         help="Initial version")
     p_init.set_defaults(get_command=get_command_name('init'))
 
@@ -493,7 +497,8 @@ def main():
 
     project_cfg = Config()
     args = parse_args(sys.argv[1:], version_file=project_cfg.version_file, date_format=project_cfg.date_format,
-        up_part=project_cfg.up_part, vcs_engine=project_cfg.vcs_engine, vcs_tag_params=project_cfg.vcs_tag_params)
+        up_part=project_cfg.up_part, vcs_engine=project_cfg.vcs_engine, vcs_tag_params=project_cfg.vcs_tag_params,
+        default_init_version=project_cfg.default_init_version)
 
     version_file = VersionFile(args.version_file)
 

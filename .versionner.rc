@@ -1,6 +1,7 @@
 [versionner]
 file = ./VERSION
 ;up_part= patch
+;default_init_version = 1.0.0
 
 [vcs]
 engine = git
