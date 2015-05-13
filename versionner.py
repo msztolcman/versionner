@@ -222,7 +222,7 @@ class Config:
     Configuration
     """
 
-    __slots__ = 'version_file date_format files vcs_engine vcs_tag vcs_tag_params up_part'.split()
+    __slots__ = 'version_file date_format files vcs_engine vcs_tag_params up_part'.split()
 
     def __init__(self):
         """
@@ -234,7 +234,6 @@ class Config:
         self.date_format = DEFAULT_DATE_FORMAT
         self.files = []
         self.vcs_engine = 'git'
-        self.vcs_tag = False
         self.vcs_tag_params = []
         self.up_part = DEFAULT_UP_PART
 
@@ -262,8 +261,6 @@ class Config:
             cfg = cfg_handler['vcs']
             if 'engine' in cfg:
                 self.vcs_engine = cfg['engine']
-            if 'tag' in cfg:
-                self.vcs_tag = cfg.getboolean('tag')
             if 'tag_params' in cfg:
                 self.vcs_tag_params = list(filter(None, cfg['tag_params'].split("\n")))
 
@@ -287,6 +284,7 @@ class Config:
         ret = '<' + self.__class__.__name__ + ': '
         ret += ', '.join('%s=%r' % (name, getattr(self, name)) for name in self.__slots__)
         return ret
+
 
 class VCS(object):
     def __init__(self, engine):
@@ -333,10 +331,15 @@ def parse_args(args, **defaults):
     p.add_argument('--date-format', type=str,
         default=defaults.get('date_format'),
         help="Date format used in project files")
-    p.add_argument('--vcs-engine', type=str, default=defaults.get('vcs_engine'), help="Select VCS engine used for tagging (only git is supported currently)",)
-    p.add_argument('--vcs-tag', '-t', action="store_true", help="Create VCS tag with current version")
-    p.add_argument('--vcs-tag-param', dest='vcs_tag_params', type=str, action="append", help="Additional params to \"tag\" command")
     p.add_argument('--verbose', action="store_true", help="Be more verbose if it's possible")
+
+    def get_command_name(name):
+        _name = name
+
+        def _():
+            return _name
+
+        return _
 
     sub = p.add_subparsers()
 
@@ -344,11 +347,13 @@ def parse_args(args, **defaults):
         help="Create new version file")
     p_init.add_argument('value', nargs='?', default='0.1.0', type=str,
         help="Initial version")
+    p_init.set_defaults(get_name=get_command_name('init'))
 
     p_up = sub.add_parser('up',
         help="Increase version")
     p_up.add_argument('value', nargs='?', type=int,
         help="Increase version by this value (default: 1)")
+    p_up.set_defaults(get_name=get_command_name('up'))
 
     p_up_gr = p_up.add_mutually_exclusive_group()
     up_part = defaults.get('up_part', defaults.get('up_part'))
@@ -358,6 +363,7 @@ def parse_args(args, **defaults):
         help="increase minor part of version" + (" (project default)" if up_part == 'minor' else ""))
     p_up_gr.add_argument('--patch', '-p', action="store_true",
         help="increase patch part of version" + (" (project default)" if up_part == 'patch' else ""))
+    p_up_gr.set_defaults(get_name=get_command_name('up'))
 
     p_set = sub.add_parser('set',
         help="Set version to specified one")
@@ -373,33 +379,37 @@ def parse_args(args, **defaults):
         help="set build part of version to BUILD")
     p_set.add_argument('value', nargs='?', type=str,
         help="set version to this value")
+    p_set.set_defaults(get_name=get_command_name('up'))
+
+    p_tag = sub.add_parser('tag',
+        help="Create VCS tag with current version")
+    p_tag.add_argument('--vcs-engine', type=str, default=defaults.get('vcs_engine'),
+        help="Select VCS engine used for tagging (only git is supported currently)", )
+    p_tag.add_argument('--vcs-tag-param', dest='vcs_tag_params', type=str, action="append", help="Additional params to \"tag\" command")
+    p_tag.set_defaults(get_name=get_command_name('tag'))
 
     args = p.parse_args(args)
     args.version_file = pathlib.Path(args.version_file).absolute()
 
+    if not hasattr(args, 'get_name'):
+        args.get_name = get_command_name(None)
+
     # TODO: how can I do that better?
-    if hasattr(args, 'build'):
-        args.command = 'set'
+    if args.get_name() == 'build':
         if not args.version_file.exists():
             p.error("Version file \"%s\" doesn't exists" % args.version_file)
 
-    elif hasattr(args, 'major'):
-        args.command = 'up'
+    elif args.get_name() == 'major':
         if not args.version_file.exists():
             p.error("Version file \"%s\" doesn't exists" % args.version_file)
 
-    elif hasattr(args, 'value'):
-        args.command = 'init'
+    elif args.get_name() == 'value':
         if args.version_file.exists():
             p.error("Version file \"%s\" already exists" % args.version_file)
 
-    else:
-        args.command = None
-
-    if defaults.get('vcs_tag'):
-        args.vcs_tag = True
-    if not args.vcs_tag_params:
-        args.vcs_tag_params = defaults.get('vcs_tag_params', [])
+    elif args.get_name() == 'tag':
+        if not args.vcs_tag_params:
+            args.vcs_tag_params = defaults.get('vcs_tag_params', [])
 
     return args
 
@@ -483,12 +493,12 @@ def main():
 
     project_cfg = Config()
     args = parse_args(sys.argv[1:], version_file=project_cfg.version_file, date_format=project_cfg.date_format,
-        up_part=project_cfg.up_part, vcs_engine=project_cfg.vcs_engine, vcs_tag=project_cfg.vcs_tag, vcs_tag_params=project_cfg.vcs_tag_params)
+        up_part=project_cfg.up_part, vcs_engine=project_cfg.vcs_engine, vcs_tag_params=project_cfg.vcs_tag_params)
 
     version_file = VersionFile(args.version_file)
 
     quant = None
-    if args.command == 'up':
+    if args.get_name() == 'up':
         current = version_file.read()
 
         if args.major:
@@ -505,7 +515,7 @@ def main():
 
         quant = update_project_files(args, project_cfg, current)
 
-    elif args.command == 'set':
+    elif args.get_name() == 'set':
         current = version_file.read()
 
         if args.value:
@@ -523,10 +533,25 @@ def main():
 
         quant = update_project_files(args, project_cfg, current)
 
-    elif args.command == 'init':
+    elif args.get_name() == 'init':
         parsed = semver.parse(args.value)
         current = Version(parsed)
         version_file.write(current)
+
+    elif args.get_name() == 'tag':
+        try:
+            current = version_file.read()
+            vcs = VCS(args.vcs_engine)
+            vcs.create_tag(current, args.vcs_tag_params)
+        except FileNotFoundError:
+            print('Version file not found', file=sys.stderr)
+            sys.exit(1)
+        except:
+            print('Git tag failed, do it yourself')
+            if args.verbose:
+                traceback.print_exc()
+        else:
+            print('Git tag created')
 
     else:
         try:
@@ -536,16 +561,6 @@ def main():
             sys.exit(1)
 
     print("Current version: %s" % current)
-    if args.command in ('up', 'set', 'init') and args.vcs_tag:
-        try:
-            vcs = VCS(args.vcs_engine)
-            vcs.create_tag(current, args.vcs_tag_params)
-        except:
-            print('Git tag failed, do it yourself')
-            if args.verbose:
-                traceback.print_exc()
-        else:
-            print('Git tag created')
 
     if quant:
         print('Changed %(files)s files (%(changes)s changes)' % quant)
