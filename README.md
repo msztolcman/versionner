@@ -37,25 +37,25 @@ Some examples:
     % ver
     
     # increase minor by 1, set patch to 0
-    ver up
+    % ver up
     
     # increase patch by 1
-    ver up --patch
+    % ver up --patch
     
     # create git tag
-    ver tag
+    % ver tag
     
     # increase patch by 4
-    ver up --patch 4
+    % ver up --patch 4
      
     # just guess...
-    ver set --minor 3 --patch 2 --build asd3f
+    % ver set --minor 3 --patch 2 --build asd3f
         
     # set version to 1.0.0
-    ver set 1.0.0
+    % ver set 1.0.0
     
     # create signed VCS tag
-    ver tag --vcs-param -s
+    % ver tag --vcs-param -s
 
 More
 ----
@@ -90,7 +90,7 @@ Look at result:
       --verbose             Be more verbose if it's possible
 
       
-So, there are three commands: `init`, `up`, `set` and `tag`. We want to look at this:
+So, there are four commands: `init`, `up`, `set` and `tag`. We want to look at this:
 
     % ver init --help
     usage: ver init [-h] [value]
