@@ -9,7 +9,7 @@ version.
 Current stable version
 ----------------------
 
-1.0.2
+1.0.3
 
 Features
 --------
@@ -23,6 +23,12 @@ Features
 -  and create vcs (only git currently) tag if requested
 -  it's `very easy to install <#installation>`__
 -  and it's all in one command...
+
+Python version
+--------------
+
+``versionner`` works only with Python 3.3+. Older versions are
+unsupported.
 
 Some examples
 -------------
@@ -41,25 +47,25 @@ Some examples:
     % ver
 
     # increase minor by 1, set patch to 0
-    ver up
+    % ver up
 
     # increase patch by 1
-    ver up --patch
+    % ver up --patch
 
     # create git tag
-    ver tag
+    % ver tag
 
     # increase patch by 4
-    ver up --patch 4
+    % ver up --patch 4
      
     # just guess...
-    ver set --minor 3 --patch 2 --build asd3f
+    % ver set --minor 3 --patch 2 --build asd3f
         
     # set version to 1.0.0
-    ver set 1.0.0
+    % ver set 1.0.0
 
     # create signed VCS tag
-    ver tag --vcs-param -s
+    % ver tag --vcs-param -s
 
 More
 ----
@@ -97,7 +103,7 @@ Look at result:
                             Date format used in project files
       --verbose             Be more verbose if it's possible
 
-So, there are three commands: ``init``, ``up``, ``set`` and ``tag``. We
+So, there are four commands: ``init``, ``up``, ``set`` and ``tag``. We
 want to look at this:
 
 ::
@@ -212,7 +218,7 @@ Simplest way is to use Python's built-in package system:
 
 ::
 
-    pip install versionner
+    pip3 install versionner
 
 Voila!
 
@@ -258,6 +264,12 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ChangeLog
 ---------
+
+v1.0.3
+~~~~~~
+
+-  many ways to tell to use Python3.3+ for versionner
+-  Makefile refinements
 
 v1.0.2
 ~~~~~~

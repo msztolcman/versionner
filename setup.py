@@ -16,7 +16,7 @@ with open(path.join(BASE_DIR, 'README.rst'), encoding='utf-8') as f:
 
 setup(
     name='versionner',
-    version='1.0.2',
+    version='1.0.3',
     description='versionner helps manipulating version of the project.',
     long_description=long_description,
     url='http://mysz.github.io/versionner/',
