@@ -245,6 +245,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ChangeLog
 ---------
 
+### v1.1.1
+
+* minor fixes
+
 ### v1.1.0
 
 * refactored codebase from one file to one package with few files
