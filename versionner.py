@@ -2,17 +2,22 @@
 
 from __future__ import print_function
 
+import pkg_resources
+import platform
+import sys
+
+if pkg_resources.parse_version(platform.python_version()) < pkg_resources.parse_version('3.3.0'):
+    print("Sorry, Python 3 is required")
+    sys.exit(1)
+
 import argparse
 import codecs
 import configparser
 import os.path
-import pkg_resources
 import pathlib
-import platform
 import re
 import shutil
 import subprocess
-import sys
 import tempfile
 import time
 import traceback
@@ -33,9 +38,7 @@ DEFAULT_TAG_TIMEOUT = 5
 DEFAULT_INIT_VERSION = '0.1.0'
 
 
-if pkg_resources.parse_version(platform.python_version()) < pkg_resources.parse_version('3.3.0'):
-    print("Sorry, Python 3 is required")
-    sys.exit(1)
+
 
 
 class Version:
