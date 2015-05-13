@@ -27,10 +27,10 @@ Some examples
 
 Some examples:
 
-    # initialise new file with version 0.1.0
+    # initialize new file with version 0.1.0
     % ver init
     
-    # initialise new file with version 1.0.0
+    # initialize new file with version 1.0.0
     % ver init 1.0.0
 
     # prints current version info
