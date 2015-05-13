@@ -19,7 +19,7 @@ import semver
 Versionner tool.
 """
 
-__version__ = '0.4.3'
+__version__ = '1.0.0'
 
 RC_FILENAME = '.versionner.rc'
 DEFAULT_VERSION_FILE = './VERSION'

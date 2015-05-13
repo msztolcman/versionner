@@ -8,7 +8,7 @@ With one command you can update all required files and git with new version.
 Current stable version
 ----------------------
 
-0.4.3
+1.0.0
 
 Features
 --------
