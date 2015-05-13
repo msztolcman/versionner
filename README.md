@@ -245,6 +245,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ChangeLog
 ---------
 
+### v1.0.7
+
+* fights with enforcing Python3
+
 ### v1.0.6
 
 * fights with enforcing Python3
