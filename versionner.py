@@ -347,13 +347,13 @@ def parse_args(args, **defaults):
         help="Create new version file")
     p_init.add_argument('value', nargs='?', default='0.1.0', type=str,
         help="Initial version")
-    p_init.set_defaults(get_name=get_command_name('init'))
+    p_init.set_defaults(get_command=get_command_name('init'))
 
     p_up = sub.add_parser('up',
         help="Increase version")
     p_up.add_argument('value', nargs='?', type=int,
         help="Increase version by this value (default: 1)")
-    p_up.set_defaults(get_name=get_command_name('up'))
+    p_up.set_defaults(get_command=get_command_name('up'))
 
     p_up_gr = p_up.add_mutually_exclusive_group()
     up_part = defaults.get('up_part', defaults.get('up_part'))
@@ -363,7 +363,7 @@ def parse_args(args, **defaults):
         help="increase minor part of version" + (" (project default)" if up_part == 'minor' else ""))
     p_up_gr.add_argument('--patch', '-p', action="store_true",
         help="increase patch part of version" + (" (project default)" if up_part == 'patch' else ""))
-    p_up_gr.set_defaults(get_name=get_command_name('up'))
+    p_up_gr.set_defaults(get_command=get_command_name('up'))
 
     p_set = sub.add_parser('set',
         help="Set version to specified one")
@@ -379,35 +379,35 @@ def parse_args(args, **defaults):
         help="set build part of version to BUILD")
     p_set.add_argument('value', nargs='?', type=str,
         help="set version to this value")
-    p_set.set_defaults(get_name=get_command_name('up'))
+    p_set.set_defaults(get_command=get_command_name('up'))
 
     p_tag = sub.add_parser('tag',
         help="Create VCS tag with current version")
     p_tag.add_argument('--vcs-engine', type=str, default=defaults.get('vcs_engine'),
         help="Select VCS engine used for tagging (only git is supported currently)", )
-    p_tag.add_argument('--vcs-tag-param', dest='vcs_tag_params', type=str, action="append", help="Additional params to \"tag\" command")
-    p_tag.set_defaults(get_name=get_command_name('tag'))
+    p_tag.add_argument('--vcs-tag-param', dest='vcs_tag_params', type=str, action="append", help="Additional params for VCS for \"tag\" command")
+    p_tag.set_defaults(get_command=get_command_name('tag'))
 
     args = p.parse_args(args)
     args.version_file = pathlib.Path(args.version_file).absolute()
 
-    if not hasattr(args, 'get_name'):
-        args.get_name = get_command_name(None)
+    if not hasattr(args, 'get_command'):
+        args.get_command = get_command_name(None)
 
     # TODO: how can I do that better?
-    if args.get_name() == 'build':
+    if args.get_command() == 'build':
         if not args.version_file.exists():
             p.error("Version file \"%s\" doesn't exists" % args.version_file)
 
-    elif args.get_name() == 'major':
+    elif args.get_command() == 'major':
         if not args.version_file.exists():
             p.error("Version file \"%s\" doesn't exists" % args.version_file)
 
-    elif args.get_name() == 'value':
+    elif args.get_command() == 'value':
         if args.version_file.exists():
             p.error("Version file \"%s\" already exists" % args.version_file)
 
-    elif args.get_name() == 'tag':
+    elif args.get_command() == 'tag':
         if not args.vcs_tag_params:
             args.vcs_tag_params = defaults.get('vcs_tag_params', [])
 
@@ -498,7 +498,7 @@ def main():
     version_file = VersionFile(args.version_file)
 
     quant = None
-    if args.get_name() == 'up':
+    if args.get_command() == 'up':
         current = version_file.read()
 
         if args.major:
@@ -515,7 +515,7 @@ def main():
 
         quant = update_project_files(args, project_cfg, current)
 
-    elif args.get_name() == 'set':
+    elif args.get_command() == 'set':
         current = version_file.read()
 
         if args.value:
@@ -533,12 +533,12 @@ def main():
 
         quant = update_project_files(args, project_cfg, current)
 
-    elif args.get_name() == 'init':
+    elif args.get_command() == 'init':
         parsed = semver.parse(args.value)
         current = Version(parsed)
         version_file.write(current)
 
-    elif args.get_name() == 'tag':
+    elif args.get_command() == 'tag':
         try:
             current = version_file.read()
             vcs = VCS(args.vcs_engine)
