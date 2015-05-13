@@ -254,12 +254,17 @@ class Config:
                 self.version_file = cfg['file']
             if 'date_format' in cfg:
                 self.date_format = cfg['date_format']
-            if 'tag' in cfg:
-                self.tag = cfg.getboolean('tag')
-            if 'tag_params' in cfg:
-                self.tag_params = list(filter(None, cfg['tag_params'].split("\n")))
             if 'up_part' in cfg:
                 self.up_part = cfg['up_part']
+
+        if 'vcs' in cfg_handler:
+            cfg = cfg_handler['vcs']
+            if 'engine' in cfg:
+                self.vcs_engine = cfg['engine']
+            if 'tag' in cfg:
+                self.vcs_tag = cfg.getboolean('tag')
+            if 'tag_params' in cfg:
+                self.vcs_tag_params = list(filter(None, cfg['tag_params'].split("\n")))
 
         # project files configuration
         for section in cfg_handler.sections():

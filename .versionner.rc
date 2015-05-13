@@ -1,6 +1,9 @@
 [versionner]
 file = ./VERSION
 ;up_part= patch
+
+[vcs]
+engine = git
 tag = yes
 tag_params =
 

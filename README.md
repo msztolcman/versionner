@@ -146,6 +146,9 @@ It allows you also to modify other files specified in configuration.
     file = ./VERSION
     date_format = %Y-%m-%d
     up_part = patch
+    
+    [vcs]
+    engine = git
     tag = true
     ;tag_params =
     ;  -f
