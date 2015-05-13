@@ -35,6 +35,7 @@ setup(
 
     entry_points={
         'console_scripts': [
+            'ver=versionner:main',
             'versionner=versionner:main',
         ],
     },

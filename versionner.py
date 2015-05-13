@@ -478,6 +478,9 @@ def main():
     :return:
     """
 
+    if pathlib.Path(sys.argv[0]).parts[-1] in ('versionner', 'versionner.py'):
+        print("versionner name is deprecated, use \"ver\" now!", file=sys.stderr)
+
     project_cfg = Config()
     args = parse_args(sys.argv[1:], version_file=project_cfg.version_file, date_format=project_cfg.date_format,
         up_part=project_cfg.up_part, vcs_engine=project_cfg.vcs_engine, vcs_tag=project_cfg.vcs_tag, vcs_tag_params=project_cfg.vcs_tag_params)

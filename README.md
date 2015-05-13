@@ -228,6 +228,7 @@ ChangeLog
 ### v0.5.0
 
 * versionner now creates vcs (only git currently) tag if requested
+* versionner's app now it 'ver' ('versionner' is deprecated)
 
 ### v0.4.3
 
