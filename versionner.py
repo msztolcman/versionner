@@ -233,8 +233,9 @@ class Config:
         self.version_file = DEFAULT_VERSION_FILE
         self.date_format = DEFAULT_DATE_FORMAT
         self.files = []
-        self.tag = False
-        self.tag_params = []
+        self.vcs_engine = 'git'
+        self.vcs_tag = False
+        self.vcs_tag_params = []
         self.up_part = DEFAULT_UP_PART
 
         cfg_handler = configparser.ConfigParser(interpolation=None)
@@ -287,6 +288,32 @@ class Config:
         ret += ', '.join('%s=%r' % (name, getattr(self, name)) for name in self.__slots__)
         return ret
 
+class VCS(object):
+    def __init__(self, engine):
+        self._engine = engine
+
+    def get_command(self, version, params):
+        cmd = None
+
+        if self._engine == 'git':
+            cmd = ['git', 'tag', '-a', '-m', 'v%s' % version, str(version)]
+            if params:
+                cmd.extend(params)
+
+        if not cmd:
+            raise RuntimeError("Unknown VCS engine: %s" % self._engine)
+
+        return cmd
+
+    def create_tag(self, version, params):
+        cmd = self.get_command(version, params)
+
+        p = subprocess.Popen(cmd, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+        (stdout, stderr) = p.communicate(timeout=DEFAULT_TAG_TIMEOUT)
+
+        if p.returncode:
+            raise RuntimeError('Can\'t create VCS tag %s. Process exited with code %d and message: %s' % (version, p.returncode, stderr))
+
 
 def parse_args(args, **defaults):
     """
@@ -306,8 +333,9 @@ def parse_args(args, **defaults):
     p.add_argument('--date-format', type=str,
         default=defaults.get('date_format'),
         help="Date format used in project files")
-    p.add_argument('--tag', '-t', action="store_true", help="Create VCS tag with current version")
-    p.add_argument('--tag-param', dest='tag_params', type=str, action="append", help="Additional params to \tag\" command")
+    p.add_argument('--vcs-engine', type=str, default=defaults.get('vcs_engine'), help="Select VCS engine used for tagging (only git is supported currently)",)
+    p.add_argument('--vcs-tag', '-t', action="store_true", help="Create VCS tag with current version")
+    p.add_argument('--vcs-tag-param', dest='vcs_tag_params', type=str, action="append", help="Additional params to \"tag\" command")
     p.add_argument('--verbose', action="store_true", help="Be more verbose if it's possible")
 
     sub = p.add_subparsers()
@@ -368,10 +396,10 @@ def parse_args(args, **defaults):
     else:
         args.command = None
 
-    if defaults.get('tag'):
-        args.tag = True
-    if not args.tag_params:
-        args.tag_params = defaults.get('tag_params', [])
+    if defaults.get('vcs_tag'):
+        args.vcs_tag = True
+    if not args.vcs_tag_params:
+        args.vcs_tag_params = defaults.get('vcs_tag_params', [])
 
     return args
 
@@ -442,18 +470,6 @@ def update_project_files(args, cfg, version):
     return counters
 
 
-def git_tag(version, params):
-    cmd = ['git', 'tag', '-a', '-m', 'v%s' % version, str(version)]
-    if params:
-        cmd.extend(params)
-
-    p = subprocess.Popen(cmd, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
-    (stdout, stderr) = p.communicate(timeout=DEFAULT_TAG_TIMEOUT)
-
-    if p.returncode:
-        raise RuntimeError('Can\'t create git tag %s. Process exited with code %d and message: %s' % (version, p.returncode, stderr))
-
-
 def main():
     """
     Main script
@@ -464,7 +480,7 @@ def main():
 
     project_cfg = Config()
     args = parse_args(sys.argv[1:], version_file=project_cfg.version_file, date_format=project_cfg.date_format,
-        up_part=project_cfg.up_part, tag=project_cfg.tag, tag_params=project_cfg.tag_params)
+        up_part=project_cfg.up_part, vcs_engine=project_cfg.vcs_engine, vcs_tag=project_cfg.vcs_tag, vcs_tag_params=project_cfg.vcs_tag_params)
 
     version_file = VersionFile(args.version_file)
 
@@ -517,9 +533,10 @@ def main():
             sys.exit(1)
 
     print("Current version: %s" % current)
-    if args.command in ('up', 'set', 'init') and args.tag:
+    if args.command in ('up', 'set', 'init') and args.vcs_tag:
         try:
-            git_tag(current, args.tag_params)
+            vcs = VCS(args.vcs_engine)
+            vcs.create_tag(current, args.vcs_tag_params)
         except:
             print('Git tag failed, do it yourself')
             if args.verbose:
