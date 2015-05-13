@@ -89,7 +89,7 @@ def parse_args(args, **defaults):
         help="set build part of version to BUILD")
     p_set.add_argument('value', nargs='?', type=str,
         help="set version to this value")
-    p_set.set_defaults(get_command=get_command_name('up'))
+    p_set.set_defaults(get_command=get_command_name('set'))
 
     p_tag = sub.add_parser('tag',
         help="Create VCS tag with current version")
