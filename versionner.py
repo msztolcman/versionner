@@ -425,10 +425,10 @@ def git_tag(version, params):
         cmd.extend(params)
 
     p = subprocess.Popen(cmd, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
-    p.communicate(timeout=DEFAULT_GIT_TAG_TIMEOUT)
+    (stdout, stderr) = p.communicate(timeout=DEFAULT_GIT_TAG_TIMEOUT)
 
     if p.returncode:
-        raise RuntimeError('Can\'t create git tag %s' % version)
+        raise RuntimeError('Can\'t create git tag %s. Process exited with code %d and message: %s' % (version, p.returncode, stderr))
 
 
 def main():
