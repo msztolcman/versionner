@@ -287,9 +287,9 @@ def parse_args(args, **defaults):
     p.add_argument('--date-format', type=str,
         default=defaults.get('date_format'),
         help="Date format used in project files")
-    p.add_argument('--git-tag', '-g', action="store_true", help="")
-    p.add_argument('--git-tag-param', type=str, action="append", help="")
-    p.add_argument('--verbose', action="store_true", help="")
+    p.add_argument('--git-tag', '-g', action="store_true", help="Create git tag with current version")
+    p.add_argument('--git-tag-param', type=str, action="append", help="Additional params to \"git tag\" command")
+    p.add_argument('--verbose', action="store_true", help="Be more verbose if it's possible")
 
     sub = p.add_subparsers()
 
