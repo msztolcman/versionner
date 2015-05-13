@@ -229,6 +229,7 @@ class Config:
         self.date_format = DEFAULT_DATE_FORMAT
         self.files = []
         self.git_tag = False
+        self.git_tag_params = []
         self.up_part = DEFAULT_UP_PART
 
         cfg_handler = configparser.ConfigParser(interpolation=None)
@@ -249,7 +250,9 @@ class Config:
             if 'date_format' in cfg:
                 self.date_format = cfg['date_format']
             if 'git_tag' in cfg:
-                self.git_tag = cfg['git_tag']
+                self.git_tag = cfg.getboolean('git_tag')
+            if 'git_tag_params' in cfg:
+                self.git_tag_params = list(filter(None, cfg['git_tag_params'].split("\n")))
             if 'up_part' in cfg:
                 self.up_part = cfg['up_part']
 
@@ -350,6 +353,11 @@ def parse_args(args, **defaults):
     else:
         args.command = None
 
+    if defaults.get('git_tag'):
+        args.git_tag = True
+    if not args.git_tag_params:
+        args.git_tag_params = defaults.get('git_tag_params', [])
+
     return args
 
 
@@ -441,7 +449,7 @@ def main():
 
     project_cfg = Config()
     args = parse_args(sys.argv[1:], version_file=project_cfg.version_file, date_format=project_cfg.date_format,
-        up_part=project_cfg.up_part)
+        up_part=project_cfg.up_part, git_tag=project_cfg.git_tag, git_tag_params=project_cfg.git_tag_params)
 
     version_file = VersionFile(args.version_file)
 

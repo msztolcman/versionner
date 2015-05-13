@@ -18,7 +18,9 @@ Features
 * it's easier to write: `versionner up` instead of open editor, edit and
     save changes ;)
 * `versionner` updates also project files (like README or sth)
+* and create git tag if requested
 * it's [very easy to install](#installation)
+* and it's all in one command...
 
 Some examples
 -------------
@@ -40,14 +42,14 @@ Some examples:
     # increase patch by 1
     versionner up --patch 
     
-    # increase patch by 4
-    versionner up --patch 4
+    # increase patch by 4, create git tag (-g must be placed before up/set/init command)
+    versionner -g up --patch 4
      
     # just guess...
     versionner set --minor 3 --patch 2 --build asd3f
         
-    # set version to 1.0.0
-    versionner set 1.0.0
+    # set version to 1.0.0, create git tag
+    versionner -g set 1.0.0
 
 More
 ----
@@ -60,10 +62,11 @@ Look at result:
 
     % versionner --help
     usage: versionner [-h] [--file VERSION_FILE] [--version]
-                      [--date-format DATE_FORMAT]
+                      [--date-format DATE_FORMAT] [--git-tag]
+                      [--git-tag-param GIT_TAG_PARAM] [--verbose]
                       {init,up,set} ...
     
-    Manipulate version of project
+    Helps manipulating version of the project
     
     positional arguments:
       {init,up,set}
@@ -78,6 +81,10 @@ Look at result:
       --version, -v         show program's version number and exit
       --date-format DATE_FORMAT
                             Date format used in project files
+      --git-tag, -g         Create git tag with current version
+      --git-tag-param GIT_TAG_PARAM
+                            Additional params to "git tag" command
+      --verbose             Be more verbose if it's possible
       
 So, there are three commands: `init`, `up` and `set`. We want to look at this:
 
@@ -99,7 +106,7 @@ So, there are three commands: `init`, `up` and `set`. We want to look at this:
     optional arguments:
       -h, --help   show this help message and exit
       --major, -j  increase major part of version
-      --minor, -n  increase minor part of version (default)
+      --minor, -n  increase minor part of version (project default)
       --patch, -p  increase patch part of version
 
     % versionner set --help
@@ -139,6 +146,10 @@ It allows you also to modify other files specified in configuration.
     file = ./VERSION
     date_format = %Y-%m-%d
     up_part = patch
+    git_tag = true
+    ;git_tag_params =
+    ;  -f
+    ;  --local-user=some-key-id
     
     [file:some/folder/some_file.py]
     enabled = true
@@ -223,6 +234,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ChangeLog
 ---------
+
+### v0.5.0
+
+* versionner now creates git tag if requested
 
 ### v0.4.3
 

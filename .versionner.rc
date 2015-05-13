@@ -1,6 +1,8 @@
 [versionner]
 file = ./VERSION
 ;up_part= patch
+git_tag = yes
+git_tag_params =
 
 [file:versionner.py]
 enabled = true
