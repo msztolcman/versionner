@@ -42,14 +42,20 @@ Some examples:
     # increase patch by 1
     ver up --patch
     
-    # increase patch by 4, create vcs (only git currently) tag (-t must be placed before up/set/init command)
-    ver -t up --patch 4
+    # create git tag
+    ver tag
+    
+    # increase patch by 4
+    ver up --patch 4
      
     # just guess...
     ver set --minor 3 --patch 2 --build asd3f
         
-    # set version to 1.0.0, create vcs tag (only git currently)
-    ver -t set 1.0.0
+    # set version to 1.0.0
+    ver set 1.0.0
+    
+    # create signed VCS tag
+    ver tag --vcs-param -s
 
 More
 ----
@@ -61,18 +67,18 @@ Everything is in help :) Just execute:
 Look at result:
 
     % ver --help
-    usage: ver [-h] [--file VERSION_FILE] [--version]
-                      [--date-format DATE_FORMAT] [--tag] [--tag-param TAG_PARAMS]
-                      [--verbose]
-                      {init,up,set} ...
+    usage: ver [-h] [--file VERSION_FILE] [--version] [--date-format DATE_FORMAT]
+               [--verbose]
+               {init,up,set,tag} ...
     
     Helps manipulating version of the project
     
     positional arguments:
-      {init,up,set}
+      {init,up,set,tag}
         init                Create new version file
         up                  Increase version
         set                 Set version to specified one
+        tag                 Create VCS tag with current version
     
     optional arguments:
       -h, --help            show this help message and exit
@@ -81,12 +87,10 @@ Look at result:
       --version, -v         show program's version number and exit
       --date-format DATE_FORMAT
                             Date format used in project files
-      --tag, -t             Create VCS tag with current version
-      --tag-param TAG_PARAMS
-                            Additional params to ag" command
       --verbose             Be more verbose if it's possible
+
       
-So, there are three commands: `init`, `up` and `set`. We want to look at this:
+So, there are three commands: `init`, `up`, `set` and `tag`. We want to look at this:
 
     % ver init --help
     usage: ver init [-h] [value]
@@ -129,6 +133,17 @@ So, there are three commands: `init`, `up` and `set`. We want to look at this:
                             set prerelease part of version to PRERELEASE
       --build BUILD, -b BUILD
                             set build part of version to BUILD
+                            
+    % ver tag --help
+    usage: ver tag [-h] [--vcs-engine VCS_ENGINE] [--vcs-tag-param VCS_TAG_PARAMS]
+    
+    optional arguments:
+      -h, --help            show this help message and exit
+      --vcs-engine VCS_ENGINE
+                            Select VCS engine used for tagging (only git is
+                            supported currently)
+      --vcs-tag-param VCS_TAG_PARAMS
+                            Additional params to "tag" command
 
 Configuration
 ---------------------
@@ -149,7 +164,6 @@ It allows you also to modify other files specified in configuration.
     
     [vcs]
     engine = git
-    tag = true
     ;tag_params =
     ;  -f
     ;  --local-user=some-key-id
