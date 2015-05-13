@@ -35,7 +35,7 @@ setup(
         'Programming Language :: Python :: 3.4',
     ],
     install_requires=['argparse', 'semver'],
-    py_modules=['versionner'],
+    packages=find_packages(),
 
     keywords='version management',
 
