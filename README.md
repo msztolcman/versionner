@@ -245,6 +245,11 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ChangeLog
 ---------
 
+### v1.0.3
+
+* many ways to tell to use Python3.3+ for versionner
+* Makefile refinements
+
 ### v1.0.2
 
 * README fixes
