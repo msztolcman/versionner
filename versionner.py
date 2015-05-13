@@ -27,6 +27,7 @@ DEFAULT_DATE_FORMAT = '%Y-%m-%d'
 DEFAULT_UP_PART = 'minor'
 DEFAULT_GIT_TAG_TIMEOUT = 5
 
+
 class Version:
     """
     Version of project.
@@ -419,7 +420,7 @@ def update_project_files(args, cfg, version):
 
 
 def git_tag(version, params):
-    cmd = ['git', 'tag1', '-a', '-m', 'v%s' % version, str(version)]
+    cmd = ['git', 'tag', '-a', '-m', 'v%s' % version, str(version)]
     if params:
         cmd.extend(params)
 
