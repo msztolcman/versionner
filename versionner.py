@@ -25,7 +25,7 @@ RC_FILENAME = '.versionner.rc'
 DEFAULT_VERSION_FILE = './VERSION'
 DEFAULT_DATE_FORMAT = '%Y-%m-%d'
 DEFAULT_UP_PART = 'minor'
-DEFAULT_GIT_TAG_TIMEOUT = 5
+DEFAULT_TAG_TIMEOUT = 5
 
 
 class Version:
@@ -228,8 +228,8 @@ class Config:
         self.version_file = DEFAULT_VERSION_FILE
         self.date_format = DEFAULT_DATE_FORMAT
         self.files = []
-        self.git_tag = False
-        self.git_tag_params = []
+        self.tag = False
+        self.tag_params = []
         self.up_part = DEFAULT_UP_PART
 
         cfg_handler = configparser.ConfigParser(interpolation=None)
@@ -249,10 +249,10 @@ class Config:
                 self.version_file = cfg['file']
             if 'date_format' in cfg:
                 self.date_format = cfg['date_format']
-            if 'git_tag' in cfg:
-                self.git_tag = cfg.getboolean('git_tag')
-            if 'git_tag_params' in cfg:
-                self.git_tag_params = list(filter(None, cfg['git_tag_params'].split("\n")))
+            if 'tag' in cfg:
+                self.tag = cfg.getboolean('tag')
+            if 'tag_params' in cfg:
+                self.tag_params = list(filter(None, cfg['tag_params'].split("\n")))
             if 'up_part' in cfg:
                 self.up_part = cfg['up_part']
 
@@ -291,8 +291,8 @@ def parse_args(args, **defaults):
     p.add_argument('--date-format', type=str,
         default=defaults.get('date_format'),
         help="Date format used in project files")
-    p.add_argument('--git-tag', '-g', action="store_true", help="Create git tag with current version")
-    p.add_argument('--git-tag-param', dest='git_tag_params', type=str, action="append", help="Additional params to \"git tag\" command")
+    p.add_argument('--tag', '-t', action="store_true", help="Create VCS tag with current version")
+    p.add_argument('--tag-param', dest='tag_params', type=str, action="append", help="Additional params to \tag\" command")
     p.add_argument('--verbose', action="store_true", help="Be more verbose if it's possible")
 
     sub = p.add_subparsers()
@@ -353,10 +353,10 @@ def parse_args(args, **defaults):
     else:
         args.command = None
 
-    if defaults.get('git_tag'):
-        args.git_tag = True
-    if not args.git_tag_params:
-        args.git_tag_params = defaults.get('git_tag_params', [])
+    if defaults.get('tag'):
+        args.tag = True
+    if not args.tag_params:
+        args.tag_params = defaults.get('tag_params', [])
 
     return args
 
@@ -433,7 +433,7 @@ def git_tag(version, params):
         cmd.extend(params)
 
     p = subprocess.Popen(cmd, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
-    (stdout, stderr) = p.communicate(timeout=DEFAULT_GIT_TAG_TIMEOUT)
+    (stdout, stderr) = p.communicate(timeout=DEFAULT_TAG_TIMEOUT)
 
     if p.returncode:
         raise RuntimeError('Can\'t create git tag %s. Process exited with code %d and message: %s' % (version, p.returncode, stderr))
@@ -449,7 +449,7 @@ def main():
 
     project_cfg = Config()
     args = parse_args(sys.argv[1:], version_file=project_cfg.version_file, date_format=project_cfg.date_format,
-        up_part=project_cfg.up_part, git_tag=project_cfg.git_tag, git_tag_params=project_cfg.git_tag_params)
+        up_part=project_cfg.up_part, tag=project_cfg.tag, tag_params=project_cfg.tag_params)
 
     version_file = VersionFile(args.version_file)
 
@@ -502,9 +502,9 @@ def main():
             sys.exit(1)
 
     print("Current version: %s" % current)
-    if args.command in ('up', 'set', 'init') and args.git_tag:
+    if args.command in ('up', 'set', 'init') and args.tag:
         try:
-            git_tag(current, args.git_tag_params)
+            git_tag(current, args.tag_params)
         except:
             print('Git tag failed, do it yourself')
             if args.verbose:

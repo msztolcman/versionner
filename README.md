@@ -3,7 +3,7 @@ versionner
 
 `versionner` helps manipulating version of the project.
 
-With one command you can update all required files with new version.
+With one command you can update all required files and git with new version.
 
 Current stable version
 ----------------------
@@ -18,7 +18,7 @@ Features
 * it's easier to write: `versionner up` instead of open editor, edit and
     save changes ;)
 * `versionner` updates also project files (like README or sth)
-* and create git tag if requested
+* and create vcs (only git currently) tag if requested
 * it's [very easy to install](#installation)
 * and it's all in one command...
 
@@ -42,14 +42,14 @@ Some examples:
     # increase patch by 1
     versionner up --patch 
     
-    # increase patch by 4, create git tag (-g must be placed before up/set/init command)
-    versionner -g up --patch 4
+    # increase patch by 4, create vcs (only git currently) tag (-t must be placed before up/set/init command)
+    versionner -t up --patch 4
      
     # just guess...
     versionner set --minor 3 --patch 2 --build asd3f
         
-    # set version to 1.0.0, create git tag
-    versionner -g set 1.0.0
+    # set version to 1.0.0, create vcs tag (only git currently)
+    versionner -t set 1.0.0
 
 More
 ----
@@ -62,8 +62,8 @@ Look at result:
 
     % versionner --help
     usage: versionner [-h] [--file VERSION_FILE] [--version]
-                      [--date-format DATE_FORMAT] [--git-tag]
-                      [--git-tag-param GIT_TAG_PARAM] [--verbose]
+                      [--date-format DATE_FORMAT] [--tag] [--tag-param TAG_PARAMS]
+                      [--verbose]
                       {init,up,set} ...
     
     Helps manipulating version of the project
@@ -81,9 +81,9 @@ Look at result:
       --version, -v         show program's version number and exit
       --date-format DATE_FORMAT
                             Date format used in project files
-      --git-tag, -g         Create git tag with current version
-      --git-tag-param GIT_TAG_PARAM
-                            Additional params to "git tag" command
+      --tag, -t             Create VCS tag with current version
+      --tag-param TAG_PARAMS
+                            Additional params to ag" command
       --verbose             Be more verbose if it's possible
       
 So, there are three commands: `init`, `up` and `set`. We want to look at this:
@@ -146,8 +146,8 @@ It allows you also to modify other files specified in configuration.
     file = ./VERSION
     date_format = %Y-%m-%d
     up_part = patch
-    git_tag = true
-    ;git_tag_params =
+    tag = true
+    ;tag_params =
     ;  -f
     ;  --local-user=some-key-id
     
@@ -237,7 +237,7 @@ ChangeLog
 
 ### v0.5.0
 
-* versionner now creates git tag if requested
+* versionner now creates vcs (only git currently) tag if requested
 
 ### v0.4.3
 
