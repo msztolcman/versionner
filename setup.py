@@ -19,12 +19,14 @@ setup(
 
     # See https://pypi.python.org/pypi?%3Aaction=list_classifiers
     classifiers=[
-        'Development Status :: 4 - Beta',
+        'Development Status :: 5 - Production/Stable',
         'Environment :: Console',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
-        'Topic :: Text Processing',
         'Topic :: Utilities',
+        'Topic:: Software Development',
+        'Topic :: Software Development :: Documentation',
+        'Topic :: Software Development :: Version Control',
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
     ],
