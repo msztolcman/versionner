@@ -213,11 +213,16 @@ class FileConfig:
         except LookupError:
             raise ValueError("Unknown encoding: \"%s\"" % self.encoding)
 
+    def __repr__(self):
+        return '<FileConfig(%s)>' % self.filename
+
 
 class Config:
     """
     Configuration
     """
+
+    __slots__ = 'version_file date_format files vcs_engine vcs_tag vcs_tag_params up_part'.split()
 
     def __init__(self):
         """
@@ -271,6 +276,11 @@ class Config:
                         print("Incorrect configuration for file \"%s\": %s" % (project_file.filename, ex.args[0]), file=sys.stderr)
                     else:
                         self.files.append(project_file)
+
+    def __repr__(self):
+        ret = '<' + self.__class__.__name__ + ': '
+        ret += ', '.join('%s=%r' % (name, getattr(self, name)) for name in self.__slots__)
+        return ret
 
 
 def parse_args(args, **defaults):
