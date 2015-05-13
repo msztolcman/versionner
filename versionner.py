@@ -7,9 +7,11 @@ import os.path
 import pathlib
 import re
 import shutil
+import subprocess
 import sys
 import tempfile
 import time
+import traceback
 
 import semver
 
@@ -23,7 +25,7 @@ RC_FILENAME = '.versionner.rc'
 DEFAULT_VERSION_FILE = './VERSION'
 DEFAULT_DATE_FORMAT = '%Y-%m-%d'
 DEFAULT_UP_PART = 'minor'
-
+DEFAULT_GIT_TAG_TIMEOUT = 5
 
 class Version:
     """
@@ -238,7 +240,7 @@ class Config:
         if not cfg_handler.read(cfg_files):
             return
 
-        ## global configuration
+        # global configuration
         if 'versionner' in cfg_handler:
             cfg = cfg_handler['versionner']
             if 'file' in cfg:
@@ -250,7 +252,7 @@ class Config:
             if 'up_part' in cfg:
                 self.up_part = cfg['up_part']
 
-        ## project files configuration
+        # project files configuration
         for section in cfg_handler.sections():
             if section.startswith('file:'):
                 project_file = FileConfig(section[5:], cfg_handler[section])
@@ -285,7 +287,8 @@ def parse_args(args, **defaults):
     p.add_argument('--date-format', type=str,
         default=defaults.get('date_format'),
         help="Date format used in project files")
-    # p.add_argument('--git', '-g', action="store_true", help="")
+    p.add_argument('--git-tag', '-g', action="store_true", help="")
+    p.add_argument('--git-tag-param', type=str, action="append", help="")
     p.add_argument('--verbose', action="store_true", help="")
 
     sub = p.add_subparsers()
@@ -415,6 +418,18 @@ def update_project_files(args, cfg, version):
     return counters
 
 
+def git_tag(version, params):
+    cmd = ['git', 'tag1', '-a', '-m', 'v%s' % version, str(version)]
+    if params:
+        cmd.extend(params)
+
+    p = subprocess.Popen(cmd, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+    p.communicate(timeout=DEFAULT_GIT_TAG_TIMEOUT)
+
+    if p.returncode:
+        raise RuntimeError('Can\'t create git tag %s' % version)
+
+
 def main():
     """
     Main script
@@ -478,6 +493,16 @@ def main():
             sys.exit(1)
 
     print("Current version: %s" % current)
+    if args.git_tag:
+        try:
+            git_tag(current, args.git_tag_param)
+        except:
+            print('Git tag failed, do it yourself')
+            if args.verbose:
+                traceback.print_exc()
+        else:
+            print('Git tag created')
+
     if quant:
         print('Changed %(files)s files (%(changes)s changes)' % quant)
 
