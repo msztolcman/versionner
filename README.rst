@@ -9,7 +9,7 @@ version.
 Current stable version
 ----------------------
 
-1.0.6
+1.0.7
 
 Features
 --------
