@@ -289,7 +289,7 @@ def parse_args(args, **defaults):
         default=defaults.get('date_format'),
         help="Date format used in project files")
     p.add_argument('--git-tag', '-g', action="store_true", help="Create git tag with current version")
-    p.add_argument('--git-tag-param', type=str, action="append", help="Additional params to \"git tag\" command")
+    p.add_argument('--git-tag-param', dest='git_tag_params', type=str, action="append", help="Additional params to \"git tag\" command")
     p.add_argument('--verbose', action="store_true", help="Be more verbose if it's possible")
 
     sub = p.add_subparsers()
@@ -331,7 +331,7 @@ def parse_args(args, **defaults):
     args = p.parse_args(args)
     args.version_file = pathlib.Path(args.version_file).absolute()
 
-    ## TODO: how can I do that better?
+    # TODO: how can I do that better?
     if hasattr(args, 'build'):
         args.command = 'set'
         if not args.version_file.exists():
@@ -496,7 +496,7 @@ def main():
     print("Current version: %s" % current)
     if args.command in ('up', 'set', 'init') and args.git_tag:
         try:
-            git_tag(current, args.git_tag_param)
+            git_tag(current, args.git_tag_params)
         except:
             print('Git tag failed, do it yourself')
             if args.verbose:
