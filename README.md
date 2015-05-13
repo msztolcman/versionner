@@ -200,7 +200,7 @@ is available, it means Linux, Windows, MacOS X etc.
 
 Simplest way is to use Python's built-in package system:
 
-    pip install versionner
+    pip3 install versionner
 
 Voila!
 
