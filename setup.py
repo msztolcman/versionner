@@ -1,6 +1,13 @@
-from setuptools import setup, find_packages
 from codecs import open
 from os import path
+from pkg_resources import parse_version
+from setuptools import setup, find_packages
+import sys
+
+if parse_version(sys.version) < parse_version('3.3.0'):
+    print("Sorry, Python 3 is required")
+    sys.exit(1)
+
 
 BASE_DIR = path.abspath(path.dirname(__file__))
 
