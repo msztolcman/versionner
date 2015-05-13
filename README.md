@@ -28,40 +28,40 @@ Some examples
 Some examples:
 
     # initialise new file with version 0.1.0
-    % versionner init
+    % ver init
     
     # initialise new file with version 1.0.0
-    % versionner init 1.0.0
+    % ver init 1.0.0
 
     # prints current version info
-    % versionner
+    % ver
     
     # increase minor by 1, set patch to 0
-    versionner up
+    ver up
     
     # increase patch by 1
-    versionner up --patch 
+    ver up --patch
     
     # increase patch by 4, create vcs (only git currently) tag (-t must be placed before up/set/init command)
-    versionner -t up --patch 4
+    ver -t up --patch 4
      
     # just guess...
-    versionner set --minor 3 --patch 2 --build asd3f
+    ver set --minor 3 --patch 2 --build asd3f
         
     # set version to 1.0.0, create vcs tag (only git currently)
-    versionner -t set 1.0.0
+    ver -t set 1.0.0
 
 More
 ----
 
 Everything is in help :) Just execute:
 
-    versionner --help
+    ver --help
 
 Look at result:
 
-    % versionner --help
-    usage: versionner [-h] [--file VERSION_FILE] [--version]
+    % ver --help
+    usage: ver [-h] [--file VERSION_FILE] [--version]
                       [--date-format DATE_FORMAT] [--tag] [--tag-param TAG_PARAMS]
                       [--verbose]
                       {init,up,set} ...
@@ -88,8 +88,8 @@ Look at result:
       
 So, there are three commands: `init`, `up` and `set`. We want to look at this:
 
-    % versionner init --help
-    usage: versionner init [-h] [value]
+    % ver init --help
+    usage: ver init [-h] [value]
     
     positional arguments:
       value       Initial version
@@ -97,8 +97,8 @@ So, there are three commands: `init`, `up` and `set`. We want to look at this:
     optional arguments:
       -h, --help  show this help message and exit
 
-    % versionner up --help
-    usage: versionner up [-h] [--major | --minor | --patch] [value]
+    % ver up --help
+    usage: ver up [-h] [--major | --minor | --patch] [value]
     
     positional arguments:
       value        Increase version by this value (default: 1)
@@ -109,8 +109,8 @@ So, there are three commands: `init`, `up` and `set`. We want to look at this:
       --minor, -n  increase minor part of version (project default)
       --patch, -p  increase patch part of version
 
-    % versionner set --help
-    usage: versionner set [-h] [--major MAJOR] [--minor MINOR] [--patch PATCH]
+    % ver set --help
+    usage: ver set [-h] [--major MAJOR] [--minor MINOR] [--patch PATCH]
                           [--prerelease PRERELEASE] [--build BUILD]
                           [value]
     
@@ -228,7 +228,7 @@ ChangeLog
 ### v0.5.0
 
 * versionner now creates vcs (only git currently) tag if requested
-* versionner's app now it 'ver' ('versionner' is deprecated)
+* versionner's app now is called 'ver', 'versionner' is deprecated
 
 ### v0.4.3
 
