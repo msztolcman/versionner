@@ -9,7 +9,7 @@ version.
 Current stable version
 ----------------------
 
-1.0.0
+1.0.1
 
 Features
 --------
@@ -258,6 +258,17 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ChangeLog
 ---------
+
+v1.0.2
+~~~~~~
+
+-  README fixes
+-  Makefile
+
+v1.0.1
+~~~~~~
+
+-  nothing changed, just for PYPI
 
 v1.0.0
 ~~~~~~

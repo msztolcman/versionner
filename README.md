@@ -240,6 +240,11 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ChangeLog
 ---------
 
+### v1.0.2
+
+* README fixes
+* Makefile
+
 ### v1.0.1
 
 * nothing changed, just for PYPI
