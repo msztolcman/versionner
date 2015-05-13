@@ -286,6 +286,7 @@ def parse_args(args, **defaults):
         default=defaults.get('date_format'),
         help="Date format used in project files")
     # p.add_argument('--git', '-g', action="store_true", help="")
+    p.add_argument('--verbose', action="store_true", help="")
 
     sub = p.add_subparsers()
 
