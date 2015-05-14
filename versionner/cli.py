@@ -1,4 +1,7 @@
-#!/usr/bin/env python3
+"""
+    Main CLI engine for versionner
+    Parse input options, and make all dirty jobs.
+"""
 
 from __future__ import print_function
 
@@ -32,21 +35,25 @@ def parse_args(args, **defaults):
     :return:
     """
     prog = pathlib.Path(sys.argv[0]).parts[-1].replace('.py', '')
-    version = "%%(prog)s %s" % versionner.__version__
+    prog_version = "%%(prog)s %s" % versionner.__version__
+
+    # pylint: disable=invalid-name
     p = argparse.ArgumentParser(prog=prog, description='Helps manipulating version of the project')
     p.add_argument('--file', '-f', dest='version_file', type=str,
         default=defaults.get('version_file'),
         help="path to file where version is saved")
-    p.add_argument('--version', '-v', action="version", version=version)
+    p.add_argument('--version', '-v', action="version", version=prog_version)
     p.add_argument('--date-format', type=str,
         default=defaults.get('date_format'),
         help="Date format used in project files")
     p.add_argument('--verbose', action="store_true", help="Be more verbose if it's possible")
 
     def get_command_name(name):
+        # pylint: disable=missing-docstring
         _name = name
 
         def _():
+            # pylint: disable=missing-docstring
             return _name
 
         return _
@@ -95,7 +102,8 @@ def parse_args(args, **defaults):
         help="Create VCS tag with current version")
     p_tag.add_argument('--vcs-engine', type=str, default=defaults.get('vcs_engine'),
         help="Select VCS engine used for tagging (only git is supported currently)", )
-    p_tag.add_argument('--vcs-tag-param', dest='vcs_tag_params', type=str, action="append", help="Additional params for VCS for \"tag\" command")
+    p_tag.add_argument('--vcs-tag-param', dest='vcs_tag_params', type=str, action="append",
+        help="Additional params for VCS for \"tag\" command")
     p_tag.set_defaults(get_command=get_command_name('tag'))
 
     args = p.parse_args(args)
@@ -104,7 +112,6 @@ def parse_args(args, **defaults):
     if not hasattr(args, 'get_command'):
         args.get_command = get_command_name(None)
 
-    # TODO: how can I do that better?
     if args.get_command() == 'build':
         if not args.version_file.exists():
             p.error("Version file \"%s\" doesn't exists" % args.version_file)
@@ -124,14 +131,14 @@ def parse_args(args, **defaults):
     return args
 
 
-def update_project_files(args, cfg, version):
+def update_project_files(args, cfg, proj_version):
     """
     Update version string in project files
 
     :rtype : dict
     :param args:script arguments
     :param cfg:project configuration
-    :param version:current version
+    :param proj_version:current version
     :return:dict :raise ValueError:
     """
     counters = {'files': 0, 'changes': 0}
@@ -141,21 +148,21 @@ def update_project_files(args, cfg, version):
             print("File \"%s\" not found" % project_file.filename, file=sys.stderr)
             continue
 
-        ## prepare data
+        # prepare data
         date_format = project_file.date_format or args.date_format
 
         rxp = re.compile(project_file.search, project_file.search_flags)
         replace = project_file.replace % {
             "date": time.strftime(date_format),
-            "major": version.major,
-            "minor": version.minor,
-            "patch": version.patch,
-            "prerelease": version.prerelease,
-            "version": str(version),
-            "build": version.build,
+            "major": proj_version.major,
+            "minor": proj_version.minor,
+            "patch": proj_version.patch,
+            "prerelease": proj_version.prerelease,
+            "version": str(proj_version),
+            "build": proj_version.build,
         }
 
-        ## update project files
+        # update project files
         with \
                 project_file.file.open(mode="r", encoding=project_file.encoding) as fh_in, \
                 tempfile.NamedTemporaryFile(mode="w", encoding=project_file.encoding, delete=False) as fh_out:
@@ -249,6 +256,7 @@ def command_set(cfg, args):
     return {'current_version': current, 'quant': quant}
 
 
+# pylint: disable=unused-argument
 def command_init(cfg, args):
     """
     Realize tasks for 'init' command
@@ -266,7 +274,8 @@ def command_init(cfg, args):
     return {'current_version': current, 'quant': 0}
 
 
-def command_tag(project_cfg, args):
+# pylint: disable=unused-argument
+def command_tag(cfg, args):
     """
     Realize tasks for 'tag' command
 
@@ -294,7 +303,8 @@ def command_tag(project_cfg, args):
     return {'current_version': current, 'quant': 0}
 
 
-def command_default(project_cfg, args):
+# pylint: disable=unused-argument
+def command_default(cfg, args):
     """
     Realize tasks when no command given
 
