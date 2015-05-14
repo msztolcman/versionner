@@ -4,6 +4,7 @@ doc:
 clean:
 	rm dist/*
 	rm -fr __pycache__
+	rm -fr versionner/__pycache__
 	rm -fr build
 
 build:
