@@ -190,11 +190,133 @@ def update_project_files(args, cfg, version):
     return counters
 
 
+def command_up(cfg, args):
+    """
+    Realize tasks for 'up' command
+
+    :param cfg:
+    :param args:
+    :return:
+    """
+    version_file = version.VersionFile(args.version_file)
+
+    current = version_file.read()
+
+    if args.major:
+        new = current.up('major', args.value)
+    elif args.minor:
+        new = current.up('minor', args.value)
+    elif args.patch:
+        new = current.up('patch', args.value)
+    else:
+        new = current.up(cfg.up_part, args.value)
+
+    version_file.write(new)
+    current = new
+
+    quant = update_project_files(args, cfg, current)
+
+    return {'current_version': current, 'quant': quant}
+
+
+def command_set(cfg, args):
+    """
+    Realize tasks for 'set' command
+
+    :param cfg:
+    :param args:
+    :return:
+    """
+    version_file = version.VersionFile(args.version_file)
+
+    current = version_file.read()
+
+    if args.value:
+        parsed = semver.parse(args.value)
+        new = version.Version(parsed)
+    else:
+        new = version.Version(current)
+        for type_ in version.Version.VALID_FIELDS:
+            value = getattr(args, type_)
+            if value:
+                new = new.set(type_, value)
+
+    version_file.write(new)
+    current = new
+
+    quant = update_project_files(args, cfg, current)
+
+    return {'current_version': current, 'quant': quant}
+
+
+def command_init(cfg, args):
+    """
+    Realize tasks for 'init' command
+
+    :param cfg:
+    :param args:
+    :return:
+    """
+    version_file = version.VersionFile(args.version_file)
+
+    parsed = semver.parse(args.value)
+    current = version.Version(parsed)
+    version_file.write(current)
+
+    return {'current_version': current, 'quant': 0}
+
+
+def command_tag(project_cfg, args):
+    """
+    Realize tasks for 'tag' command
+
+    :param cfg:
+    :param args:
+    :return:
+    """
+    version_file = version.VersionFile(args.version_file)
+
+    try:
+        current = version_file.read()
+        vcs_handler = vcs.VCS(args.vcs_engine)
+        vcs_handler.create_tag(current, args.vcs_tag_params)
+    except FileNotFoundError:
+        print('Version file not found', file=sys.stderr)
+        sys.exit(1)
+    # pylint: disable=bare-except
+    except:
+        print('Git tag failed, do it yourself')
+        if args.verbose:
+            traceback.print_exc()
+    else:
+        print('Git tag created')
+
+    return {'current_version': current, 'quant': 0}
+
+
+def command_default(project_cfg, args):
+    """
+    Realize tasks when no command given
+
+    :param cfg:
+    :param args:
+    :return:
+    """
+    version_file = version.VersionFile(args.version_file)
+
+    try:
+        current = version_file.read()
+    except FileNotFoundError:
+        print('Version file not found', file=sys.stderr)
+        sys.exit(1)
+
+    return {'current_version': current, 'quant': 0}
+
+
 def main():
     """
     Main script
 
-    :param args:
     :return:
     """
 
@@ -206,70 +328,10 @@ def main():
         up_part=project_cfg.up_part, vcs_engine=project_cfg.vcs_engine, vcs_tag_params=project_cfg.vcs_tag_params,
         default_init_version=project_cfg.default_init_version)
 
-    version_file = version.VersionFile(args.version_file)
-
-    quant = None
-    if args.get_command() == 'up':
-        current = version_file.read()
-
-        if args.major:
-            new = current.up('major', args.value)
-        elif args.minor:
-            new = current.up('minor', args.value)
-        elif args.patch:
-            new = current.up('patch', args.value)
-        else:
-            new = current.up(project_cfg.up_part, args.value)
-
-        version_file.write(new)
-        current = new
-
-        quant = update_project_files(args, project_cfg, current)
-
-    elif args.get_command() == 'set':
-        current = version_file.read()
-
-        if args.value:
-            parsed = semver.parse(args.value)
-            new = version.Version(parsed)
-        else:
-            new = version.Version(current)
-            for type_ in version.Version.VALID_FIELDS:
-                value = getattr(args, type_)
-                if value:
-                    new = new.set(type_, value)
-
-        version_file.write(new)
-        current = new
-
-        quant = update_project_files(args, project_cfg, current)
-
-    elif args.get_command() == 'init':
-        parsed = semver.parse(args.value)
-        current = version.Version(parsed)
-        version_file.write(current)
-
-    elif args.get_command() == 'tag':
-        try:
-            current = version_file.read()
-            vcs_handler = vcs.VCS(args.vcs_engine)
-            vcs_handler.create_tag(current, args.vcs_tag_params)
-        except FileNotFoundError:
-            print('Version file not found', file=sys.stderr)
-            sys.exit(1)
-        except:
-            print('Git tag failed, do it yourself')
-            if args.verbose:
-                traceback.print_exc()
-        else:
-            print('Git tag created')
-
-    else:
-        try:
-            current = version_file.read()
-        except FileNotFoundError:
-            print('Version file not found', file=sys.stderr)
-            sys.exit(1)
+    commands = {'up': command_up, 'set': command_set, 'init': command_init, 'tag': command_tag}
+    result = commands.get(args.get_command(), command_default)(project_cfg, args)
+    quant = result['quant']
+    current = result['current_version']
 
     print("Current version: %s" % current)
 
