@@ -1,3 +1,7 @@
+"""
+    Configuration-related classes for versionner
+"""
+
 import codecs
 import configparser
 import os.path
@@ -8,6 +12,7 @@ import sys
 from versionner import defaults
 
 
+# pylint: disable=too-many-instance-attributes,too-few-public-methods
 class FileConfig:
     """
     Single project file configuration
@@ -32,7 +37,7 @@ class FileConfig:
 
         search_flags = cfg.get('search_flags', '')
         if search_flags:
-            search_flags = re.split('\s*,\s*', search_flags)
+            search_flags = re.split(r'\s*,\s*', search_flags)
             for search_flag in search_flags:
                 self.search_flags |= getattr(re, search_flag.upper())
 
@@ -70,6 +75,7 @@ class Config:
 
     __slots__ = 'version_file date_format files vcs_engine vcs_tag_params up_part default_init_version'.split()
 
+    # pylint: disable=too-many-branches
     def __init__(self):
         """
         Evaluate configuration
