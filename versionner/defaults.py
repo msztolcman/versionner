@@ -1,3 +1,7 @@
+"""
+    Default values for some versionner options
+"""
+
 RC_FILENAME = '.versionner.rc'
 DEFAULT_VERSION_FILE = './VERSION'
 DEFAULT_DATE_FORMAT = '%Y-%m-%d'
