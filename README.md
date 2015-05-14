@@ -245,6 +245,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ChangeLog
 ---------
 
+### v1.2.0
+
+* PEP8 refinements (coding style)
+
 ### v1.1.1
 
 * minor fixes
