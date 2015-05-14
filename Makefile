@@ -2,10 +2,10 @@ doc:
 	pandoc --from=markdown --to=rst --output="README.rst" "README.md"
 
 clean:
-	rm dist/*
-	rm -fr __pycache__
-	rm -fr versionner/__pycache__
-	rm -fr build
+	rm dist/* || true
+	rm -fr __pycache__ || true
+	rm -fr versionner/__pycache__ || true
+	rm -fr build || true
 
 build:
 	python3 setup.py sdist
