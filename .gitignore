@@ -1,6 +1,7 @@
 /.idea
 /venv
 /__pycache__/
+/versionner/__pycache__/
 /build/
 /dist/
 /versionner.egg-info/
