@@ -13,3 +13,5 @@ build:
 
 upload:
 	twine upload dist/versionner*
+
+distro: clean build upload
