@@ -1,8 +1,12 @@
+"""
+    Playing with versions and version file
+"""
+
 import semver
 
 class Version:
     """
-    Version of project.
+    Parse and manipulate version string
     """
 
     VALID_FIELDS = ('major', 'minor', 'patch', 'prerelease', 'build')
@@ -30,17 +34,18 @@ class Version:
         self.prerelease = version_dict.get('prerelease', '')
         self.build = version_dict.get('build', '')
 
-    def up(self, type, value=None):
+    # pylint: disable=invalid-name
+    def up(self, field, value=None):
         """
         Increase version and return new instance
 
         :rtype : Version
-        :param type:one of Version.VALID_UP_FIELDS
+        :param field:one of Version.VALID_UP_FIELDS
         :param value:int
         :return: :raise ValueError:
         """
 
-        if type not in self.VALID_UP_FIELDS:
+        if field not in self.VALID_UP_FIELDS:
             raise ValueError("Incorrect value of \"type\"")
 
         if not value:
@@ -48,11 +53,11 @@ class Version:
 
         version = Version(self)
 
-        if type == 'major':
+        if field == 'major':
             version.major += value
             version.minor = 0
             version.patch = 0
-        elif type == 'minor':
+        elif field == 'minor':
             version.minor += value
             version.patch = 0
         else:
@@ -60,21 +65,21 @@ class Version:
 
         return version
 
-    def set(self, type, value):
+    def set(self, field, value):
         """
         Set any field of semver to `value`
 
         :rtype : Version
-        :param type:type of field (one of Version.VALID_FIELDS)
+        :param field:type of field (one of Version.VALID_FIELDS)
         :param value:
         :return: :raise ValueError:
         """
 
-        if type not in self.VALID_FIELDS:
+        if field not in self.VALID_FIELDS:
             raise ValueError("Incorrect value of \"type\"")
 
         version = Version(self)
-        setattr(version, type, value)
+        setattr(version, field, value)
 
         semver.parse(str(version))
 
@@ -98,7 +103,7 @@ class Version:
 
 class VersionFile():
     """
-    Main file with projects version
+    Manipulate project version file
     """
 
     def __init__(self, path):
