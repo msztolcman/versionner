@@ -75,7 +75,6 @@ class Config:
 
     __slots__ = 'version_file date_format files vcs_engine vcs_tag_params up_part default_init_version'.split()
 
-    # pylint: disable=too-many-branches
     def __init__(self):
         """
         Evaluate configuration
@@ -90,6 +89,13 @@ class Config:
         self.vcs_tag_params = []
         self.up_part = defaults.DEFAULT_UP_PART
 
+        self._parse()
+
+    def _parse(self):
+        """
+        Parse config file (ini) and set properties
+        :return:
+        """
         cfg_handler = configparser.ConfigParser(interpolation=None)
 
         cfg_files = [
@@ -100,6 +106,16 @@ class Config:
         if not cfg_handler.read(cfg_files):
             return
 
+        self._parse_global_section(cfg_handler)
+        self._parse_vcs_section(cfg_handler)
+        self._parse_file_section(cfg_handler)
+
+    def _parse_global_section(self, cfg_handler):
+        """
+        Parse global ([versionner]) section
+        :param cfg_handler:
+        :return:
+        """
         # global configuration
         if 'versionner' in cfg_handler:
             cfg = cfg_handler['versionner']
@@ -112,6 +128,12 @@ class Config:
             if 'default_init_version' in cfg:
                 self.default_init_version = cfg['default_init_version']
 
+    def _parse_vcs_section(self, cfg_handler):
+        """
+            Parse [vcs] section
+            :param cfg_handler:
+            :return:
+            """
         if 'vcs' in cfg_handler:
             cfg = cfg_handler['vcs']
             if 'engine' in cfg:
@@ -119,6 +141,12 @@ class Config:
             if 'tag_params' in cfg:
                 self.vcs_tag_params = list(filter(None, cfg['tag_params'].split("\n")))
 
+    def _parse_file_section(self, cfg_handler):
+        """
+            Parse [file:*] sections
+            :param cfg_handler:
+            :return:
+            """
         # project files configuration
         for section in cfg_handler.sections():
             if section.startswith('file:'):
