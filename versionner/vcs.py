@@ -1,12 +1,35 @@
+"""
+    Version Control Systems abstractions
+"""
+
 import subprocess
 
 from versionner import defaults
 
+
+# pylint: disable=too-few-public-methods
 class VCS(object):
+    """
+        Main class for working with VCS
+    """
+
     def __init__(self, engine):
+        """
+        Initializer, just save 'engine' option
+
+        :param engine:
+        :return:
+        """
         self._engine = engine
 
-    def get_command(self, version, params):
+    def _get_command(self, version, params):
+        """
+        Build and return full command to use with subprocess.Popen
+
+        :param version:
+        :param params:
+        :return: list
+        """
         cmd = None
 
         if self._engine == 'git':
@@ -20,10 +43,20 @@ class VCS(object):
         return cmd
 
     def create_tag(self, version, params):
-        cmd = self.get_command(version, params)
+        """
+        Run VCS command for tag using subprocess.Popen
 
-        p = subprocess.Popen(cmd, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
-        (stdout, stderr) = p.communicate(timeout=defaults.DEFAULT_TAG_TIMEOUT)
+        :param version:
+        :param params:
+        :return:
+        """
+        cmd = self._get_command(version, params)
 
-        if p.returncode:
-            raise RuntimeError('Can\'t create VCS tag %s. Process exited with code %d and message: %s' % (version, p.returncode, stderr))
+        process = subprocess.Popen(cmd, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+
+        # pylint: disable=unexpected-keyword-arg
+        (_, stderr) = process.communicate(timeout=defaults.DEFAULT_TAG_TIMEOUT)
+
+        if process.returncode:
+            raise RuntimeError('Can\'t create VCS tag %s. Process exited with code %d and message: %s' % (
+                version, process.returncode, stderr))
