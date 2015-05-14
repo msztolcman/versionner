@@ -248,6 +248,7 @@ ChangeLog
 ### v1.2.0
 
 * PEP8 refinements (coding style)
+* Makefile refinements
 
 ### v1.1.1
 
