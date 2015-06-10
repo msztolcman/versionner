@@ -223,6 +223,7 @@ Download sources from [Github](https://github.com/mysz/versionner/archive/1.2.0.
     wget -O 1.2.0.zip https://github.com/mysz/versionner/archive/1.2.0.zip
     
 or
+
     curl -o 1.2.0.zip https://github.com/mysz/versionner/archive/1.2.0.zip
 
 Unpack:
