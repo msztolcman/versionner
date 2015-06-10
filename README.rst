@@ -9,7 +9,7 @@ version.
 Current stable version
 ----------------------
 
-1.1.1
+1.2.0
 
 Features
 --------
@@ -240,26 +240,26 @@ Simplest way is to use Python's built-in package system:
 2. Using sources
 
 Download sources from
-`Github <https://github.com/mysz/versionner/archive/1.1.1.zip>`__:
+`Github <https://github.com/mysz/versionner/archive/1.2.0.zip>`__:
 
 ::
 
-    wget -O 1.1.1.zip https://github.com/mysz/versionner/archive/1.1.1.zip
+    wget -O 1.2.0.zip https://github.com/mysz/versionner/archive/1.2.0.zip
 
-or curl -o 1.1.1.zip
-https://github.com/mysz/versionner/archive/1.1.1.zip
+or curl -o 1.2.0.zip
+https://github.com/mysz/versionner/archive/1.2.0.zip
 
 Unpack:
 
 ::
 
-    unzip 1.1.1.zip
+    unzip 1.2.0.zip
 
 And install
 
 ::
 
-    cd versionner-1.1.1
+    cd versionner-1.2.0
     python3 setup.py install
 
 Voila!
