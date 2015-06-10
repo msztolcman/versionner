@@ -197,6 +197,14 @@ It allows you also to modify other files specified in configuration.
     search_flags = 
     encoding = utf-8
 
+    [file:2:some/folder/some_file.py]
+        enabled = true
+        search = ^"Program is in version 1\.1\.1"$
+        replace = "Program is in version %(version)s"
+        match = line
+        search_flags = 
+        encoding = utf-8
+
 Data in '[project]' section are default data for whole project.
 
 Data in '[file:some/folder/some\_file.py]' section are for single file
@@ -207,8 +215,17 @@ have to search for it (``search``) and replace it with value of
 line, and for 'file' whole file is read into memory and matched against
 ``search``.
 
+If you must do more replaces in single file, just add number to section
+name:
+
+::
+
+    [file:2:some/path]
+
 Installation
 ------------
+
+1. Using PIP
 
 ``versionner`` should work on any platform where
 `Python <http://python.org>`__ is available, it means Linux, Windows,
@@ -219,6 +236,31 @@ Simplest way is to use Python's built-in package system:
 ::
 
     pip3 install versionner
+
+2. Using sources
+
+Download sources from
+`Github <https://github.com/mysz/versionner/archive/1.1.1.zip>`__:
+
+::
+
+    wget -O 1.1.1.zip https://github.com/mysz/versionner/archive/1.1.1.zip
+
+or curl -o 1.1.1.zip
+https://github.com/mysz/versionner/archive/1.1.1.zip
+
+Unpack:
+
+::
+
+    unzip 1.1.1.zip
+
+And install
+
+::
+
+    cd versionner-1.1.1
+    python3 setup.py install
 
 Voila!
 
@@ -268,8 +310,10 @@ ChangeLog
 v1.2.0
 ~~~~~~
 
--  PEP8 refinements (coding style)
--  Makefile refinements
+-  Allow to make more then one replace in single file
+-  Do not show an exception when version file does not exists
+-  PEP8 fixes (coding style)
+-  Makefile improvements
 
 v1.1.1
 ~~~~~~
