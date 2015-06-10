@@ -280,6 +280,7 @@ ChangeLog
 ### v1.2.0
 
 * Allow to make more then one replace in single file
+* Do not show an exception when version file does not exists
 * PEP8 fixes (coding style)
 * Makefile improvements
 
