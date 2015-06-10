@@ -36,6 +36,13 @@ encoding = utf-8
 [file:2:README.md]
 enabled = true
 match = line
-search = https://github\.com/mysz/versionner/archive/\d+\.\d+\.\d+\.zip
-replace = https://github.com/mysz/versionner/archive/%(version)s.zip
+search = \b\d+\.\d+\.\d+\.zip\b
+replace = %(version)s.zip
+encoding = utf-8
+
+[file:3:README.md]
+enabled = true
+match = line
+search = \bcd versionner-\d+\.\d+\.\d+\b
+replace = cd versionner-%(version)s
 encoding = utf-8
