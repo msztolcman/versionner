@@ -17,8 +17,8 @@ Features
 -  ``versionner`` guards the compliance with `Semantic
    Versioning <http://semver.org/>`__
 -  manual changes are error-prone, ``versionner`` is error proof
--  it's easier to write: ``versionner up`` instead of open editor, edit
-   and save changes ;)
+-  it's easier to write: ``ver up`` instead of open editor, edit and
+   save changes ;)
 -  ``versionner`` updates also project files (like README or sth)
 -  and create vcs (only git currently) tag if requested
 -  it's `very easy to install <#installation>`__
@@ -199,7 +199,7 @@ It allows you also to modify other files specified in configuration.
 
     [file:2:some/folder/some_file.py]
         enabled = true
-        search = ^"Program is in version 1\.1\.1"$
+        search = ^"Program is in version \d+\.\d+\.\d+"$
         replace = "Program is in version %(version)s"
         match = line
         search_flags = 
