@@ -32,3 +32,10 @@ replace = \nCurrent stable version
 
     %(version)s\n
 encoding = utf-8
+
+[file:2:README.md]
+enabled = true
+match = line
+search = https://github\.com/mysz/versionner/archive/\d+\.\d+\.\d+\.zip
+replace = https://github.com/mysz/versionner/archive/%(version)s.zip
+encoding = utf-8

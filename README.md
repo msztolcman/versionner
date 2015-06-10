@@ -207,12 +207,32 @@ If you must do more replaces in single file, just add number to section name:
 Installation
 ------------
 
+1. Using PIP
+
 `versionner` should work on any platform where [Python](http://python.org)
 is available, it means Linux, Windows, MacOS X etc. 
 
 Simplest way is to use Python's built-in package system:
 
     pip3 install versionner
+
+2. Using sources
+
+Download sources from [Github](https://github.com/mysz/versionner/archive/1.1.1.zip):
+
+    wget -O 1.1.1.zip https://github.com/mysz/versionner/archive/1.1.1.zip
+    
+or
+    curl -o 1.1.1.zip https://github.com/mysz/versionner/archive/1.1.1.zip
+
+Unpack:
+
+    unzip 1.1.1.zip
+
+And install
+
+    cd versionner-1.1.1
+    python3 setup.py install
 
 Voila!
 
