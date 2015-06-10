@@ -205,9 +205,14 @@ def command_up(cfg, args):
     :param args:
     :return:
     """
+
     version_file = version.VersionFile(args.version_file)
 
-    current = version_file.read()
+    try:
+        current = version_file.read()
+    except FileNotFoundError:
+        print('Version file not found', file=sys.stderr)
+        sys.exit(1)
 
     if args.major:
         new = current.up('major', args.value)
@@ -234,9 +239,14 @@ def command_set(cfg, args):
     :param args:
     :return:
     """
+
     version_file = version.VersionFile(args.version_file)
 
-    current = version_file.read()
+    try:
+        current = version_file.read()
+    except FileNotFoundError:
+        print('Version file not found', file=sys.stderr)
+        sys.exit(1)
 
     if args.value:
         parsed = semver.parse(args.value)
