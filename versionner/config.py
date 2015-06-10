@@ -147,10 +147,15 @@ class Config:
             :param cfg_handler:
             :return:
             """
+
+        _number_rxp = re.compile(r'^\d+:(.)')
         # project files configuration
         for section in cfg_handler.sections():
             if section.startswith('file:'):
-                project_file = FileConfig(section[5:], cfg_handler[section])
+                path = section[5:]
+                path = _number_rxp.sub(r'\1', path)
+
+                project_file = FileConfig(path, cfg_handler[section])
 
                 if not project_file.date_format:
                     project_file.date_format = self.date_format

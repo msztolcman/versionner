@@ -182,6 +182,14 @@ It allows you also to modify other files specified in configuration.
     match = line
     search_flags = 
     encoding = utf-8
+    
+    [file:2:some/folder/some_file.py]
+        enabled = true
+        search = ^"Program is in version 1\.1\.1"$
+        replace = "Program is in version %(version)s"
+        match = line
+        search_flags = 
+        encoding = utf-8
 
 Data in '[project]' section are default data for whole project.
 
@@ -191,6 +199,10 @@ version string (key: `enabled`), has encoding `encoding` and we have to
 search for it (`search`) and replace it with value of `replace`. If `match` is
 'line', then `search` is matched line by line, and for 'file' whole file is
 read into memory and matched against `search`.
+
+If you must do more replaces in single file, just add number to section name:
+
+    [file:2:some/path]
 
 Installation
 ------------
@@ -247,8 +259,9 @@ ChangeLog
 
 ### v1.2.0
 
-* PEP8 refinements (coding style)
-* Makefile refinements
+* Allow to make more then one replace in single file
+* PEP8 fixes (coding style)
+* Makefile improvements
 
 ### v1.1.1
 
