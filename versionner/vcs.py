@@ -89,6 +89,14 @@ class VCS:
         self._engine = engine
         self._command = VCSCommandsBuilder(engine)
 
+    def _exec(self, cmd):
+        process = subprocess.Popen(cmd, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+
+        # pylint: disable=unexpected-keyword-arg
+        (stdout, stderr) = process.communicate(timeout=defaults.DEFAULT_TAG_TIMEOUT)
+
+        return process.returncode, stdout, stderr
+
     def create_tag(self, version, params):
         """
         Run VCS command for tag using subprocess.Popen
@@ -99,25 +107,20 @@ class VCS:
         """
         cmd = self._command.tag(version, params)
 
-        process = subprocess.Popen(cmd, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+        (code, stdout, stderr) = self._exec(cmd)
 
-        # pylint: disable=unexpected-keyword-arg
-        (_, stderr) = process.communicate(timeout=defaults.DEFAULT_TAG_TIMEOUT)
-
-        if process.returncode:
+        if code:
             raise VCSError('Can\'t create VCS tag %s. Process exited with code %d and message: %s' % (
-                version, process.returncode, stderr.decode('utf-8')))
+                version, code, stderr.decode('utf-8')))
 
     def raise_if_cant_commit(self):
         cmd = self._command.status()
 
-        process = subprocess.Popen(cmd, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+        (code, stdout, stderr) = self._exec(cmd)
 
-        (stdout, stderr) = process.communicate(timeout=defaults.DEFAULT_TAG_TIMEOUT)
-
-        if process.returncode:
+        if code:
             raise VCSError('Can\'t verify VCS status. Process exited with code %d and message: %s' % (
-                process.returncode, stderr))
+                code, stderr))
 
         for line in stdout.splitlines():
             if line.decode('utf-8').startswith(('??', '!!')):
@@ -127,21 +130,17 @@ class VCS:
     def create_commit(self, message):
         cmd = self._command.commit(message)
 
-        process = subprocess.Popen(cmd, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+        (code, stdout, stderr) = self._exec(cmd)
 
-        (stdout, stderr) = process.communicate(timeout=defaults.DEFAULT_TAG_TIMEOUT)
-
-        if process.returncode:
+        if code:
             raise VCSError('Commit failed. Process exited with code %d and message: %s' % (
-                process.returncode, stderr.decode('utf-8')))
+                code, stderr.decode('utf-8')))
 
     def add_to_stage(self, paths):
         cmd = self._command.add(paths)
 
-        process = subprocess.Popen(cmd, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+        (code, stdout, stderr) = self._exec(cmd)
 
-        (stdout, stderr) = process.communicate(timeout=defaults.DEFAULT_TAG_TIMEOUT)
-
-        if process.returncode:
+        if code:
             raise VCSError('Can\'t add paths to VCS. Process exited with code %d and message: %s' % (
-                process.returncode, stderr))
+                code, stderr))
