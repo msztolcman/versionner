@@ -243,6 +243,7 @@ def command_up(cfg, args):
 
     if args.commit:
         files = {str(file.file) for file in cfg.files}
+        files.add(cfg.version_file)
         vcs_handler.add_to_stage(files)
         vcs_handler.create_commit(args.vcs_commit_message % current)
 
@@ -288,6 +289,7 @@ def command_set(cfg, args):
 
     if args.commit:
         files = {str(file.file) for file in cfg.files}
+        files.add(cfg.version_file)
         vcs_handler.add_to_stage(files)
         vcs_handler.create_commit(args.vcs_commit_message % current)
 
@@ -317,6 +319,7 @@ def command_init(cfg, args):
 
     if args.commit:
         files = {str(file.file) for file in cfg.files}
+        files.add(cfg.version_file)
         vcs_handler.add_to_stage(files)
         vcs_handler.create_commit(args.vcs_commit_message % current)
 
