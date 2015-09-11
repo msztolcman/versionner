@@ -52,6 +52,9 @@ Some examples:
     # increase patch by 1
     % ver up --patch
 
+    # increase patch by 2 and try to automatically commit changes
+    % ver up --patch -c
+
     # create git tag
     % ver tag
 
@@ -82,6 +85,7 @@ Look at result:
 
     % ver --help
     usage: ver [-h] [--file VERSION_FILE] [--version] [--date-format DATE_FORMAT]
+               [--vcs-engine VCS_ENGINE] [--vcs-commit-message VCS_COMMIT_MESSAGE]
                [--verbose]
                {init,up,set,tag} ...
 
@@ -101,6 +105,10 @@ Look at result:
       --version, -v         show program's version number and exit
       --date-format DATE_FORMAT
                             Date format used in project files
+      --vcs-engine VCS_ENGINE
+                            Select VCS engine (only git is supported currently)
+      --vcs-commit-message VCS_COMMIT_MESSAGE, -m VCS_COMMIT_MESSAGE
+                            Commit message used when committing changes
       --verbose             Be more verbose if it's possible
 
 So, there are four commands: ``init``, ``up``, ``set`` and ``tag``. We
@@ -108,31 +116,33 @@ want to look at this:
 
 ::
 
-    % ver init --help
-    usage: ver init [-h] [value]
+    usage: ver init [-h] [--commit] [value]
 
     positional arguments:
-      value       Initial version
+      value         Initial version
 
     optional arguments:
-      -h, --help  show this help message and exit
+      -h, --help    show this help message and exit
+      --commit, -c  Commit changes done by `up` command (only if there is no
+                    changes in repo before)
 
-    % ver up --help
-    usage: ver up [-h] [--major | --minor | --patch] [value]
+    usage: ver up [-h] [--commit] [--major | --minor | --patch] [value]
 
     positional arguments:
-      value        Increase version by this value (default: 1)
+      value         Increase version by this value (default: 1)
 
     optional arguments:
-      -h, --help   show this help message and exit
-      --major, -j  increase major part of version
-      --minor, -n  increase minor part of version (project default)
-      --patch, -p  increase patch part of version
+      -h, --help    show this help message and exit
+      --commit, -c  Commit changes done by `up` command (only if there is no
+                    changes in repo before)
+      --major, -j   increase major part of version
+      --minor, -n   increase minor part of version (project default)
+      --patch, -p   increase patch part of version
 
     % ver set --help
     usage: ver set [-h] [--major MAJOR] [--minor MINOR] [--patch PATCH]
-                          [--prerelease PRERELEASE] [--build BUILD]
-                          [value]
+                   [--prerelease PRERELEASE] [--build BUILD] [--commit]
+                   [value]
 
     positional arguments:
       value                 set version to this value
@@ -149,17 +159,16 @@ want to look at this:
                             set prerelease part of version to PRERELEASE
       --build BUILD, -b BUILD
                             set build part of version to BUILD
+      --commit, -c          Commit changes done by `set` command (only if there is
+                            no changes in repo before)
                             
     % ver tag --help
-    usage: ver tag [-h] [--vcs-engine VCS_ENGINE] [--vcs-tag-param VCS_TAG_PARAMS]
+    usage: ver tag [-h] [--vcs-tag-param VCS_TAG_PARAMS]
 
     optional arguments:
       -h, --help            show this help message and exit
-      --vcs-engine VCS_ENGINE
-                            Select VCS engine used for tagging (only git is
-                            supported currently)
       --vcs-tag-param VCS_TAG_PARAMS
-                            Additional params to "tag" command
+                            Additional params for VCS for "tag" command
 
 Configuration
 -------------
@@ -184,6 +193,7 @@ It allows you also to modify other files specified in configuration.
 
     [vcs]
     engine = git
+    commit_message = '%s'
     ;tag_params =
     ;  -f
     ;  --local-user=some-key-id
@@ -246,8 +256,11 @@ Download sources from
 
     wget -O 1.2.0.zip https://github.com/mysz/versionner/archive/1.2.0.zip
 
-or curl -o 1.2.0.zip
-https://github.com/mysz/versionner/archive/1.2.0.zip
+or
+
+::
+
+    curl -o 1.2.0.zip https://github.com/mysz/versionner/archive/1.2.0.zip
 
 Unpack:
 
@@ -306,6 +319,11 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ChangeLog
 ---------
+
+v1.3.0
+~~~~~~
+
+-  Allow to automatically commit changes done by commands: up, set, init
 
 v1.2.0
 ~~~~~~
