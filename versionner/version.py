@@ -132,7 +132,7 @@ class VersionFile():
 
     def write(self, version):
         """
-        Save new version into file
+        Save new version into self._path in safe way (using temporary file)
 
         :param version:Version
         """
