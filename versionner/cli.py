@@ -46,6 +46,10 @@ def parse_args(args, **defaults):
     p.add_argument('--date-format', type=str,
         default=defaults.get('date_format'),
         help="Date format used in project files")
+    p.add_argument('--vcs-engine', type=str, default=defaults.get('vcs_engine'),
+        help="Select VCS engine (only git is supported currently)", )
+    p.add_argument('--vcs-commit-message', '-m', type=str, default=defaults.get('vcs_commit_message'),
+        help="Commit message used when committing changes")
     p.add_argument('--verbose', action="store_true", help="Be more verbose if it's possible")
 
     def get_command_name(name):
@@ -64,16 +68,20 @@ def parse_args(args, **defaults):
         help="Create new version file")
     p_init.add_argument('value', nargs='?', default=defaults.get('default_init_version'), type=str,
         help="Initial version")
+    p_init.add_argument('--commit', '-c', action='store_true',
+        help="Commit changes done by `up` command (only if there is no changes in repo before)")
     p_init.set_defaults(get_command=get_command_name('init'))
 
     p_up = sub.add_parser('up',
         help="Increase version")
+    p_up.add_argument('--commit', '-c', action='store_true',
+        help="Commit changes done by `up` command (only if there is no changes in repo before)")
     p_up.add_argument('value', nargs='?', type=int,
         help="Increase version by this value (default: 1)")
     p_up.set_defaults(get_command=get_command_name('up'))
 
     p_up_gr = p_up.add_mutually_exclusive_group()
-    up_part = defaults.get('up_part', defaults.get('up_part'))
+    up_part = defaults.get('up_part')
     p_up_gr.add_argument('--major', '-j', action="store_true",
         help="increase major part of version" + (" (project default)" if up_part == 'major' else ""))
     p_up_gr.add_argument('--minor', '-n', action="store_true",
@@ -94,14 +102,14 @@ def parse_args(args, **defaults):
         help="set prerelease part of version to PRERELEASE")
     p_set.add_argument('--build', '-b', type=str,
         help="set build part of version to BUILD")
+    p_set.add_argument('--commit', '-c', action='store_true',
+        help="Commit changes done by `set` command (only if there is no changes in repo before)")
     p_set.add_argument('value', nargs='?', type=str,
         help="set version to this value")
     p_set.set_defaults(get_command=get_command_name('set'))
 
     p_tag = sub.add_parser('tag',
         help="Create VCS tag with current version")
-    p_tag.add_argument('--vcs-engine', type=str, default=defaults.get('vcs_engine'),
-        help="Select VCS engine used for tagging (only git is supported currently)", )
     p_tag.add_argument('--vcs-tag-param', dest='vcs_tag_params', type=str, action="append",
         help="Additional params for VCS for \"tag\" command")
     p_tag.set_defaults(get_command=get_command_name('tag'))
@@ -206,6 +214,11 @@ def command_up(cfg, args):
     :return:
     """
 
+    vcs_handler = None
+    if args.commit:
+        vcs_handler = vcs.VCS(args.vcs_engine)
+        vcs_handler.raise_if_cant_commit()
+
     version_file = version.VersionFile(args.version_file)
 
     try:
@@ -228,7 +241,12 @@ def command_up(cfg, args):
 
     quant = update_project_files(args, cfg, current)
 
-    return {'current_version': current, 'quant': quant}
+    if args.commit:
+        files = {str(file.file) for file in cfg.files}
+        vcs_handler.add_to_stage(files)
+        vcs_handler.create_commit(args.vcs_commit_message % current)
+
+    return {'current_version': current, 'quant': quant, 'commit': args.commit}
 
 
 def command_set(cfg, args):
@@ -239,6 +257,11 @@ def command_set(cfg, args):
     :param args:
     :return:
     """
+
+    vcs_handler = None
+    if args.commit:
+        vcs_handler = vcs.VCS(args.vcs_engine)
+        vcs_handler.raise_if_cant_commit()
 
     version_file = version.VersionFile(args.version_file)
 
@@ -263,7 +286,12 @@ def command_set(cfg, args):
 
     quant = update_project_files(args, cfg, current)
 
-    return {'current_version': current, 'quant': quant}
+    if args.commit:
+        files = {str(file.file) for file in cfg.files}
+        vcs_handler.add_to_stage(files)
+        vcs_handler.create_commit(args.vcs_commit_message % current)
+
+    return {'current_version': current, 'quant': quant, 'commit': args.commit}
 
 
 # pylint: disable=unused-argument
@@ -275,13 +303,24 @@ def command_init(cfg, args):
     :param args:
     :return:
     """
+
+    vcs_handler = None
+    if args.commit:
+        vcs_handler = vcs.VCS(args.vcs_engine)
+        vcs_handler.raise_if_cant_commit()
+
     version_file = version.VersionFile(args.version_file)
 
     parsed = semver.parse(args.value)
     current = version.Version(parsed)
     version_file.write(current)
 
-    return {'current_version': current, 'quant': 0}
+    if args.commit:
+        files = {str(file.file) for file in cfg.files}
+        vcs_handler.add_to_stage(files)
+        vcs_handler.create_commit(args.vcs_commit_message % current)
+
+    return {'current_version': current, 'quant': 0, 'commit': args.commit}
 
 
 # pylint: disable=unused-argument
@@ -346,14 +385,15 @@ def main():
     project_cfg = config.Config()
     args = parse_args(sys.argv[1:], version_file=project_cfg.version_file, date_format=project_cfg.date_format,
         up_part=project_cfg.up_part, vcs_engine=project_cfg.vcs_engine, vcs_tag_params=project_cfg.vcs_tag_params,
-        default_init_version=project_cfg.default_init_version)
+        default_init_version=project_cfg.default_init_version, vcs_commit_message=project_cfg.vcs_commit_message)
 
     commands = {'up': command_up, 'set': command_set, 'init': command_init, 'tag': command_tag}
     result = commands.get(args.get_command(), command_default)(project_cfg, args)
     quant = result['quant']
     current = result['current_version']
+    commit = result.get('commit')
 
     print("Current version: %s" % current)
 
     if quant:
-        print('Changed %(files)s files (%(changes)s changes)' % quant)
+        print('Changed' + (' and committed' if commit else '') + ' %(files)s files (%(changes)s changes)' % quant)

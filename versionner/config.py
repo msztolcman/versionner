@@ -73,7 +73,7 @@ class Config:
     Configuration
     """
 
-    __slots__ = 'version_file date_format files vcs_engine vcs_tag_params up_part default_init_version'.split()
+    __slots__ = 'version_file date_format files vcs_engine vcs_tag_params up_part default_init_version vcs_commit_message'.split()
 
     def __init__(self):
         """
@@ -87,6 +87,7 @@ class Config:
         self.files = []
         self.vcs_engine = 'git'
         self.vcs_tag_params = []
+        self.vcs_commit_message = defaults.DEFAULT_VCS_COMMIT_MESSAGE
         self.up_part = defaults.DEFAULT_UP_PART
 
         self._parse()
@@ -140,6 +141,8 @@ class Config:
                 self.vcs_engine = cfg['engine']
             if 'tag_params' in cfg:
                 self.vcs_tag_params = list(filter(None, cfg['tag_params'].split("\n")))
+            if 'vcs_commit_message' in cfg:
+                self.vcs_commit_message = cfg['vcs_commit_message']
 
     def _parse_file_section(self, cfg_handler):
         """
