@@ -1,4 +1,5 @@
 import importlib
+import re
 
 from versionner.vcs import errors
 
@@ -6,6 +7,9 @@ from versionner.vcs import errors
 class VCS:
     def __init__(self, engine):
         self._engine = engine
+
+        if engine.startswith('_') or engine.endswith('_') or not re.match(r'^\w+$', engine, re.UNICODE):
+            raise errors.UnknownVCSError("Incorrect engine name: %s" % engine)
 
         try:
             builder = importlib.import_module('versionner.vcs.%s' % engine)
