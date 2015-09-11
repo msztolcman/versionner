@@ -21,7 +21,7 @@ class VCS:
         return self._command.raise_if_cant_commit()
 
     def create_commit(self, message):
-        return self._command.create_tag(message)
+        return self._command.create_commit(message)
 
     def add_to_stage(self, paths):
         return self._command.add_to_stage(paths)
