@@ -340,7 +340,7 @@ def command_tag(cfg):
     try:
         current = version_file.read()
         vcs_handler = vcs.VCS(cfg.vcs_engine)
-        vcs_handler.create_tag(current, args.vcs_tag_params)
+        vcs_handler.create_tag(current, cfg.vcs_tag_params)
     # pylint: disable=bare-except
     except:
         print('Git tag failed, do it yourself')
