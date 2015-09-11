@@ -95,7 +95,7 @@ class VCS:
         # pylint: disable=unexpected-keyword-arg
         (stdout, stderr) = process.communicate(timeout=defaults.DEFAULT_TAG_TIMEOUT)
 
-        return process.returncode, stdout, stderr
+        return process.returncode, stdout.decode(), stderr.decode()
 
     def create_tag(self, version, params):
         """
@@ -111,7 +111,7 @@ class VCS:
 
         if code:
             raise VCSError('Can\'t create VCS tag %s. Process exited with code %d and message: %s' % (
-                version, code, stderr.decode('utf-8')))
+                version, code, stderr))
 
     def raise_if_cant_commit(self):
         cmd = self._command.status()
@@ -123,7 +123,7 @@ class VCS:
                 code, stderr))
 
         for line in stdout.splitlines():
-            if line.decode('utf-8').startswith(('??', '!!')):
+            if line.startswith(('??', '!!')):
                 continue
             raise VCSError("VCS status doesn't allow to commit. Please commit or stash your changes and try again")
 
@@ -134,7 +134,7 @@ class VCS:
 
         if code:
             raise VCSError('Commit failed. Process exited with code %d and message: %s' % (
-                code, stderr.decode('utf-8')))
+                code, stderr))
 
     def add_to_stage(self, paths):
         cmd = self._command.add(paths)
