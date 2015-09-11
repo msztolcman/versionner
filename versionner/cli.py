@@ -44,11 +44,14 @@ def parse_args(args, **defaults):
     p.add_argument('--date-format', type=str,
         default=defaults.get('date_format'),
         help="Date format used in project files")
-    p.add_argument('--vcs-engine', type=str, default=defaults.get('vcs_engine'),
+    p.add_argument('--vcs-engine', type=str,
+        default=defaults.get('vcs_engine'),
         help="Select VCS engine (only git is supported currently)", )
-    p.add_argument('--vcs-commit-message', '-m', type=str, default=defaults.get('vcs_commit_message'),
+    p.add_argument('--vcs-commit-message', '-m', type=str,
+        default=defaults.get('vcs_commit_message'),
         help="Commit message used when committing changes")
-    p.add_argument('--verbose', action="store_true", help="Be more verbose if it's possible")
+    p.add_argument('--verbose', action="store_true",
+        help="Be more verbose if it's possible")
 
     def get_command_name(name):
         # pylint: disable=missing-docstring
@@ -64,7 +67,8 @@ def parse_args(args, **defaults):
 
     p_init = sub.add_parser('init',
         help="Create new version file")
-    p_init.add_argument('value', nargs='?', default=defaults.get('default_init_version'), type=str,
+    p_init.add_argument('value', nargs='?', type=str,
+        default=defaults.get('default_init_version'),
         help="Initial version")
     p_init.add_argument('--commit', '-c', action='store_true',
         help="Commit changes done by `up` command (only if there is no changes in repo before)")
