@@ -141,8 +141,8 @@ class Config:
                 self.vcs_engine = cfg['engine']
             if 'tag_params' in cfg:
                 self.vcs_tag_params = list(filter(None, cfg['tag_params'].split("\n")))
-            if 'vcs_commit_message' in cfg:
-                self.vcs_commit_message = cfg['vcs_commit_message']
+            if 'commit_message' in cfg:
+                self.vcs_commit_message = cfg['commit_message']
 
     def _parse_file_section(self, cfg_handler):
         """
