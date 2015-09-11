@@ -2,6 +2,10 @@
     Playing with versions and version file
 """
 
+import pathlib
+import shutil
+import tempfile
+
 import semver
 
 class Version:
@@ -132,8 +136,11 @@ class VersionFile():
 
         :param version:Version
         """
-        with self._path.open(mode='w') as fh:
+        with tempfile.NamedTemporaryFile(mode="w", delete=False) as fh:
             fh.write(str(version))
+
+        shutil.copystat(str(self._path), fh.name)
+        pathlib.Path(fh.name).rename(self._path)
 
     def __str__(self):
         return str(self._path)
