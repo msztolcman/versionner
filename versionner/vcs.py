@@ -121,7 +121,7 @@ class VCS:
         process = subprocess.Popen(cmd, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
 
         # pylint: disable=unexpected-keyword-arg
-        (stdout, stderr) = process.communicate(timeout=defaults.DEFAULT_TAG_TIMEOUT)
+        (stdout, stderr) = process.communicate(timeout=defaults.DEFAULT_VCS_TIMEOUT)
 
         return process.returncode, stdout.decode(), stderr.decode()
 
