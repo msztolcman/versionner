@@ -81,7 +81,8 @@ def parse_args(args, cfg):
     p_up.add_argument('--commit', '-c', action='store_true',
         help="Commit changes done by `up` command (only if there is no changes in repo before)")
     p_up.add_argument('value', nargs='?', type=int,
-        help="Increase version by this value (default: 1)")
+        default=cfg.default_increase_value,
+        help="Increase version by this value (default: %d)" % cfg.default_increase_value)
     p_up.set_defaults(get_command=get_command_name('up'))
 
     p_up_gr = p_up.add_mutually_exclusive_group()

@@ -78,6 +78,7 @@ class Config:
         'commit',
         'date_format',
         'default_init_version',
+        'default_increase_value',
         'files',
         'value',
         'up_part',
@@ -98,6 +99,7 @@ class Config:
         self.commit = False
         self.date_format = defaults.DEFAULT_DATE_FORMAT
         self.default_init_version = defaults.DEFAULT_INIT_VERSION
+        self.default_increase_value = defaults.DEFAULT_INCREASE_VALUE
         self.files = []
         self.value = None
         self.up_part = defaults.DEFAULT_UP_PART
@@ -145,6 +147,8 @@ class Config:
                 self.up_part = cfg['up_part']
             if 'default_init_version' in cfg:
                 self.default_init_version = cfg['default_init_version']
+            if 'default_increase_value' in cfg:
+                self.default_increase_value = cfg.getint('default_increase_value')
 
     def _parse_vcs_section(self, cfg_handler):
         """
