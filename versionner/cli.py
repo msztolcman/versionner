@@ -3,8 +3,6 @@
     Parse input options, and make all dirty jobs.
 """
 
-from __future__ import print_function
-
 from versionner import utils
 
 utils.validate_python_version()
