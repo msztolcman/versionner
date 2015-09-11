@@ -8,24 +8,26 @@ from versionner import defaults
 
 
 class VCSError(RuntimeError):
-    pass
+    """General VCS error"""
 
 
 class UnknownVCSError(VCSError):
-    pass
+    """Unknwon VCS"""
 
 
 class VCSStateError(VCSError):
-    pass
+    """VCS state doesn't allow for specified command"""
 
 
 class VCSCommandsBuilder:
+    """ Build shell VCS command
+    """
     def __init__(self, engine):
         self._engine = engine
 
     def tag(self, version, params):
         """
-        Build and return full command to use with subprocess.Popen
+        Build and return full command to use with subprocess.Popen for 'git tag' command
 
         :param version:
         :param params:
@@ -44,6 +46,11 @@ class VCSCommandsBuilder:
         return cmd
 
     def status(self):
+        """
+        Build and return full command to use with subprocess.Popen for 'git status' command
+
+        :return: list
+        """
         cmd = None
 
         if self._engine == 'git':
@@ -55,6 +62,12 @@ class VCSCommandsBuilder:
         return cmd
 
     def commit(self, message):
+        """
+        Build and return full command to use with subprocess.Popen for 'git commit' command
+
+        :param message:
+        :return: list
+        """
         cmd = None
 
         if self._engine == 'git':
@@ -66,6 +79,12 @@ class VCSCommandsBuilder:
         return cmd
 
     def add(self, paths):
+        """
+        Build and return full command to use with subprocess.Popen for 'git add' command
+
+        :param paths:
+        :return: list
+        """
         cmd = None
 
         if self._engine == 'git':
@@ -77,7 +96,6 @@ class VCSCommandsBuilder:
         return cmd
 
 
-# pylint: disable=too-few-public-methods
 class VCS:
     """
         Main class for working with VCS
@@ -93,7 +111,13 @@ class VCS:
         self._engine = engine
         self._command = VCSCommandsBuilder(engine)
 
-    def _exec(self, cmd):
+    @staticmethod
+    def _exec(cmd):
+        """
+        Execute command using subprocess.Popen
+        :param cmd:
+        :return: (code, stdout, stderr)
+        """
         process = subprocess.Popen(cmd, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
 
         # pylint: disable=unexpected-keyword-arg
@@ -118,6 +142,11 @@ class VCS:
                 version, code, stderr or stdout))
 
     def raise_if_cant_commit(self):
+        """
+        Verify VCS status and raise an error if commit is disallowed
+
+        :return:
+        """
         cmd = self._command.status()
 
         (code, stdout, stderr) = self._exec(cmd)
@@ -132,6 +161,12 @@ class VCS:
             raise VCSStateError("VCS status doesn't allow to commit. Please commit or stash your changes and try again")
 
     def create_commit(self, message):
+        """
+        Create commit
+
+        :param message:
+        :return:
+        """
         cmd = self._command.commit(message)
 
         (code, stdout, stderr) = self._exec(cmd)
@@ -141,6 +176,12 @@ class VCS:
                 code, stderr or stdout))
 
     def add_to_stage(self, paths):
+        """
+        Stage given files
+
+        :param paths:
+        :return:
+        """
         cmd = self._command.add(paths)
 
         (code, stdout, stderr) = self._exec(cmd)
