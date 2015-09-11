@@ -24,12 +24,14 @@ from versionner import version
 from versionner import vcs
 
 
-def parse_args(args, **defaults):
+def parse_args(args, cfg):
     """
     Parse input arguments of script.
 
     :rtype : argparse.Namespace
     :param args:
+    :rtype : Config
+    :param cfg:
     :return:
     """
     prog = pathlib.Path(sys.argv[0]).parts[-1].replace('.py', '')
@@ -38,17 +40,17 @@ def parse_args(args, **defaults):
     # pylint: disable=invalid-name
     p = argparse.ArgumentParser(prog=prog, description='Helps manipulating version of the project')
     p.add_argument('--file', '-f', dest='version_file', type=str,
-        default=defaults.get('version_file'),
+        default=cfg.version_file,
         help="path to file where version is saved")
     p.add_argument('--version', '-v', action="version", version=prog_version)
     p.add_argument('--date-format', type=str,
-        default=defaults.get('date_format'),
+        default=cfg.date_format,
         help="Date format used in project files")
     p.add_argument('--vcs-engine', type=str,
-        default=defaults.get('vcs_engine'),
+        default=cfg.vcs_engine,
         help="Select VCS engine (only git is supported currently)", )
     p.add_argument('--vcs-commit-message', '-m', type=str,
-        default=defaults.get('vcs_commit_message'),
+        default=cfg.vcs_commit_message,
         help="Commit message used when committing changes")
     p.add_argument('--verbose', action="store_true",
         help="Be more verbose if it's possible")
@@ -68,7 +70,7 @@ def parse_args(args, **defaults):
     p_init = sub.add_parser('init',
         help="Create new version file")
     p_init.add_argument('value', nargs='?', type=str,
-        default=defaults.get('default_init_version'),
+        default=cfg.default_init_version,
         help="Initial version")
     p_init.add_argument('--commit', '-c', action='store_true',
         help="Commit changes done by `up` command (only if there is no changes in repo before)")
@@ -83,7 +85,7 @@ def parse_args(args, **defaults):
     p_up.set_defaults(get_command=get_command_name('up'))
 
     p_up_gr = p_up.add_mutually_exclusive_group()
-    up_part = defaults.get('up_part')
+    up_part = cfg.up_part
     p_up_gr.add_argument('--major', '-j', action="store_true",
         help="increase major part of version" + (" (project default)" if up_part == 'major' else ""))
     p_up_gr.add_argument('--minor', '-n', action="store_true",
@@ -132,17 +134,48 @@ def parse_args(args, **defaults):
 
     elif args.get_command() == 'tag':
         if not args.vcs_tag_params:
-            args.vcs_tag_params = defaults.get('vcs_tag_params', [])
+            args.vcs_tag_params = cfg.vcs_tag_params or []
 
-    return args
+    cfg.command = args.get_command()
+    cfg.version_file = args.version_file
+    cfg.date_format = args.date_format
+    cfg.vcs_engine = args.vcs_engine
+    cfg.vcs_commit_message = args.vcs_commit_message
+    cfg.verbose = args.verbose
+
+    if args.get_command() == 'init':
+        cfg.value = args.value
+
+    elif args.get_command() == 'up':
+        cfg.value = args.value
+        if args.major:
+            cfg.up_part = 'major'
+        elif args.minor:
+            cfg.up_part = 'minor'
+        elif args.patch:
+            cfg.up_part = 'patch'
+
+    elif args.get_command() == 'set':
+        if args.value:
+            cfg.value = args.value
+        else:
+            cfg.value = (
+                args.major,
+                args.minor,
+                args.patch,
+                args.prerelease,
+                args.build
+            )
+
+    elif args.get_command() == 'tag':
+        cfg.vcs_tag_params = args.vcs_tag_params
 
 
-def update_project_files(args, cfg, proj_version):
+def update_project_files(cfg, proj_version):
     """
     Update version string in project files
 
     :rtype : dict
-    :param args:script arguments
     :param cfg:project configuration
     :param proj_version:current version
     :return:dict :raise ValueError:
@@ -155,7 +188,7 @@ def update_project_files(args, cfg, proj_version):
             continue
 
         # prepare data
-        date_format = project_file.date_format or args.date_format
+        date_format = project_file.date_format or cfg.date_format
 
         rxp = re.compile(project_file.search, project_file.search_flags)
         replace = project_file.replace % {
@@ -203,138 +236,125 @@ def update_project_files(args, cfg, proj_version):
     return counters
 
 
-def command_up(cfg, args):
+def command_up(cfg):
     """
     Realize tasks for 'up' command
 
     :param cfg:
-    :param args:
     :return:
     """
 
     vcs_handler = None
-    if args.commit:
-        vcs_handler = vcs.VCS(args.vcs_engine)
+    if cfg.commit:
+        vcs_handler = vcs.VCS(cfg.vcs_engine)
         vcs_handler.raise_if_cant_commit()
 
-    version_file = version.VersionFile(args.version_file)
+    version_file = version.VersionFile(cfg.version_file)
 
     current = version_file.read()
 
-    if args.major:
-        new = current.up('major', args.value)
-    elif args.minor:
-        new = current.up('minor', args.value)
-    elif args.patch:
-        new = current.up('patch', args.value)
-    else:
-        new = current.up(cfg.up_part, args.value)
+    new = current.up(cfg.up_part, cfg.value)
 
     version_file.write(new)
     current = new
 
-    quant = update_project_files(args, cfg, current)
+    quant = update_project_files(cfg, current)
 
-    if args.commit:
+    if cfg.commit:
         files = {str(file.file) for file in cfg.files}
         files.add(cfg.version_file)
         vcs_handler.add_to_stage(files)
-        vcs_handler.create_commit(args.vcs_commit_message % current)
+        vcs_handler.create_commit(cfg.vcs_commit_message % current)
 
-    return {'current_version': current, 'quant': quant, 'commit': args.commit}
+    return {'current_version': current, 'quant': quant, 'commit': cfg.commit}
 
 
-def command_set(cfg, args):
+def command_set(cfg):
     """
     Realize tasks for 'set' command
 
     :param cfg:
-    :param args:
     :return:
     """
 
     vcs_handler = None
-    if args.commit:
-        vcs_handler = vcs.VCS(args.vcs_engine)
+    if cfg.commit:
+        vcs_handler = vcs.VCS(cfg.vcs_engine)
         vcs_handler.raise_if_cant_commit()
 
-    version_file = version.VersionFile(args.version_file)
+    version_file = version.VersionFile(cfg.version_file)
 
     current = version_file.read()
 
-    if args.value:
-        parsed = semver.parse(args.value)
-        new = version.Version(parsed)
-    else:
+    if isinstance(cfg.value, tuple):
         new = version.Version(current)
-        for type_ in version.Version.VALID_FIELDS:
-            value = getattr(args, type_)
+        for type_, value in zip(version.Version.VALID_FIELDS, cfg.value):
             if value:
                 new = new.set(type_, value)
+    else:
+        parsed = semver.parse(cfg.value)
+        new = version.Version(parsed)
 
     version_file.write(new)
     current = new
 
-    quant = update_project_files(args, cfg, current)
+    quant = update_project_files(cfg, current)
 
-    if args.commit:
+    if cfg.commit:
         files = {str(file.file) for file in cfg.files}
         files.add(cfg.version_file)
         vcs_handler.add_to_stage(files)
-        vcs_handler.create_commit(args.vcs_commit_message % current)
+        vcs_handler.create_commit(cfg.vcs_commit_message % current)
 
-    return {'current_version': current, 'quant': quant, 'commit': args.commit}
+    return {'current_version': current, 'quant': quant, 'commit': cfg.commit}
 
 
-# pylint: disable=unused-argument
-def command_init(cfg, args):
+def command_init(cfg):
     """
     Realize tasks for 'init' command
 
+    :rtype : Config :
     :param cfg:
-    :param args:
     :return:
     """
 
     vcs_handler = None
-    if args.commit:
-        vcs_handler = vcs.VCS(args.vcs_engine)
+    if cfg.commit:
+        vcs_handler = vcs.VCS(cfg.vcs_engine)
         vcs_handler.raise_if_cant_commit()
 
-    version_file = version.VersionFile(args.version_file)
+    version_file = version.VersionFile(cfg.version_file)
 
-    parsed = semver.parse(args.value)
+    parsed = semver.parse(cfg.value)
     current = version.Version(parsed)
     version_file.write(current)
 
-    if args.commit:
+    if cfg.commit:
         files = {str(file.file) for file in cfg.files}
         files.add(cfg.version_file)
         vcs_handler.add_to_stage(files)
-        vcs_handler.create_commit(args.vcs_commit_message % current)
+        vcs_handler.create_commit(cfg.vcs_commit_message % current)
 
-    return {'current_version': current, 'quant': 0, 'commit': args.commit}
+    return {'current_version': current, 'quant': 0, 'commit': cfg.commit}
 
 
-# pylint: disable=unused-argument
-def command_tag(cfg, args):
+def command_tag(cfg):
     """
     Realize tasks for 'tag' command
 
     :param cfg:
-    :param args:
     :return:
     """
-    version_file = version.VersionFile(args.version_file)
+    version_file = version.VersionFile(cfg.version_file)
 
     try:
         current = version_file.read()
-        vcs_handler = vcs.VCS(args.vcs_engine)
+        vcs_handler = vcs.VCS(cfg.vcs_engine)
         vcs_handler.create_tag(current, args.vcs_tag_params)
     # pylint: disable=bare-except
     except:
         print('Git tag failed, do it yourself')
-        if args.verbose:
+        if cfg.verbose:
             traceback.print_exc()
     else:
         print('Git tag created')
@@ -343,15 +363,14 @@ def command_tag(cfg, args):
 
 
 # pylint: disable=unused-argument
-def command_default(cfg, args):
+def command_default(cfg):
     """
     Realize tasks when no command given
 
     :param cfg:
-    :param args:
     :return:
     """
-    version_file = version.VersionFile(args.version_file)
+    version_file = version.VersionFile(cfg.version_file)
 
     current = version_file.read()
 
@@ -368,13 +387,11 @@ def main():
     if pathlib.Path(sys.argv[0]).parts[-1] in ('versionner', 'versionner.py'):
         print("versionner name is deprecated, use \"ver\" now!", file=sys.stderr)
 
-    project_cfg = config.Config()
-    args = parse_args(sys.argv[1:], version_file=project_cfg.version_file, date_format=project_cfg.date_format,
-        up_part=project_cfg.up_part, vcs_engine=project_cfg.vcs_engine, vcs_tag_params=project_cfg.vcs_tag_params,
-        default_init_version=project_cfg.default_init_version, vcs_commit_message=project_cfg.vcs_commit_message)
+    cfg = config.Config()
+    parse_args(sys.argv[1:], cfg)
 
     commands = {'up': command_up, 'set': command_set, 'init': command_init, 'tag': command_tag}
-    result = commands.get(args.get_command(), command_default)(project_cfg, args)
+    result = commands.get(cfg.command, command_default)(cfg)
     quant = result['quant']
     current = result['current_version']
     commit = result.get('commit')

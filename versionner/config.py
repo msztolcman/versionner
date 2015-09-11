@@ -73,7 +73,20 @@ class Config:
     Configuration
     """
 
-    __slots__ = 'version_file date_format files vcs_engine vcs_tag_params up_part default_init_version vcs_commit_message'.split()
+    __slots__ = (
+        'command',
+        'commit',
+        'date_format',
+        'default_init_version',
+        'files',
+        'value',
+        'up_part',
+        'vcs_commit_message',
+        'vcs_engine',
+        'vcs_tag_params',
+        'verbose',
+        'version_file',
+    )
 
     def __init__(self):
         """
@@ -81,18 +94,22 @@ class Config:
 
         :return:
         """
-        self.version_file = defaults.DEFAULT_VERSION_FILE
+        self.command = None
+        self.commit = False
         self.date_format = defaults.DEFAULT_DATE_FORMAT
         self.default_init_version = defaults.DEFAULT_INIT_VERSION
         self.files = []
+        self.value = None
+        self.up_part = defaults.DEFAULT_UP_PART
+        self.vcs_commit_message = defaults.DEFAULT_VCS_COMMIT_MESSAGE
         self.vcs_engine = 'git'
         self.vcs_tag_params = []
-        self.vcs_commit_message = defaults.DEFAULT_VCS_COMMIT_MESSAGE
-        self.up_part = defaults.DEFAULT_UP_PART
+        self.verbose = False
+        self.version_file = defaults.DEFAULT_VERSION_FILE
 
-        self._parse()
+        self._parse_config_file()
 
-    def _parse(self):
+    def _parse_config_file(self):
         """
         Parse config file (ini) and set properties
         :return:
