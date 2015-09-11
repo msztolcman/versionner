@@ -15,6 +15,10 @@ class UnknownVCSError(VCSError):
     pass
 
 
+class VCSStateError(VCSError):
+    pass
+
+
 class VCSCommandsBuilder:
     def __init__(self, engine):
         self._engine = engine
@@ -125,7 +129,7 @@ class VCS:
         for line in stdout.splitlines():
             if line.startswith(('??', '!!')):
                 continue
-            raise VCSError("VCS status doesn't allow to commit. Please commit or stash your changes and try again")
+            raise VCSStateError("VCS status doesn't allow to commit. Please commit or stash your changes and try again")
 
     def create_commit(self, message):
         cmd = self._command.commit(message)
