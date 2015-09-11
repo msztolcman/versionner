@@ -62,7 +62,7 @@ class VCS(object):
 
         if process.returncode:
             raise RuntimeError('Can\'t create VCS tag %s. Process exited with code %d and message: %s' % (
-                version, process.returncode, stderr))
+                version, process.returncode, stderr.decode('utf-8')))
 
     def _get_status_command(self):
         cmd = None
@@ -111,7 +111,7 @@ class VCS(object):
 
         if process.returncode:
             raise RuntimeError('Commit failed. Process exited with code %d and message: %s' % (
-                process.returncode, stderr))
+                process.returncode, stderr.decode('utf-8')))
 
     def _get_add_command(self, paths):
         cmd = None
