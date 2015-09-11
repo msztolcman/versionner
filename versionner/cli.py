@@ -118,15 +118,11 @@ def parse_args(args, **defaults):
     if not hasattr(args, 'get_command'):
         args.get_command = get_command_name(None)
 
-    if args.get_command() == 'build':
+    if args.get_command() in ('up', 'set'):
         if not args.version_file.exists():
             p.error("Version file \"%s\" doesn't exists" % args.version_file)
 
-    elif args.get_command() == 'major':
-        if not args.version_file.exists():
-            p.error("Version file \"%s\" doesn't exists" % args.version_file)
-
-    elif args.get_command() == 'value':
+    elif args.get_command() == 'init':
         if args.version_file.exists():
             p.error("Version file \"%s\" already exists" % args.version_file)
 
@@ -219,11 +215,7 @@ def command_up(cfg, args):
 
     version_file = version.VersionFile(args.version_file)
 
-    try:
-        current = version_file.read()
-    except FileNotFoundError:
-        print('Version file not found', file=sys.stderr)
-        sys.exit(1)
+    current = version_file.read()
 
     if args.major:
         new = current.up('major', args.value)
@@ -264,11 +256,7 @@ def command_set(cfg, args):
 
     version_file = version.VersionFile(args.version_file)
 
-    try:
-        current = version_file.read()
-    except FileNotFoundError:
-        print('Version file not found', file=sys.stderr)
-        sys.exit(1)
+    current = version_file.read()
 
     if args.value:
         parsed = semver.parse(args.value)
@@ -339,9 +327,6 @@ def command_tag(cfg, args):
         current = version_file.read()
         vcs_handler = vcs.VCS(args.vcs_engine)
         vcs_handler.create_tag(current, args.vcs_tag_params)
-    except FileNotFoundError:
-        print('Version file not found', file=sys.stderr)
-        sys.exit(1)
     # pylint: disable=bare-except
     except:
         print('Git tag failed, do it yourself')
@@ -364,11 +349,7 @@ def command_default(cfg, args):
     """
     version_file = version.VersionFile(args.version_file)
 
-    try:
-        current = version_file.read()
-    except FileNotFoundError:
-        print('Version file not found', file=sys.stderr)
-        sys.exit(1)
+    current = version_file.read()
 
     return {'current_version': current, 'quant': 0}
 
