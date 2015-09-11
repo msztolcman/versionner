@@ -139,7 +139,8 @@ class VersionFile():
         with tempfile.NamedTemporaryFile(mode="w", delete=False) as fh:
             fh.write(str(version))
 
-        shutil.copystat(str(self._path), fh.name)
+        if self._path.exists():
+            shutil.copystat(str(self._path), fh.name)
         pathlib.Path(fh.name).rename(self._path)
 
     def __str__(self):
