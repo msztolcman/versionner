@@ -115,7 +115,7 @@ class VCS:
 
         if code:
             raise VCSError('Can\'t create VCS tag %s. Process exited with code %d and message: %s' % (
-                version, code, stderr))
+                version, code, stderr or stdout))
 
     def raise_if_cant_commit(self):
         cmd = self._command.status()
@@ -124,7 +124,7 @@ class VCS:
 
         if code:
             raise VCSError('Can\'t verify VCS status. Process exited with code %d and message: %s' % (
-                code, stderr))
+                code, stderr or stdout))
 
         for line in stdout.splitlines():
             if line.startswith(('??', '!!')):
@@ -138,7 +138,7 @@ class VCS:
 
         if code:
             raise VCSError('Commit failed. Process exited with code %d and message: %s' % (
-                code, stderr))
+                code, stderr or stdout))
 
     def add_to_stage(self, paths):
         cmd = self._command.add(paths)
@@ -147,4 +147,4 @@ class VCS:
 
         if code:
             raise VCSError('Can\'t add paths to VCS. Process exited with code %d and message: %s' % (
-                code, stderr))
+                code, stderr + stdout))
