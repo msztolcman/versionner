@@ -24,6 +24,7 @@ from versionner import version
 from versionner import vcs
 
 
+# pylint: disable=too-many-branches,too-many-statements
 def parse_args(args, cfg):
     """
     Parse input arguments of script.
