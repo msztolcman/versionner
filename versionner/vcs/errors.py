@@ -1,3 +1,7 @@
+"""
+VCS exceptions
+"""
+
 class VCSError(RuntimeError):
     """General VCS error"""
 

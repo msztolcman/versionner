@@ -1,3 +1,7 @@
+"""
+Realize VCS action for git
+"""
+
 import subprocess
 
 from versionner import defaults
@@ -83,7 +87,7 @@ class VCSEngine:
 
     def create_tag(self, version, params):
         """
-        Run VCS command for tag using subprocess.Popen
+        Create VCS tag
 
         :param version:
         :param params:
