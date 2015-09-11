@@ -57,13 +57,7 @@ def parse_args(args, cfg):
 
     def get_command_name(name):
         # pylint: disable=missing-docstring
-        _name = name
-
-        def _():
-            # pylint: disable=missing-docstring
-            return _name
-
-        return _
+        return lambda: name
 
     sub = p.add_subparsers()
 
@@ -86,13 +80,12 @@ def parse_args(args, cfg):
     p_up.set_defaults(get_command=get_command_name('up'))
 
     p_up_gr = p_up.add_mutually_exclusive_group()
-    up_part = cfg.up_part
     p_up_gr.add_argument('--major', '-j', action="store_true",
-        help="increase major part of version" + (" (project default)" if up_part == 'major' else ""))
+        help="increase major part of version" + (" (project default)" if cfg.up_part == 'major' else ""))
     p_up_gr.add_argument('--minor', '-n', action="store_true",
-        help="increase minor part of version" + (" (project default)" if up_part == 'minor' else ""))
+        help="increase minor part of version" + (" (project default)" if cfg.up_part == 'minor' else ""))
     p_up_gr.add_argument('--patch', '-p', action="store_true",
-        help="increase patch part of version" + (" (project default)" if up_part == 'patch' else ""))
+        help="increase patch part of version" + (" (project default)" if cfg.up_part == 'patch' else ""))
     p_up_gr.set_defaults(get_command=get_command_name('up'))
 
     p_set = sub.add_parser('set',
@@ -120,34 +113,27 @@ def parse_args(args, cfg):
     p_tag.set_defaults(get_command=get_command_name('tag'))
 
     args = p.parse_args(args)
-    args.version_file = pathlib.Path(args.version_file).absolute()
 
     if not hasattr(args, 'get_command'):
         args.get_command = get_command_name(None)
 
-    if args.get_command() in ('up', 'set'):
-        if not args.version_file.exists():
-            p.error("Version file \"%s\" doesn't exists" % args.version_file)
-
-    elif args.get_command() == 'init':
-        if args.version_file.exists():
-            p.error("Version file \"%s\" already exists" % args.version_file)
-
-    elif args.get_command() == 'tag':
-        if not args.vcs_tag_params:
-            args.vcs_tag_params = cfg.vcs_tag_params or []
-
     cfg.command = args.get_command()
-    cfg.version_file = args.version_file
+    cfg.version_file = pathlib.Path(args.version_file).absolute()
     cfg.date_format = args.date_format
     cfg.vcs_engine = args.vcs_engine
     cfg.vcs_commit_message = args.vcs_commit_message
     cfg.verbose = args.verbose
 
-    if args.get_command() == 'init':
+    if cfg.command == 'init':
+        if cfg.version_file.exists():
+            p.error("Version file \"%s\" already exists" % cfg.version_file)
+
         cfg.value = args.value
 
-    elif args.get_command() == 'up':
+    elif cfg.command == 'up':
+        if not cfg.version_file.exists():
+            p.error("Version file \"%s\" doesn't exists" % cfg.version_file)
+
         cfg.value = args.value
         if args.major:
             cfg.up_part = 'major'
@@ -156,7 +142,10 @@ def parse_args(args, cfg):
         elif args.patch:
             cfg.up_part = 'patch'
 
-    elif args.get_command() == 'set':
+    elif cfg.command == 'set':
+        if not cfg.version_file.exists():
+            p.error("Version file \"%s\" doesn't exists" % cfg.version_file)
+
         if args.value:
             cfg.value = args.value
         else:
@@ -168,8 +157,8 @@ def parse_args(args, cfg):
                 args.build
             )
 
-    elif args.get_command() == 'tag':
-        cfg.vcs_tag_params = args.vcs_tag_params
+    elif cfg.command == 'tag':
+        cfg.vcs_tag_params = args.vcs_tag_params or []
 
 
 def update_project_files(cfg, proj_version):
