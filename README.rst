@@ -324,6 +324,7 @@ v1.3.0
 ~~~~~~
 
 -  Allow to automatically commit changes done by commands: up, set, init
+-  Rewritten VCS subsystem, allows now for many engines
 
 v1.2.0
 ~~~~~~
