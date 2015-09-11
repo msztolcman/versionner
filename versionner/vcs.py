@@ -132,10 +132,5 @@ class VCS(object):
         (stdout, stderr) = process.communicate(timeout=defaults.DEFAULT_TAG_TIMEOUT)
 
         if process.returncode:
-            raise RuntimeError('Can\'t verify VCS status. Process exited with code %d and message: %s' % (
+            raise RuntimeError('Can\'t add paths to VCS. Process exited with code %d and message: %s' % (
                 process.returncode, stderr))
-
-        for line in stdout.splitlines():
-            if line.decode('utf-8').startswith(('??', '!!')):
-                continue
-            raise VCSError("VCS status doesn't allow to commit. Please commit or stash your changes and try again")
