@@ -309,7 +309,7 @@ def command_set(cfg):
                 if value is not None:
                     new = new.set(field, value)
         except ValueError as exc:
-            raise InvalidVersionError("Cannot use \"%s\" as \"%s\" field" % (value, field)) from exc
+            raise InvalidVersionError("Cannot use \"%s\" as \"--%s\" field" % (value, field)) from exc
     else:
         try:
             parsed = semver.parse(cfg.value)
