@@ -286,7 +286,11 @@ def command_set(cfg):
             if value:
                 new = new.set(type_, value)
     else:
-        parsed = semver.parse(cfg.value)
+        try:
+            parsed = semver.parse(cfg.value)
+        except ValueError as exc:
+            raise InvalidVersionError("Cannot parse version string: %s" % cfg.value) from exc
+
         new = version.Version(parsed)
 
     version_file.write(new)
@@ -319,7 +323,11 @@ def command_init(cfg):
 
     version_file = version.VersionFile(cfg.version_file)
 
-    parsed = semver.parse(cfg.value)
+    try:
+        parsed = semver.parse(cfg.value)
+    except ValueError as exc:
+        raise InvalidVersionError("Cannot parse version string: %s" % cfg.value) from exc
+
     current = version.Version(parsed)
     version_file.write(current)
 
