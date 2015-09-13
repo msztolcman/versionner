@@ -303,9 +303,13 @@ def command_set(cfg):
 
     if isinstance(cfg.value, tuple):
         new = version.Version(current)
-        for type_, value in zip(version.Version.VALID_FIELDS, cfg.value):
-            if value is not None:
-                new = new.set(type_, value)
+
+        try:
+            for field, value in zip(version.Version.VALID_FIELDS, cfg.value):
+                if value is not None:
+                    new = new.set(field, value)
+        except ValueError as exc:
+            raise InvalidVersionError("Cannot use \"%s\" as \"%s\" field" % (value, field)) from exc
     else:
         try:
             parsed = semver.parse(cfg.value)
