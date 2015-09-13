@@ -158,6 +158,9 @@ def parse_args(args, cfg):
                 args.build
             )
 
+            if all(value is None for value in cfg.value):
+                p.error("Version is not specified")
+
     elif cfg.command == 'tag':
         cfg.vcs_tag_params = args.vcs_tag_params or []
 
