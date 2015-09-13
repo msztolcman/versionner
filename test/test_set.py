@@ -4,13 +4,14 @@ import os
 import tempfile
 import unittest
 from pathlib import Path
+
 import semver
 
 from versionner.cli import execute
 from versionner.config import Config
+from versionner.version import Version
 
 from test.streamcatcher import catch_streams
-from versionner.version import Version
 
 
 def bootstrap_env(create=True):
