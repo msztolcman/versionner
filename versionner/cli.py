@@ -22,7 +22,7 @@ import versionner
 from versionner import config
 from versionner import version
 from versionner import vcs
-
+from versionner.errors import *
 
 # pylint: disable=too-many-branches,too-many-statements
 def parse_args(args, cfg):
@@ -220,7 +220,7 @@ def update_project_files(cfg, proj_version):
                 fh_out.write(data)
 
             else:
-                raise ValueError("Unknown match type: \"%s\"" % project_file.match)
+                raise ConfigError("Unknown match type: \"%s\"" % project_file.match)
 
             fh_out.close()
 
