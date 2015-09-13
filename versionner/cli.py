@@ -379,21 +379,21 @@ def command_default(cfg):
     return {'current_version': current, 'quant': 0}
 
 
-def main():
-    """
-    Main script
-
-    :return:
-    """
-
-    if pathlib.Path(sys.argv[0]).parts[-1] in ('versionner', 'versionner.py'):
+def execute(prog, argv):
+    if pathlib.Path(prog).parts[-1] in ('versionner', 'versionner.py'):
         print("versionner name is deprecated, use \"ver\" now!", file=sys.stderr)
 
     cfg = config.Config()
-    parse_args(sys.argv[1:], cfg)
+    parse_args(argv, cfg)
 
     commands = {'up': command_up, 'set': command_set, 'init': command_init, 'tag': command_tag}
-    result = commands.get(cfg.command, command_default)(cfg)
+
+    try:
+        result = commands.get(cfg.command, command_default)(cfg)
+    except VersionnerError as exc:
+        print('%s: %s' % (exc.__class__.__name__, exc), file=sys.stderr)
+        return exc.ret_code
+
     quant = result['quant']
     current = result['current_version']
     commit = result.get('commit')
@@ -402,3 +402,14 @@ def main():
 
     if quant:
         print('Changed' + (' and committed' if commit else '') + ' %(files)s files (%(changes)s changes)' % quant)
+
+    return 0
+
+def main():
+    """
+    Main script
+
+    :return:
+    """
+
+    return execute(sys.argv[0], sys.argv[1:])
