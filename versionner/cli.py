@@ -283,7 +283,7 @@ def command_set(cfg):
     if isinstance(cfg.value, tuple):
         new = version.Version(current)
         for type_, value in zip(version.Version.VALID_FIELDS, cfg.value):
-            if value:
+            if value is not None:
                 new = new.set(type_, value)
     else:
         try:
