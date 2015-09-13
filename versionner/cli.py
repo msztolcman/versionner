@@ -47,12 +47,6 @@ def parse_args(args, cfg):
     p.add_argument('--date-format', type=str,
         default=cfg.date_format,
         help="Date format used in project files")
-    p.add_argument('--vcs-engine', type=str,
-        default=cfg.vcs_engine,
-        help="Select VCS engine (only git is supported currently)", )
-    p.add_argument('--vcs-commit-message', '-m', type=str,
-        default=cfg.vcs_commit_message,
-        help="Commit message used when committing changes")
     p.add_argument('--verbose', action="store_true",
         help="Be more verbose if it's possible")
 
@@ -67,17 +61,30 @@ def parse_args(args, cfg):
     p_init.add_argument('value', nargs='?', type=str,
         default=cfg.default_init_version,
         help="Initial version")
+    p_init.add_argument('--vcs-engine', type=str,
+        default=cfg.vcs_engine,
+        help="Select VCS engine (only git is supported currently)", )
+    p_init.add_argument('--vcs-commit-message', '-m', type=str,
+        default=cfg.vcs_commit_message,
+        help="Commit message used when committing changes")
     p_init.add_argument('--commit', '-c', action='store_true',
         help="Commit changes done by `up` command (only if there is no changes in repo before)")
     p_init.set_defaults(get_command=get_command_name('init'))
 
     p_up = sub.add_parser('up',
         help="Increase version")
+    p_up.add_argument('--vcs-engine', type=str,
+        default=cfg.vcs_engine,
+        help="Select VCS engine (only git is supported currently)", )
+    p_up.add_argument('--vcs-commit-message', '-m', type=str,
+        default=cfg.vcs_commit_message,
+        help="Commit message used when committing changes")
     p_up.add_argument('--commit', '-c', action='store_true',
         help="Commit changes done by `up` command (only if there is no changes in repo before)")
     p_up.add_argument('value', nargs='?', type=int,
         default=cfg.default_increase_value,
         help="Increase version by this value (default: %d)" % cfg.default_increase_value)
+
     p_up.set_defaults(get_command=get_command_name('up'))
 
     p_up_gr = p_up.add_mutually_exclusive_group()
@@ -101,6 +108,12 @@ def parse_args(args, cfg):
         help="set prerelease part of version to PRERELEASE")
     p_set.add_argument('--build', '-b', type=str,
         help="set build part of version to BUILD")
+    p_set.add_argument('--vcs-engine', type=str,
+        default=cfg.vcs_engine,
+        help="Select VCS engine (only git is supported currently)", )
+    p_set.add_argument('--vcs-commit-message', '-m', type=str,
+        default=cfg.vcs_commit_message,
+        help="Commit message used when committing changes")
     p_set.add_argument('--commit', '-c', action='store_true',
         help="Commit changes done by `set` command (only if there is no changes in repo before)")
     p_set.add_argument('value', nargs='?', type=str,
@@ -121,20 +134,22 @@ def parse_args(args, cfg):
     cfg.command = args.get_command()
     cfg.version_file = pathlib.Path(args.version_file).absolute()
     cfg.date_format = args.date_format
-    cfg.vcs_engine = args.vcs_engine
-    cfg.vcs_commit_message = args.vcs_commit_message
     cfg.verbose = args.verbose
 
     if cfg.command == 'init':
         if cfg.version_file.exists():
             p.error("Version file \"%s\" already exists" % cfg.version_file)
 
+        cfg.vcs_engine = args.vcs_engine
+        cfg.vcs_commit_message = args.vcs_commit_message
         cfg.value = args.value
 
     elif cfg.command == 'up':
         if not cfg.version_file.exists():
             p.error("Version file \"%s\" doesn't exists" % cfg.version_file)
 
+        cfg.vcs_engine = args.vcs_engine
+        cfg.vcs_commit_message = args.vcs_commit_message
         cfg.value = args.value
         if args.major:
             cfg.up_part = 'major'
@@ -146,6 +161,9 @@ def parse_args(args, cfg):
     elif cfg.command == 'set':
         if not cfg.version_file.exists():
             p.error("Version file \"%s\" doesn't exists" % cfg.version_file)
+
+        cfg.vcs_engine = args.vcs_engine
+        cfg.vcs_commit_message = args.vcs_commit_message
 
         if args.value:
             cfg.value = args.value

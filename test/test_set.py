@@ -97,7 +97,6 @@ class SetTest(unittest.TestCase):
             with version_file.open('r') as fh:
                 self.assertEqual(fh.read().strip(), '7.8.1-ZZZ+XXX')
 
-
     def test_specified_invalid_version(self):
         version = '1.a.3+asd'
 
