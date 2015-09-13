@@ -140,6 +140,7 @@ def parse_args(args, cfg):
         if cfg.version_file.exists():
             p.error("Version file \"%s\" already exists" % cfg.version_file)
 
+        cfg.commit = args.commit
         cfg.vcs_engine = args.vcs_engine
         cfg.vcs_commit_message = args.vcs_commit_message
         cfg.value = args.value
@@ -148,6 +149,7 @@ def parse_args(args, cfg):
         if not cfg.version_file.exists():
             p.error("Version file \"%s\" doesn't exists" % cfg.version_file)
 
+        cfg.commit = args.commit
         cfg.vcs_engine = args.vcs_engine
         cfg.vcs_commit_message = args.vcs_commit_message
         cfg.value = args.value
@@ -162,6 +164,7 @@ def parse_args(args, cfg):
         if not cfg.version_file.exists():
             p.error("Version file \"%s\" doesn't exists" % cfg.version_file)
 
+        cfg.commit = args.commit
         cfg.vcs_engine = args.vcs_engine
         cfg.vcs_commit_message = args.vcs_commit_message
 
