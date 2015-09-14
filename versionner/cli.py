@@ -382,8 +382,8 @@ def command_tag(cfg):
     """
     version_file = version.VersionFile(cfg.version_file)
 
+    current = version_file.read()
     try:
-        current = version_file.read()
         vcs_handler = vcs.VCS(cfg.vcs_engine)
         vcs_handler.create_tag(current, cfg.vcs_tag_params)
     # pylint: disable=bare-except
