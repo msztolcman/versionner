@@ -63,7 +63,7 @@ class Version:
         """
 
         if field not in self.VALID_UP_FIELDS:
-            raise ValueError("Incorrect value of \"type\"")
+            raise ValueError("Invalid field: %s" % field)
 
         if not value:
             value = 1
