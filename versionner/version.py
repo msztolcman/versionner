@@ -154,8 +154,10 @@ class Version:
 
     def __repr__(self):
         data = {field: getattr(self, field) for field in self.VALID_FIELDS}
-        return ('<Version({major: %(major)s, minor: %(minor)s, patch: %(patch)s, '
-               'prerelease: %(prerelease)s, build: %(build)s})>') % data
+        tpl = '<Version({major: %(major)s, minor: %(minor)s, patch: %(patch)s, ' \
+              'prerelease: %(prerelease)s, build: %(build)s})>'
+
+        return tpl % data
 
     def _cmp(self, other):
         """
