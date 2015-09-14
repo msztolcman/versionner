@@ -6,8 +6,11 @@ import pathlib
 import shutil
 import tempfile
 import functools
+from collections import abc
 
 import semver
+
+from versionner.errors import InvalidVersionError
 
 
 @functools.total_ordering
@@ -19,37 +22,45 @@ class Version:
     VALID_FIELDS = ('major', 'minor', 'patch', 'prerelease', 'build')
     VALID_UP_FIELDS = ('major', 'minor', 'patch')
 
-    def __init__(self, version_dict=None):
+    def __init__(self, version=None):
         """
         Initialise object
 
-        :param version_dict:Version object (to clone) or dictionary from semver.parse
+        :param version:Version object (to clone) or dictionary from semver.parse
         """
 
-        if isinstance(version_dict, Version):
-            version_dict = {
-                'major': version_dict.major,
-                'minor': version_dict.minor,
-                'patch': version_dict.patch,
-                'prerelease': version_dict.prerelease,
-                'build': version_dict.build,
-            }
+        if version is not None:
+            self._parse(version)
 
-        self.major = version_dict['major']
-        self.minor = version_dict['minor']
-        self.patch = version_dict['patch']
-        self.prerelease = version_dict.get('prerelease', '')
-        self.build = version_dict.get('build', '')
+    def _parse_object(self, version):
+        self.major = version.major
+        self.minor = version.minor
+        self.patch = version.patch
+        self.prerelease = getattr(version, 'prerelease', '')
+        self.build = getattr(version, 'build', '')
 
-    @classmethod
-    def from_str(cls, version_str):
-        """
-        Create Version from string
-        :param version_str:
-        :return:
-        """
-        version = semver.parse(version_str)
-        return cls(version)
+    def _parse_dict(self, version):
+        self.major = version['major']
+        self.minor = version['minor']
+        self.patch = version['patch']
+        self.prerelease = version.get('prerelease', '')
+        self.build = version.get('build', '')
+
+    def _parse_str(self, version):
+        version = semver.parse(version)
+        self._parse_dict(version)
+
+    def _parse(self, version):
+        if all(hasattr(version, field) for field in self.VALID_UP_FIELDS):
+            self._parse_object(version)
+        elif isinstance(version, abc.Mapping):
+            self._parse_dict(version)
+        elif isinstance(version, (str, bytes)):
+            if hasattr(version, 'decode'):
+                version = version.decode()
+            self._parse_str(version)
+        else:
+            raise InvalidVersionError("Unknown object type: %s" % type(version))
 
     # pylint: disable=invalid-name
     def up(self, field, value=None):

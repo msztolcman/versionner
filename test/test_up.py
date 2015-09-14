@@ -43,7 +43,7 @@ class UpTest(unittest.TestCase):
 
     def test_default_call(self):
         increase_value = self.cfg.default_increase_value
-        version = Version.from_str(self.cfg.default_init_version)
+        version = Version(self.cfg.default_init_version)
         version_expected = version.up(self.cfg.up_part, increase_value)
         version_file = self.root / self.cfg.version_file
 
@@ -55,7 +55,7 @@ class UpTest(unittest.TestCase):
 
     def test_specified_increase_value(self):
         increase_value = 7
-        version = Version.from_str(self.cfg.default_init_version)
+        version = Version(self.cfg.default_init_version)
         version_expected = version.up(self.cfg.up_part, increase_value)
         version_file = self.root / self.cfg.version_file
 
@@ -67,7 +67,7 @@ class UpTest(unittest.TestCase):
 
     def test_specified_field_default_value(self):
         increase_value = self.cfg.default_increase_value
-        version = Version.from_str(self.cfg.default_init_version)
+        version = Version(self.cfg.default_init_version)
         version_file = self.root / self.cfg.version_file
 
         for field in Version.VALID_UP_FIELDS:
@@ -86,7 +86,7 @@ class UpTest(unittest.TestCase):
 
     def test_specified_field_specified_value(self):
         increase_value = 7
-        version = Version.from_str(self.cfg.default_init_version)
+        version = Version(self.cfg.default_init_version)
         version_file = self.root / self.cfg.version_file
 
         for field in Version.VALID_UP_FIELDS:
