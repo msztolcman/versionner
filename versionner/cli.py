@@ -137,9 +137,9 @@ def parse_args(args, cfg):
     cfg.date_format = args.date_format
     cfg.verbose = args.verbose
 
+    version_file_requirement = 'doesn\'t matter'
     if cfg.command == 'init':
-        if cfg.version_file.exists():
-            p.error("Version file \"%s\" already exists" % cfg.version_file)
+        version_file_requirement = 'none'
 
         cfg.commit = args.commit
         cfg.vcs_engine = args.vcs_engine
@@ -147,8 +147,7 @@ def parse_args(args, cfg):
         cfg.value = args.value
 
     elif cfg.command == 'up':
-        if not cfg.version_file.exists():
-            p.error("Version file \"%s\" doesn't exists" % cfg.version_file)
+        version_file_requirement = 'required'
 
         cfg.commit = args.commit
         cfg.vcs_engine = args.vcs_engine
@@ -162,8 +161,7 @@ def parse_args(args, cfg):
             cfg.up_part = 'patch'
 
     elif cfg.command == 'set':
-        if not cfg.version_file.exists():
-            p.error("Version file \"%s\" doesn't exists" % cfg.version_file)
+        version_file_requirement = 'required'
 
         cfg.commit = args.commit
         cfg.vcs_engine = args.vcs_engine
@@ -173,18 +171,27 @@ def parse_args(args, cfg):
             cfg.value = args.value
         else:
             cfg.value = (
-                args.major,
-                args.minor,
-                args.patch,
-                args.prerelease,
-                args.build
+                args.major, args.minor, args.patch,
+                args.prerelease, args.build
             )
 
             if all(value is None for value in cfg.value):
                 p.error("Version is not specified")
 
     elif cfg.command == 'tag':
+        version_file_requirement = 'required'
+
         cfg.vcs_tag_params = args.vcs_tag_params or []
+
+    elif cfg.command is None:
+        version_file_requirement = 'required'
+
+    if version_file_requirement == 'required':
+        if not cfg.version_file.exists():
+            p.error("Version file \"%s\" doesn't exists" % cfg.version_file)
+    elif version_file_requirement == 'none':
+        if cfg.version_file.exists():
+            p.error("Version file \"%s\" already exists" % cfg.version_file)
 
 
 def update_project_files(cfg, proj_version):
