@@ -41,6 +41,16 @@ class Version:
         self.prerelease = version_dict.get('prerelease', '')
         self.build = version_dict.get('build', '')
 
+    @classmethod
+    def from_str(cls, version_str):
+        """
+        Create Version from string
+        :param version_str:
+        :return:
+        """
+        version = semver.parse(version_str)
+        return cls(version)
+
     # pylint: disable=invalid-name
     def up(self, field, value=None):
         """
