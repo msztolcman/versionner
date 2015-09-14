@@ -74,7 +74,7 @@ class Version:
         """
 
         if field not in self.VALID_UP_FIELDS:
-            raise ValueError("Invalid field: %s" % field)
+            raise ValueError("Invalid field type: %s" % field)
 
         if not value:
             value = 1
@@ -104,12 +104,16 @@ class Version:
         """
 
         if field not in self.VALID_FIELDS:
-            raise ValueError("Incorrect value of \"type\"")
+            raise ValueError("Invalid field type: %s" % field)
 
         version = Version(self)
         setattr(version, field, value)
 
-        semver.parse(str(version))
+        # validation
+        try:
+            semver.parse(str(version))
+        except ValueError as exc:
+            raise InvalidVersionError("Invalid value for field %s: %s" % (field, value)) from exc
 
         return version
 
@@ -175,7 +179,6 @@ class VersionFile():
         """
         with self._path.open(mode='r') as fh:
             version = fh.read().strip()
-            version = semver.parse(version)
             return Version(version)
 
     def write(self, version):

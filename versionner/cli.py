@@ -16,8 +16,6 @@ import tempfile
 import time
 import traceback
 
-import semver
-
 import versionner
 from versionner import config
 from versionner import version
@@ -320,11 +318,9 @@ def command_set(cfg):
             raise InvalidVersionError("Cannot use \"%s\" as \"--%s\" field" % (value, field)) from exc
     else:
         try:
-            parsed = semver.parse(cfg.value)
+            new = version.Version(cfg.value)
         except ValueError as exc:
             raise InvalidVersionError("Cannot parse version string: %s" % cfg.value) from exc
-
-        new = version.Version(parsed)
 
     version_file.write(new)
     current = new
@@ -357,11 +353,10 @@ def command_init(cfg):
     version_file = version.VersionFile(cfg.version_file)
 
     try:
-        parsed = semver.parse(cfg.value)
+        current = version.Version(cfg.value)
     except ValueError as exc:
         raise InvalidVersionError("Cannot parse version string: %s" % cfg.value) from exc
 
-    current = version.Version(parsed)
     version_file.write(current)
 
     if cfg.commit:

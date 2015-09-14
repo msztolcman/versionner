@@ -5,8 +5,6 @@ import tempfile
 import unittest
 from pathlib import Path
 
-import semver
-
 from versionner.cli import execute
 from versionner.config import Config
 from versionner.version import Version
@@ -62,7 +60,7 @@ class SetTest(unittest.TestCase):
             self.assertEqual(fh.read().strip(), version)
 
     def test_specified_fields(self):
-        version = Version(semver.parse(self.cfg.default_init_version))
+        version = Version(self.cfg.default_init_version)
         version_file = self.root / self.cfg.version_file
 
         for field, value in zip(Version.VALID_FIELDS, (2, 3, 4, 'asd', 'qwe')):
