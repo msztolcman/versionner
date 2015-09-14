@@ -27,7 +27,6 @@ class InitTest(unittest.TestCase):
         version = self.cfg.default_init_version
         version_file = self.root / self.cfg.version_file
 
-
         with catch_streams():
             execute('ver', ['init'])
 

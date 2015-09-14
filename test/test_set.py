@@ -84,13 +84,13 @@ class SetTest(unittest.TestCase):
 
             self.assertRegex(streams.err.getvalue(), r'(?ms).*argument --%s.*invalid int value' % field)
 
-        for field, value in zip(('build', 'prerelease'), ('ążśź', 'ążśź')):
+        other_fields = set(Version.VALID_FIELDS) - set(Version.VALID_UP_FIELDS)
+        for field, value in zip(other_fields, ('ążśź', 'ążśź')):
             with catch_streams() as streams:
                 execute('ver', ['set', '--%s' % field, str(value)])
 
             self.assertRegex(streams.err.getvalue(), r'(?ms).*Cannot use .* as "--%s" field' % field)
             streams.err.truncate()
-
 
     def test_all_fields_together(self):
         version_file = self.root / self.cfg.version_file
