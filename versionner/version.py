@@ -5,9 +5,12 @@
 import pathlib
 import shutil
 import tempfile
+import functools
 
 import semver
 
+
+@functools.total_ordering
 class Version:
     """
     Parse and manipulate version string
@@ -104,6 +107,31 @@ class Version:
 
         return version
 
+    def __cmp__(self, other):
+        if isinstance(other, self.__class__):
+            v1, v2 = str(self), str(other)
+        elif isinstance(other, dict):
+            v1, v2 = str(self), str(self.__class__(other))
+        elif isinstance(other, str):
+            v1, v2 = str(self), other
+        else:
+            return NotImplemented
+
+        return semver.compare(v1, v2)
+
+    def __eq__(self, other):
+        result = self.__cmp__(other)
+        if result is NotImplemented:
+            return result
+
+        return result == 0
+
+    def __lt__(self, other):
+        result = self.__cmp__(other)
+        if result is NotImplemented:
+            return result
+
+        return result == -1
 
 class VersionFile():
     """
