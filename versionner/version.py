@@ -26,13 +26,18 @@ class Version:
         """
         Initialise object
 
-        :param version:Version object (to clone) or dictionary from semver.parse
+        :param version:version data to initialize
         """
 
         if version is not None:
             self._parse(version)
 
     def _parse_object(self, version):
+        """
+        Parse version as Version object and initialize self with data from version
+        :param version:
+        :return:
+        """
         self.major = version.major
         self.minor = version.minor
         self.patch = version.patch
@@ -40,6 +45,11 @@ class Version:
         self.build = getattr(version, 'build', '')
 
     def _parse_dict(self, version):
+        """
+        Parse version as dict returned from semver.parse and initialize self with data from version
+        :param version:
+        :return:
+        """
         self.major = version['major']
         self.minor = version['minor']
         self.patch = version['patch']
@@ -47,10 +57,20 @@ class Version:
         self.build = version.get('build', '')
 
     def _parse_str(self, version):
+        """
+        Parse version as string and initialize self with data from version
+        :param version:
+        :return:
+        """
         version = semver.parse(version)
         self._parse_dict(version)
 
     def _parse(self, version):
+        """
+        Recognize version type and dispatch it to self._parse_*
+        :param version:
+        :return:
+        """
         if all(hasattr(version, field) for field in self.VALID_UP_FIELDS):
             self._parse_object(version)
         elif isinstance(version, abc.Mapping):
@@ -132,6 +152,13 @@ class Version:
                'prerelease: %(prerelease)s, build: %(build)s})>') % data
 
     def _cmp(self, other):
+        """
+        Compare versions
+
+        :rtype : any
+        :param other: version as any recognizable type
+        :return: int
+        """
         if isinstance(other, self.__class__):
             v1, v2 = str(self), str(other)
         elif isinstance(other, dict):
