@@ -29,6 +29,12 @@ class Version:
         :param version:version data to initialize
         """
 
+        self.major = 0
+        self.minor = 0
+        self.patch = 0
+        self.prerelease = ''
+        self.build = ''
+
         if version is not None:
             self._parse(version)
 
