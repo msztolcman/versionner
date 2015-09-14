@@ -111,6 +111,10 @@ class Version:
 
         return semver.format_version(self.major, self.minor, self.patch, self.prerelease or None, self.build or None)
 
+    def __repr__(self):
+        data = {field: getattr(self, field) for field in self.VALID_FIELDS}
+        return ('<Version({major: %(major)s, minor: %(minor)s, patch: %(patch)s, '
+               'prerelease: %(prerelease)s, build: %(build)s})>') % data
 
     def __cmp__(self, other):
         if isinstance(other, self.__class__):
