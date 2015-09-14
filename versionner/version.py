@@ -131,7 +131,7 @@ class Version:
         return ('<Version({major: %(major)s, minor: %(minor)s, patch: %(patch)s, '
                'prerelease: %(prerelease)s, build: %(build)s})>') % data
 
-    def __cmp__(self, other):
+    def _cmp(self, other):
         if isinstance(other, self.__class__):
             v1, v2 = str(self), str(other)
         elif isinstance(other, dict):
@@ -144,14 +144,14 @@ class Version:
         return semver.compare(v1, v2)
 
     def __eq__(self, other):
-        result = self.__cmp__(other)
+        result = self._cmp(other)
         if result is NotImplemented:
             return result
 
         return result == 0
 
     def __lt__(self, other):
-        result = self.__cmp__(other)
+        result = self._cmp(other)
         if result is NotImplemented:
             return result
 
