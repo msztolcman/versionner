@@ -22,6 +22,7 @@ import versionner
 from versionner import config
 from versionner import version
 from versionner import vcs
+# pylint: disable=wildcard-import
 from versionner.errors import *
 
 # pylint: disable=too-many-branches,too-many-statements
