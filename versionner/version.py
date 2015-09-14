@@ -109,13 +109,8 @@ class Version:
         :return:str
         """
 
-        version = '.'.join([str(self.major), str(self.minor), str(self.patch)])
-        if self.prerelease:
-            version += '-' + str(self.prerelease)
-        if self.build:
-            version += '+' + str(self.build)
+        return semver.format_version(self.major, self.minor, self.patch, self.prerelease or None, self.build or None)
 
-        return version
 
     def __cmp__(self, other):
         if isinstance(other, self.__class__):
