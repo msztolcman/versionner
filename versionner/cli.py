@@ -413,6 +413,13 @@ def command_default(cfg):
 
 
 def execute(prog, argv):
+    """
+    Execute whole program
+
+    :param prog: program name
+    :param argv: list: script arguments
+    :return:
+    """
     if pathlib.Path(prog).parts[-1] in ('versionner', 'versionner.py'):
         print("versionner name is deprecated, use \"ver\" now!", file=sys.stderr)
 

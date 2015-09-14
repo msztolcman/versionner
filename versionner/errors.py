@@ -1,10 +1,18 @@
+"""
+Exceptions for versionner
+"""
+
 class VersionnerError(Exception):
+    """ Generic versionne error
+    """
     ret_code = 2
 
 
 class ConfigError(VersionnerError):
-    pass
+    """ Configuration error
+    """
 
 
 class InvalidVersionError(VersionnerError):
-    pass
+    """ Bad version string/value error
+    """
