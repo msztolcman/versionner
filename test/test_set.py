@@ -87,7 +87,7 @@ class SetTest(unittest.TestCase):
             with catch_streams() as streams:
                 execute('ver', ['set', '--%s' % field, str(value)])
 
-            self.assertRegex(streams.err.getvalue(), r'(?ms).*Cannot use .* as "--%s" field' % field)
+            self.assertRegex(streams.err.getvalue(), r'(?ms).*Invalid value for field %s: %s' % (field, value))
             streams.err.truncate()
 
     def test_all_fields_together(self):

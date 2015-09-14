@@ -81,7 +81,7 @@ class UpTest(unittest.TestCase):
 
         other_fields = set(Version.VALID_FIELDS) - set(Version.VALID_UP_FIELDS)
         for field in other_fields:
-            with self.assertRaisesRegex(ValueError, r'Invalid field: %s' % field):
+            with self.assertRaisesRegex(ValueError, r'Invalid field type: %s' % field):
                 version.up(field, increase_value)
 
     def test_specified_field_specified_value(self):
@@ -100,7 +100,7 @@ class UpTest(unittest.TestCase):
 
         other_fields = set(Version.VALID_FIELDS) - set(Version.VALID_UP_FIELDS)
         for field in other_fields:
-            with self.assertRaisesRegex(ValueError, r'Invalid field: %s' % field):
+            with self.assertRaisesRegex(ValueError, r'Invalid field type: %s' % field):
                 version.up(field, increase_value)
 
     def test_specified_invalid_field(self):
