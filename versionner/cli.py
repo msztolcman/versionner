@@ -259,6 +259,32 @@ def update_project_files(cfg, proj_version):
     return counters
 
 
+def save_version_and_update_files(cfg, version_file, version_to_save):
+    """
+    Save version to version_file and commit changes if required
+
+    :param cfg:
+    :param version_file:
+    :param version_to_save:
+    :return:
+    """
+    with vcs.VCS(cfg.vcs_engine) as vcs_handler:
+        if cfg.commit:
+            vcs_handler.raise_if_cant_commit()
+
+        version_file.write(version_to_save)
+
+        quant = update_project_files(cfg, version_to_save)
+
+        if cfg.commit:
+            files = {str(file.file) for file in cfg.files}
+            files.add(str(cfg.version_file))
+            vcs_handler.add_to_stage(files)
+            vcs_handler.create_commit(cfg.vcs_commit_message % {'version': version_to_save})
+
+    return quant
+
+
 def command_up(cfg):
     """
     Realize tasks for 'up' command
@@ -267,29 +293,15 @@ def command_up(cfg):
     :return:
     """
 
-    vcs_handler = None
-    if cfg.commit:
-        vcs_handler = vcs.VCS(cfg.vcs_engine)
-        vcs_handler.raise_if_cant_commit()
-
     version_file = version.VersionFile(cfg.version_file)
 
     current = version_file.read()
 
     new = current.up(cfg.up_part, cfg.value)
 
-    version_file.write(new)
-    current = new
+    quant = save_version_and_update_files(cfg, version_file, new)
 
-    quant = update_project_files(cfg, current)
-
-    if cfg.commit:
-        files = {str(file.file) for file in cfg.files}
-        files.add(str(cfg.version_file))
-        vcs_handler.add_to_stage(files)
-        vcs_handler.create_commit(cfg.vcs_commit_message % {'version': current})
-
-    return {'current_version': current, 'quant': quant, 'commit': cfg.commit}
+    return {'current_version': new, 'quant': quant, 'commit': cfg.commit}
 
 
 def command_set(cfg):
@@ -300,13 +312,7 @@ def command_set(cfg):
     :return:
     """
 
-    vcs_handler = None
-    if cfg.commit:
-        vcs_handler = vcs.VCS(cfg.vcs_engine)
-        vcs_handler.raise_if_cant_commit()
-
     version_file = version.VersionFile(cfg.version_file)
-
     current = version_file.read()
 
     if isinstance(cfg.value, tuple):
@@ -324,18 +330,9 @@ def command_set(cfg):
         except ValueError as exc:
             raise InvalidVersionError("Cannot parse version string: %s" % cfg.value) from exc
 
-    version_file.write(new)
-    current = new
+    quant = save_version_and_update_files(cfg, version_file, new)
 
-    quant = update_project_files(cfg, current)
-
-    if cfg.commit:
-        files = {str(file.file) for file in cfg.files}
-        files.add(str(cfg.version_file))
-        vcs_handler.add_to_stage(files)
-        vcs_handler.create_commit(cfg.vcs_commit_message % {'version': current})
-
-    return {'current_version': current, 'quant': quant, 'commit': cfg.commit}
+    return {'current_version': new, 'quant': quant, 'commit': cfg.commit}
 
 
 def command_init(cfg):
@@ -347,11 +344,6 @@ def command_init(cfg):
     :return:
     """
 
-    vcs_handler = None
-    if cfg.commit:
-        vcs_handler = vcs.VCS(cfg.vcs_engine)
-        vcs_handler.raise_if_cant_commit()
-
     version_file = version.VersionFile(cfg.version_file)
 
     try:
@@ -359,15 +351,9 @@ def command_init(cfg):
     except ValueError as exc:
         raise InvalidVersionError("Cannot parse version string: %s" % cfg.value) from exc
 
-    version_file.write(current)
+    quant = save_version_and_update_files(cfg, version_file, current)
 
-    if cfg.commit:
-        files = {str(file.file) for file in cfg.files}
-        files.add(str(cfg.version_file))
-        vcs_handler.add_to_stage(files)
-        vcs_handler.create_commit(cfg.vcs_commit_message % {'version': current})
-
-    return {'current_version': current, 'quant': 0, 'commit': cfg.commit}
+    return {'current_version': current, 'quant': quant, 'commit': cfg.commit}
 
 
 def command_tag(cfg):

@@ -29,6 +29,12 @@ class VCS:
 
         self._command = builder.VCSEngine()
 
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        return
+
     def create_tag(self, version, params):
         """
         Create VCS tag
