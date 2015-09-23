@@ -210,6 +210,16 @@ search for it (`search`) and replace it with value of `replace`. If `match` is
 'line', then `search` is matched line by line, and for 'file' whole file is
 read into memory and matched against `search`.
 
+When replacing values, there can be used some of placeholders:
+
+    %(date)s: current date
+    %(major)s: major part of version
+    %(minor)s: minor part of version
+    %(patch)s: patch part of version
+    %(prerelease)s: prerelease part of version
+    %(build)s: build part of version
+    %(version)s: full version string
+
 If you must do more replaces in single file, just add number to section name:
 
     [file:2:some/path]

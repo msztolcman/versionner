@@ -9,7 +9,7 @@ version.
 Current stable version
 ----------------------
 
-1.2.0
+1.3.0
 
 Features
 --------
@@ -193,7 +193,7 @@ It allows you also to modify other files specified in configuration.
 
     [vcs]
     engine = git
-    commit_message = '%s'
+    commit_message = '%(version)s'
     ;tag_params =
     ;  -f
     ;  --local-user=some-key-id
@@ -225,6 +225,18 @@ have to search for it (``search``) and replace it with value of
 line, and for 'file' whole file is read into memory and matched against
 ``search``.
 
+When replacing values, there can be used some of placeholders:
+
+::
+
+    %(date)s: current date
+    %(major)s: major part of version
+    %(minor)s: minor part of version
+    %(patch)s: patch part of version
+    %(prerelease)s: prerelease part of version
+    %(build)s: build part of version
+    %(version)s: full version string
+
 If you must do more replaces in single file, just add number to section
 name:
 
@@ -250,29 +262,29 @@ Simplest way is to use Python's built-in package system:
 2. Using sources
 
 Download sources from
-`Github <https://github.com/mysz/versionner/archive/1.2.0.zip>`__:
+`Github <https://github.com/mysz/versionner/archive/1.3.0.zip>`__:
 
 ::
 
-    wget -O 1.2.0.zip https://github.com/mysz/versionner/archive/1.2.0.zip
+    wget -O 1.3.0.zip https://github.com/mysz/versionner/archive/1.3.0.zip
 
 or
 
 ::
 
-    curl -o 1.2.0.zip https://github.com/mysz/versionner/archive/1.2.0.zip
+    curl -o 1.3.0.zip https://github.com/mysz/versionner/archive/1.3.0.zip
 
 Unpack:
 
 ::
 
-    unzip 1.2.0.zip
+    unzip 1.3.0.zip
 
 And install
 
 ::
 
-    cd versionner-1.2.0
+    cd versionner-1.3.0
     python3 setup.py install
 
 Voila!
