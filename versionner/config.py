@@ -4,7 +4,6 @@
 
 import codecs
 import configparser
-import os.path
 import pathlib
 import re
 import sys
@@ -89,7 +88,7 @@ class Config:
         'version_file',
     )
 
-    def __init__(self):
+    def __init__(self, files=None):
         """
         Evaluate configuration
 
@@ -109,21 +108,17 @@ class Config:
         self.verbose = False
         self.version_file = defaults.DEFAULT_VERSION_FILE
 
-        self._parse_config_file()
+        if files:
+            self._parse_config_file(files)
 
-    def _parse_config_file(self):
+    def _parse_config_file(self, cfg_files):
         """
         Parse config file (ini) and set properties
         :return:
         """
         cfg_handler = configparser.ConfigParser(interpolation=None)
 
-        cfg_files = [
-            str(pathlib.Path(os.path.expanduser('~')) / defaults.RC_FILENAME),
-            str(pathlib.Path() / defaults.RC_FILENAME)
-        ]
-
-        if not cfg_handler.read(cfg_files):
+        if not cfg_handler.read(map(str, cfg_files)):
             return
 
         self._parse_global_section(cfg_handler)

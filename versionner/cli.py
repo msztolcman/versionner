@@ -9,6 +9,7 @@ utils.validate_python_version()
 
 import argparse
 import pathlib
+import os.path
 import re
 import shutil
 import sys
@@ -18,6 +19,7 @@ import traceback
 
 import versionner
 from versionner import config
+from versionner import defaults
 from versionner import version
 from versionner import vcs
 # pylint: disable=wildcard-import
@@ -407,6 +409,30 @@ def command_default(cfg):
     return {'current_version': current, 'quant': 0}
 
 
+def _find_project_config_file(user_config_file):
+    """
+    Find path to project-wide config file
+    Search from current user directory, and traverse path up to
+    directory with versionner rc file or root directort
+
+    :param user_config_file:pathlib.Path instance with user-wide config path
+    :return:pathlib.Path
+    """
+    proj_cfg_dir = pathlib.Path('.').absolute()
+    proj_cfg_file = None
+    root = pathlib.Path('/')
+    while proj_cfg_dir != root:
+        proj_cfg_file = proj_cfg_dir / defaults.RC_FILENAME
+        if proj_cfg_file.exists():
+            break
+
+        proj_cfg_file = None
+        proj_cfg_dir = proj_cfg_dir.parent
+
+    if proj_cfg_file and proj_cfg_file != user_config_file:
+        return proj_cfg_file
+
+
 def execute(prog, argv):
     """
     Execute whole program
@@ -418,7 +444,14 @@ def execute(prog, argv):
     if pathlib.Path(prog).parts[-1] in ('versionner', 'versionner.py'):
         print("versionner name is deprecated, use \"ver\" now!", file=sys.stderr)
 
-    cfg = config.Config()
+    cfg_files = [
+        pathlib.Path(os.path.expanduser('~')) / defaults.RC_FILENAME,
+    ]
+    proj_cfg_file = _find_project_config_file(cfg_files[0])
+    if proj_cfg_file:
+        cfg_files.append(proj_cfg_file)
+
+    cfg = config.Config(cfg_files)
     parse_args(argv, cfg)
 
     commands = {'up': command_up, 'set': command_set, 'init': command_init, 'tag': command_tag}
