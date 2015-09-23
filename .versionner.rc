@@ -8,7 +8,7 @@ file = ./VERSION
 engine = git
 tag = yes
 tag_params =
-commit_message = '%s'
+commit_message = '%(version)s'
 
 [file:versionner/__init__.py]
 enabled = true

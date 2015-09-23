@@ -179,7 +179,7 @@ It allows you also to modify other files specified in configuration.
     
     [vcs]
     engine = git
-    commit_message = '%s'
+    commit_message = '%(version)s'
     ;tag_params =
     ;  -f
     ;  --local-user=some-key-id
