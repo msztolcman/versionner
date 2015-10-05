@@ -51,11 +51,7 @@ def parse_args(args, cfg):
     p.add_argument('--verbose', action="store_true",
         help="Be more verbose if it's possible")
 
-    def get_command_name(name):
-        # pylint: disable=missing-docstring
-        return lambda: name
-
-    sub = p.add_subparsers()
+    sub = p.add_subparsers(dest='command')
 
     p_init = sub.add_parser('init',
         help="Create new version file")
@@ -70,7 +66,6 @@ def parse_args(args, cfg):
         help="Commit message used when committing changes")
     p_init.add_argument('--commit', '-c', action='store_true',
         help="Commit changes done by `up` command (only if there is no changes in repo before)")
-    p_init.set_defaults(get_command=get_command_name('init'))
 
     p_up = sub.add_parser('up',
         help="Increase version")
@@ -86,8 +81,6 @@ def parse_args(args, cfg):
         default=cfg.default_increase_value,
         help="Increase version by this value (default: %d)" % cfg.default_increase_value)
 
-    p_up.set_defaults(get_command=get_command_name('up'))
-
     p_up_gr = p_up.add_mutually_exclusive_group()
     p_up_gr.add_argument('--major', '-j', action="store_true",
         help="increase major part of version" + (" (project default)" if cfg.up_part == 'major' else ""))
@@ -95,7 +88,6 @@ def parse_args(args, cfg):
         help="increase minor part of version" + (" (project default)" if cfg.up_part == 'minor' else ""))
     p_up_gr.add_argument('--patch', '-p', action="store_true",
         help="increase patch part of version" + (" (project default)" if cfg.up_part == 'patch' else ""))
-    p_up_gr.set_defaults(get_command=get_command_name('up'))
 
     p_set = sub.add_parser('set',
         help="Set version to specified one")
@@ -119,20 +111,15 @@ def parse_args(args, cfg):
         help="Commit changes done by `set` command (only if there is no changes in repo before)")
     p_set.add_argument('value', nargs='?', type=str,
         help="set version to this value")
-    p_set.set_defaults(get_command=get_command_name('set'))
 
     p_tag = sub.add_parser('tag',
         help="Create VCS tag with current version")
     p_tag.add_argument('--vcs-tag-param', dest='vcs_tag_params', type=str, action="append",
         help="Additional params for VCS for \"tag\" command")
-    p_tag.set_defaults(get_command=get_command_name('tag'))
 
     args = p.parse_args(args)
 
-    if not hasattr(args, 'get_command'):
-        args.get_command = get_command_name(None)
-
-    cfg.command = args.get_command()
+    cfg.command = args.command
     cfg.version_file = pathlib.Path(args.version_file).absolute()
     cfg.date_format = args.date_format
     cfg.verbose = args.verbose
