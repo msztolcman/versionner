@@ -367,7 +367,6 @@ def command_tag(cfg):
     return {'current_version': current, 'quant': 0}
 
 
-# pylint: disable=unused-argument
 def command_default(cfg):
     """
     Realize tasks when no command given
