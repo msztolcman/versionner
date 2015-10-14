@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 
 import os
-import tempfile
-import unittest
-from pathlib import Path
 import itertools
+from pathlib import Path
+import re
+import tempfile
 
-import semver
+import pytest
 
 from versionner.cli import execute
 from versionner.config import Config
@@ -24,8 +24,9 @@ def bootstrap_env(create=True):
     return dir
 
 
-class UpTest(unittest.TestCase):
-    def setUp(self):
+class TestUp:
+    @pytest.fixture(autouse=True)
+    def set_env(self):
         self.dir = bootstrap_env()
         self.root = Path(self.dir.name)
         self.cfg = Config()
@@ -36,10 +37,10 @@ class UpTest(unittest.TestCase):
         version_file.unlink()
 
         with catch_streams() as streams,\
-                self.assertRaises(SystemExit):
+                pytest.raises(SystemExit):
             execute('ver', ['up'])
 
-        self.assertRegex(streams.err.getvalue(), r'(?ms).*Version file .* doesn\'t exists')
+        assert re.search(r'(?ms).*Version file .* doesn\'t exists', streams.err.getvalue())
 
     def test_default_call(self):
         increase_value = self.cfg.default_increase_value
@@ -51,7 +52,7 @@ class UpTest(unittest.TestCase):
             execute('ver', ['up'])
 
         with version_file.open('r') as fh:
-            self.assertEqual(fh.read().strip(), str(version_expected))
+            assert fh.read().strip() == str(version_expected)
 
     def test_specified_increase_value(self):
         increase_value = 7
@@ -63,7 +64,7 @@ class UpTest(unittest.TestCase):
             execute('ver', ['up', str(increase_value)])
 
         with version_file.open('r') as fh:
-            self.assertEqual(fh.read().strip(), str(version_expected))
+            assert fh.read().strip() == str(version_expected)
 
     def test_specified_field_default_value(self):
         increase_value = self.cfg.default_increase_value
@@ -77,12 +78,14 @@ class UpTest(unittest.TestCase):
                 execute('ver', ['up', '--%s' % field])
 
             with version_file.open('r') as fh:
-                self.assertEqual(fh.read().strip(), str(version))
+                assert fh.read().strip() == str(version)
 
         other_fields = set(Version.VALID_FIELDS) - set(Version.VALID_UP_FIELDS)
         for field in other_fields:
-            with self.assertRaisesRegex(ValueError, r'Invalid field type: %s' % field):
+            with pytest.raises(ValueError) as exc:
                 version.up(field, increase_value)
+
+            assert re.search(r'Invalid field type: %s' % field, str(exc.value))
 
     def test_specified_field_specified_value(self):
         increase_value = 7
@@ -96,48 +99,50 @@ class UpTest(unittest.TestCase):
                 execute('ver', ['up', '--%s' % field, str(increase_value)])
 
             with version_file.open('r') as fh:
-                self.assertEqual(fh.read().strip(), str(version))
+                assert fh.read().strip() == str(version)
 
         other_fields = set(Version.VALID_FIELDS) - set(Version.VALID_UP_FIELDS)
         for field in other_fields:
-            with self.assertRaisesRegex(ValueError, r'Invalid field type: %s' % field):
+            with pytest.raises(ValueError) as exc:
                 version.up(field, increase_value)
+
+            assert re.search(r'Invalid field type: %s' % field, str(exc.value))
 
     def test_specified_invalid_field(self):
         other_fields = set(Version.VALID_FIELDS) - set(Version.VALID_UP_FIELDS)
         other_fields.add('azsx')
         for field in other_fields:
             with catch_streams() as streams, \
-                    self.assertRaises(SystemExit):
+                    pytest.raises(SystemExit):
                 execute('ver', ['up', '--%s' % field])
 
-            self.assertRegex(streams.err.getvalue(), r'(?ms).*unrecognized arguments: --%s' % field)
+            assert re.search(r'(?ms).*unrecognized arguments: --%s' % field, streams.err.getvalue())
             streams.err.truncate()
 
     def test_specified_field_invalid_value(self):
         increase_value = 'asd'
         for field in Version.VALID_UP_FIELDS:
             with catch_streams() as streams, \
-                    self.assertRaises(SystemExit):
+                    pytest.raises(SystemExit):
                 execute('ver', ['up', '--%s' % field, increase_value])
 
-            self.assertRegex(streams.err.getvalue(), r'(?ms).*argument value: invalid int value: \'%s\'' % increase_value)
+            assert re.search(r'(?ms).*argument value: invalid int value: \'%s\'' % increase_value, streams.err.getvalue())
             streams.err.truncate()
 
     def test_multiple_fields_together(self):
         for field1, field2 in itertools.permutations(('minor', 'major', 'patch'), 2):
             with catch_streams() as streams, \
-                    self.assertRaises(SystemExit):
+                    pytest.raises(SystemExit):
                 execute('ver', ['up', '--%s' % field1, '--%s' % field2])
 
-            self.assertRegex(
-                streams.err.getvalue(),
+            assert re.search(
                 r'(?ms).*argument --(%s|%s)/-.: not allowed with argument --(%s|%s)/-.' % (
                     field1, field2, field1, field2
-                )
+                ),
+                streams.err.getvalue(),
             )
             streams.err.truncate()
 
 
 if __name__ == '__main__':
-    unittest.main()
+    pytest.main()

@@ -2,8 +2,10 @@
 
 import os
 from pathlib import Path
+import re
 import tempfile
-import unittest
+
+import pytest
 
 from versionner.cli import execute
 from versionner.config import Config
@@ -17,8 +19,9 @@ def bootstrap_env():
     return dir
 
 
-class InitTest(unittest.TestCase):
-    def setUp(self):
+class TestInit:
+    @pytest.fixture(autouse=True)
+    def set_dev(self):
         self.dir = bootstrap_env()
         self.root = Path(self.dir.name)
         self.cfg = Config()
@@ -30,11 +33,10 @@ class InitTest(unittest.TestCase):
         with catch_streams():
             execute('ver', ['init'])
 
-        self.assertTrue(version_file.is_file(),
-            "%s is not a file (exists: %s)" % (version_file, version_file.exists()))
+        assert version_file.is_file(), "%s is not a file (exists: %s)" % (version_file, version_file.exists())
 
         with version_file.open('r') as fh:
-            self.assertEqual(fh.read().strip(), version)
+            assert fh.read().strip() == version
 
     def test_specified_version(self):
         version = '1.2.3+asd'
@@ -43,11 +45,10 @@ class InitTest(unittest.TestCase):
         with catch_streams():
             execute('ver', ['init', version])
 
-        self.assertTrue(version_file.is_file(),
-            "%s is not a file (exists: %s)" % (version_file, version_file.exists()))
+        assert version_file.is_file(), "%s is not a file (exists: %s)" % (version_file, version_file.exists())
 
         with version_file.open('r') as fh:
-            self.assertEqual(fh.read().strip(), version)
+            assert fh.read().strip() == version
 
     def test_specified_invalid_version(self):
         version = '1.a.3+asd'
@@ -55,8 +56,8 @@ class InitTest(unittest.TestCase):
         with catch_streams() as streams:
             ret_code = execute('ver', ['init', version])
 
-        self.assertEqual(ret_code, 2)
-        self.assertRegex(streams.err.getvalue(), r'^InvalidVersionError:')
+        assert ret_code == 2
+        assert re.search(r'^InvalidVersionError:', streams.err.getvalue())
 
     def test_version_file_exsists(self):
         version = '1.2.3+asd'
@@ -65,11 +66,11 @@ class InitTest(unittest.TestCase):
         open(str(version_file), 'w').close()
 
         with catch_streams() as streams,\
-                self.assertRaises(SystemExit):
+                pytest.raises(SystemExit):
             execute('ver', ['init', version])
 
-        self.assertRegex(streams.err.getvalue(), r'Version file .* already exists')
+        assert re.search(r'Version file .* already exists', streams.err.getvalue())
 
 
 if __name__ == '__main__':
-    unittest.main()
+    pytest.main()

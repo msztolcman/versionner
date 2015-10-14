@@ -2,8 +2,10 @@
 
 import os
 from pathlib import Path
+import re
 import tempfile
-import unittest
+
+import pytest
 
 from versionner.cli import execute
 from versionner.config import Config
@@ -19,8 +21,9 @@ def bootstrap_env():
     return dir
 
 
-class DefaultTest(unittest.TestCase):
-    def setUp(self):
+class TestDefault:
+    @pytest.fixture(autouse=True)
+    def set_dev(self):
         self.dir = bootstrap_env()
         self.root = Path(self.dir.name)
         self.cfg = Config()
@@ -32,11 +35,10 @@ class DefaultTest(unittest.TestCase):
         with catch_streams():
             execute('ver', [])
 
-        self.assertTrue(version_file.is_file(),
-            "%s is not a file (exists: %s)" % (version_file, version_file.exists()))
+        assert version_file.is_file(), "%s is not a file (exists: %s)" % (version_file, version_file.exists())
 
         with version_file.open('r') as fh:
-            self.assertEqual(fh.read().strip(), version)
+            assert fh.read().strip() == version
 
     def test_not_initialized(self):
         version_file = self.root / self.cfg.version_file
@@ -44,11 +46,10 @@ class DefaultTest(unittest.TestCase):
         version_file.unlink()
 
         with catch_streams() as streams, \
-                self.assertRaises(SystemExit):
+                pytest.raises(SystemExit):
             execute('ver', [])
 
-        self.assertRegex(streams.err.getvalue(), r'(?ms).*Version file .* doesn\'t exists')
-
+        assert re.search(r'(?ms).*Version file .* doesn\'t exists', streams.err.getvalue())
 
 if __name__ == '__main__':
-    unittest.main()
+    pytest.main()

@@ -2,8 +2,9 @@
 
 import os
 import tempfile
-import unittest
 from pathlib import Path
+import pytest
+import re
 
 from versionner.cli import execute
 from versionner.config import Config
@@ -21,8 +22,9 @@ def bootstrap_env(create=True):
     return dir
 
 
-class SetTest(unittest.TestCase):
-    def setUp(self):
+class TestSet:
+    @pytest.fixture(autouse=True)
+    def set_env(self):
         self.dir = bootstrap_env()
         self.root = Path(self.dir.name)
         self.cfg = Config()
@@ -34,17 +36,17 @@ class SetTest(unittest.TestCase):
         version_file.unlink()
 
         with catch_streams() as streams,\
-                self.assertRaises(SystemExit):
+                pytest.raises(SystemExit):
             execute('ver', ['set', version])
 
-        self.assertRegex(streams.err.getvalue(), r'(?ms).*Version file .* doesn\'t exists')
+        assert re.search(r'(?ms).*Version file .* doesn\'t exists', streams.err.getvalue())
 
     def test_without_version(self):
         with catch_streams() as streams, \
-                self.assertRaises(SystemExit):
+                pytest.raises(SystemExit):
             execute('ver', ['set'])
 
-        self.assertRegex(streams.err.getvalue(), r'Version is not specified')
+        assert re.search(r'Version is not specified', streams.err.getvalue())
 
     def test_specified_version(self):
         version = '1.2.3+asd'
@@ -53,11 +55,10 @@ class SetTest(unittest.TestCase):
         with catch_streams():
             execute('ver', ['set', version])
 
-        self.assertTrue(version_file.is_file(),
-            "%s is not a file (exists: %s)" % (version_file, version_file.exists()))
+        assert version_file.is_file(), "%s is not a file (exists: %s)" % (version_file, version_file.exists())
 
         with version_file.open('r') as fh:
-            self.assertEqual(fh.read().strip(), version)
+            assert fh.read().strip() == version
 
     def test_specified_fields(self):
         version = Version(self.cfg.default_init_version)
@@ -68,26 +69,25 @@ class SetTest(unittest.TestCase):
                 execute('ver', ['set', '--%s' % field, str(value)])
             version = version.set(field, value)
 
-            self.assertTrue(version_file.is_file(),
-                "%s is not a file (exists: %s)" % (version_file, version_file.exists()))
+            assert version_file.is_file(), "%s is not a file (exists: %s)" % (version_file, version_file.exists())
 
             with version_file.open('r') as fh:
-                self.assertEqual(fh.read().strip(), str(version))
+                assert fh.read().strip() == str(version)
 
     def test_specified_fields_invalid(self):
         for field, value in zip(Version.VALID_UP_FIELDS, ('a', 'b', 'c')):
             with catch_streams() as streams,\
-                    self.assertRaises(SystemExit):
+                    pytest.raises(SystemExit):
                 execute('ver', ['set', '--%s' % field, str(value)])
 
-            self.assertRegex(streams.err.getvalue(), r'(?ms).*argument --%s.*invalid int value' % field)
+            assert re.search(r'(?ms).*argument --%s.*invalid int value' % field, streams.err.getvalue())
 
         other_fields = set(Version.VALID_FIELDS) - set(Version.VALID_UP_FIELDS)
         for field, value in zip(other_fields, ('ążśź', 'ążśź')):
             with catch_streams() as streams:
                 execute('ver', ['set', '--%s' % field, str(value)])
 
-            self.assertRegex(streams.err.getvalue(), r'(?ms).*Invalid value for field %s: %s' % (field, value))
+            assert re.search(r'(?ms).*Invalid value for field %s: %s' % (field, value), streams.err.getvalue())
             streams.err.truncate()
 
     def test_all_fields_together(self):
@@ -97,11 +97,10 @@ class SetTest(unittest.TestCase):
             args = ['set', '--major', '7', '--minor', '8', '--patch', '1', '--prerelease', 'ZZZ', '--build', 'XXX']
             execute('ver', args)
 
-            self.assertTrue(version_file.is_file(),
-                "%s is not a file (exists: %s)" % (version_file, version_file.exists()))
+            assert version_file.is_file(), "%s is not a file (exists: %s)" % (version_file, version_file.exists())
 
             with version_file.open('r') as fh:
-                self.assertEqual(fh.read().strip(), '7.8.1-ZZZ+XXX')
+                assert fh.read().strip() == '7.8.1-ZZZ+XXX'
 
     def test_specified_invalid_version(self):
         version = '1.a.3+asd'
@@ -109,9 +108,9 @@ class SetTest(unittest.TestCase):
         with catch_streams() as streams:
             ret_code = execute('ver', ['set', version])
 
-        self.assertEqual(ret_code, 2)
-        self.assertRegex(streams.err.getvalue(), r'^InvalidVersionError:')
+        assert ret_code == 2
+        assert re.search(r'^InvalidVersionError:', streams.err.getvalue())
 
 
 if __name__ == '__main__':
-    unittest.main()
+    pytest.main()
