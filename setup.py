@@ -16,7 +16,7 @@ setup(
     version='1.3.0',
     description='versionner helps manipulating version of the project.',
     long_description=long_description,
-    url='http://mysz.github.io/versionner/',
+    url='http://msztolcman.github.io/versionner/',
     author='Marcin Sztolcman',
     author_email='marcin@urzenia.net',
     license='MIT',

@@ -238,13 +238,13 @@ Simplest way is to use Python's built-in package system:
 
 2. Using sources
 
-Download sources from [Github](https://github.com/mysz/versionner/archive/1.3.0.zip):
+Download sources from [Github](https://github.com/msztolcman/versionner/archive/1.3.0.zip):
 
-    wget -O 1.3.0.zip https://github.com/mysz/versionner/archive/1.3.0.zip
+    wget -O 1.3.0.zip https://github.com/msztolcman/versionner/archive/1.3.0.zip
     
 or
 
-    curl -o 1.3.0.zip https://github.com/mysz/versionner/archive/1.3.0.zip
+    curl -o 1.3.0.zip https://github.com/msztolcman/versionner/archive/1.3.0.zip
 
 Unpack:
 
@@ -269,7 +269,7 @@ If you like or dislike this software, please do not hesitate to tell me about
 this me via email (marcin@urzenia.net).
 
 If you find bug or have an idea to enhance this tool, please use GitHub's
-[issues](https://github.com/mysz/versionner/issues).
+[issues](https://github.com/msztolcman/versionner/issues).
 
 License
 -------
