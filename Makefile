@@ -15,3 +15,6 @@ upload:
 	twine upload dist/versionner*
 
 distro: clean build upload
+
+register:
+	python setup.py register
