@@ -236,7 +236,11 @@ Simplest way is to use Python's built-in package system:
 
     pip3 install versionner
 
-2. Using sources
+2. Using [pipsi](https://github.com/mitsuhiko/pipsi)
+  
+    pipsi install --python3 versionner
+  
+3. Using sources
 
 Download sources from [Github](https://github.com/msztolcman/versionner/archive/1.3.0.zip):
 
