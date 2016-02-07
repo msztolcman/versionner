@@ -147,10 +147,10 @@ class Config:
 
     def _parse_vcs_section(self, cfg_handler):
         """
-            Parse [vcs] section
-            :param cfg_handler:
-            :return:
-            """
+        Parse [vcs] section
+        :param cfg_handler:
+        :return:
+        """
         if 'vcs' in cfg_handler:
             cfg = cfg_handler['vcs']
             if 'engine' in cfg:
@@ -162,10 +162,10 @@ class Config:
 
     def _parse_file_section(self, cfg_handler):
         """
-            Parse [file:*] sections
-            :param cfg_handler:
-            :return:
-            """
+        Parse [file:*] sections
+        :param cfg_handler:
+        :return:
+        """
 
         _number_rxp = re.compile(r'^\d+:(.)')
         # project files configuration
