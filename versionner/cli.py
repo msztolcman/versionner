@@ -384,8 +384,8 @@ def command_default(cfg):
 def _find_project_config_file(user_config_file):
     """
     Find path to project-wide config file
-    Search from current user directory, and traverse path up to
-    directory with versionner rc file or root directort
+    Search from current working directory, and traverse path up to
+    directory with .versionner.rc file or root directory
 
     :param user_config_file:pathlib.Path instance with user-wide config path
     :return:pathlib.Path
