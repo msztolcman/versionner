@@ -27,7 +27,7 @@ Features
 Python version
 --------------
 
-``versionner`` works only with Python 3.3+. Older versions are
+``versionner`` works only with Python 3.3+. Older Python versions are
 unsupported.
 
 Some examples
