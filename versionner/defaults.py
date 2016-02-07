@@ -3,7 +3,6 @@
 """
 
 RC_FILENAME = '.versionner.rc'
-DEFAULT_VERSION_FILE = './VERSION'
 DEFAULT_DATE_FORMAT = '%Y-%m-%d'
 DEFAULT_UP_PART = 'minor'
 DEFAULT_VCS_TIMEOUT = 5

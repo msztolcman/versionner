@@ -85,7 +85,6 @@ class Config:
         'vcs_engine',
         'vcs_tag_params',
         'verbose',
-        'version_file',
     )
 
     def __init__(self, files=None):
@@ -106,7 +105,6 @@ class Config:
         self.vcs_engine = 'git'
         self.vcs_tag_params = []
         self.verbose = False
-        self.version_file = defaults.DEFAULT_VERSION_FILE
 
         if files:
             self._parse_config_file(files)
@@ -134,8 +132,6 @@ class Config:
         # global configuration
         if 'versionner' in cfg_handler:
             cfg = cfg_handler['versionner']
-            if 'file' in cfg:
-                self.version_file = cfg['file']
             if 'date_format' in cfg:
                 self.date_format = cfg['date_format']
             if 'up_part' in cfg:

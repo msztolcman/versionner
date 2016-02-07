@@ -41,9 +41,6 @@ def parse_args(args, cfg):
 
     # pylint: disable=invalid-name
     p = argparse.ArgumentParser(prog=prog, description='Helps manipulating version of the project')
-    p.add_argument('--file', '-f', dest='version_file', type=str,
-        default=cfg.version_file,
-        help="path to file where version is saved")
     p.add_argument('--version', '-v', action="version", version=prog_version)
     p.add_argument('--date-format', type=str,
         default=cfg.date_format,
@@ -120,22 +117,16 @@ def parse_args(args, cfg):
     args = p.parse_args(args)
 
     cfg.command = args.command
-    cfg.version_file = pathlib.Path(args.version_file).absolute()
     cfg.date_format = args.date_format
     cfg.verbose = args.verbose
 
-    version_file_requirement = 'doesn\'t matter'
     if cfg.command == 'init':
-        version_file_requirement = 'none'
-
         cfg.commit = args.commit
         cfg.vcs_engine = args.vcs_engine
         cfg.vcs_commit_message = args.vcs_commit_message
         cfg.value = args.value
 
     elif cfg.command == 'up':
-        version_file_requirement = 'required'
-
         cfg.commit = args.commit
         cfg.vcs_engine = args.vcs_engine
         cfg.vcs_commit_message = args.vcs_commit_message
@@ -148,8 +139,6 @@ def parse_args(args, cfg):
             cfg.up_part = 'patch'
 
     elif cfg.command == 'set':
-        version_file_requirement = 'required'
-
         cfg.commit = args.commit
         cfg.vcs_engine = args.vcs_engine
         cfg.vcs_commit_message = args.vcs_commit_message
@@ -166,19 +155,7 @@ def parse_args(args, cfg):
                 p.error("Version is not specified")
 
     elif cfg.command == 'tag':
-        version_file_requirement = 'required'
-
         cfg.vcs_tag_params = args.vcs_tag_params or []
-
-    elif cfg.command is None:
-        version_file_requirement = 'required'
-
-    if version_file_requirement == 'required':
-        if not cfg.version_file.exists():
-            p.error("Version file \"%s\" doesn't exists" % cfg.version_file)
-    elif version_file_requirement == 'none':
-        if cfg.version_file.exists():
-            p.error("Version file \"%s\" already exists" % cfg.version_file)
 
 
 def update_project_files(cfg, proj_version):
