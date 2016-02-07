@@ -36,6 +36,8 @@ setup(
     ],
     install_requires=['argparse', 'semver'],
     packages=find_packages(),
+    package_data={'': ['LICENSE']},
+    include_package_data=True,
 
     keywords='version management',
 
