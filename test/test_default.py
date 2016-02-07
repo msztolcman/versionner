@@ -30,7 +30,7 @@ class TestDefault:
 
     def test_empty(self):
         version = self.cfg.default_init_version
-        version_file = self.root / self.cfg.version_file
+        version_file = self.root / self.cfg.storage_filename
 
         with catch_streams():
             execute('ver', [])
@@ -41,7 +41,7 @@ class TestDefault:
             assert fh.read().strip() == version
 
     def test_not_initialized(self):
-        version_file = self.root / self.cfg.version_file
+        version_file = self.root / self.cfg.storage_filename
 
         version_file.unlink()
 

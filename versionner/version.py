@@ -3,6 +3,7 @@
 """
 
 import pathlib
+import shelve
 import shutil
 import tempfile
 import functools
@@ -10,7 +11,7 @@ from collections import abc
 
 import semver
 
-from versionner.errors import InvalidVersionError
+from versionner.errors import InvalidVersionError, InvalidStorageType
 
 
 @functools.total_ordering
@@ -192,11 +193,8 @@ class Version:
 
         return result == -1
 
-class VersionFile():
-    """
-    Manipulate project version file
-    """
 
+class VersionStorage:
     def __init__(self, path):
         """
         Initialisation
@@ -204,6 +202,30 @@ class VersionFile():
         :param path:pathlib.Path
         """
         self._path = path
+
+    def read(self):
+        raise NotImplementedError("Should be implemented")
+
+    def write(self, version):
+        raise NotImplementedError("Should be implemented")
+
+    def close(self):
+        pass
+
+    def __str__(self):
+        return str(self._path)
+
+    def __enter__(self):
+        pass
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.close()
+
+
+class VersionFile(VersionStorage):
+    """
+    Manipulate project version file
+    """
 
     def read(self):
         """
@@ -229,5 +251,26 @@ class VersionFile():
             shutil.copystat(str(self._path), fh.name)
         pathlib.Path(fh.name).rename(self._path)
 
-    def __str__(self):
-        return str(self._path)
+
+class VersionDB(VersionStorage):
+    def __init__(self, path):
+        super().__init__(path)
+        self._db = shelve.open(str(self._path))
+
+    def read(self):
+        return self._db[str(self._path)]
+
+    def write(self, version):
+        self._db[str(self._path)] = str(version)
+
+    def close(self):
+        self._db.close()
+
+
+def get_storage(type, path):
+    if type == 'file':
+        return VersionFile(path)
+    elif type == 'vcs':
+        return VersionDB(path)
+    else:
+        raise InvalidStorageType("Unknown storage type: %s" % type)

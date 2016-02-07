@@ -31,7 +31,7 @@ class TestSet:
 
     def test_not_initialized(self):
         version = '1.2.3+asd'
-        version_file = self.root / self.cfg.version_file
+        version_file = self.root / self.cfg.storage_filename
 
         version_file.unlink()
 
@@ -50,7 +50,7 @@ class TestSet:
 
     def test_specified_version(self):
         version = '1.2.3+asd'
-        version_file = self.root / self.cfg.version_file
+        version_file = self.root / self.cfg.storage_filename
 
         with catch_streams():
             execute('ver', ['set', version])
@@ -62,7 +62,7 @@ class TestSet:
 
     def test_specified_fields(self):
         version = Version(self.cfg.default_init_version)
-        version_file = self.root / self.cfg.version_file
+        version_file = self.root / self.cfg.storage_filename
 
         for field, value in zip(Version.VALID_FIELDS, (2, 3, 4, 'asd', 'qwe')):
             with catch_streams():
@@ -91,7 +91,7 @@ class TestSet:
             streams.err.truncate()
 
     def test_all_fields_together(self):
-        version_file = self.root / self.cfg.version_file
+        version_file = self.root / self.cfg.storage_filename
 
         with catch_streams():
             args = ['set', '--major', '7', '--minor', '8', '--patch', '1', '--prerelease', 'ZZZ', '--build', 'XXX']

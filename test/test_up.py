@@ -32,7 +32,7 @@ class TestUp:
         self.cfg = Config()
 
     def test_not_initialized(self):
-        version_file = self.root / self.cfg.version_file
+        version_file = self.root / self.cfg.storage_filename
 
         version_file.unlink()
 
@@ -46,7 +46,7 @@ class TestUp:
         increase_value = self.cfg.default_increase_value
         version = Version(self.cfg.default_init_version)
         version_expected = version.up(self.cfg.up_part, increase_value)
-        version_file = self.root / self.cfg.version_file
+        version_file = self.root / self.cfg.storage_filename
 
         with catch_streams():
             execute('ver', ['up'])
@@ -58,7 +58,7 @@ class TestUp:
         increase_value = 7
         version = Version(self.cfg.default_init_version)
         version_expected = version.up(self.cfg.up_part, increase_value)
-        version_file = self.root / self.cfg.version_file
+        version_file = self.root / self.cfg.storage_filename
 
         with catch_streams():
             execute('ver', ['up', str(increase_value)])
@@ -69,7 +69,7 @@ class TestUp:
     def test_specified_field_default_value(self):
         increase_value = self.cfg.default_increase_value
         version = Version(self.cfg.default_init_version)
-        version_file = self.root / self.cfg.version_file
+        version_file = self.root / self.cfg.storage_filename
 
         for field in Version.VALID_UP_FIELDS:
             version = version.up(field, increase_value)
@@ -90,7 +90,7 @@ class TestUp:
     def test_specified_field_specified_value(self):
         increase_value = 7
         version = Version(self.cfg.default_init_version)
-        version_file = self.root / self.cfg.version_file
+        version_file = self.root / self.cfg.storage_filename
 
         for field in Version.VALID_UP_FIELDS:
             version = version.up(field, increase_value)

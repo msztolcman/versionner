@@ -2,6 +2,7 @@
     Main CLI engine for versionner
     Parse input options, and make all dirty jobs.
 """
+import warnings
 
 from versionner import utils
 
@@ -42,7 +43,7 @@ def parse_args(args, cfg):
     # pylint: disable=invalid-name
     p = argparse.ArgumentParser(prog=prog, description='Helps manipulating version of the project')
     p.add_argument('--file', '-f', dest='version_file', type=str,
-        default=cfg.version_file,
+        default=cfg.storage_path,
         help="path to file where version is saved")
     p.add_argument('--version', '-v', action="version", version=prog_version)
     p.add_argument('--date-format', type=str,
@@ -50,6 +51,12 @@ def parse_args(args, cfg):
         help="Date format used in project files")
     p.add_argument('--verbose', action="store_true",
         help="Be more verbose if it's possible")
+    p.add_argument('--storage-type', type=str, choices=('file', 'vcs'),
+        default=cfg.storage_type,
+        help='what storage is used to keeping current version info (currently available storages: file, vcs)')
+    p.add_argument('--storage-path', type=str,
+        default=cfg.storage_path,
+        help='for --storage-type="file", what file is used for keeping version info')
 
     sub = p.add_subparsers(dest='command')
 
@@ -120,13 +127,17 @@ def parse_args(args, cfg):
     args = p.parse_args(args)
 
     cfg.command = args.command
-    cfg.version_file = pathlib.Path(args.version_file).absolute()
+    if args.storage_path == cfg.storage_path and args.version_file != cfg.storage_path:
+        warnings.warn('"--file" param is deprecated. Use "--storage-path" param')
+        args.storage_path = args.version_file
+    cfg.storage_path = pathlib.Path(args.storage_path).absolute()
     cfg.date_format = args.date_format
     cfg.verbose = args.verbose
 
     version_file_requirement = 'doesn\'t matter'
     if cfg.command == 'init':
-        version_file_requirement = 'none'
+        if cfg.storage_type == 'file':
+            version_file_requirement = 'none'
 
         cfg.commit = args.commit
         cfg.vcs_engine = args.vcs_engine
@@ -134,7 +145,8 @@ def parse_args(args, cfg):
         cfg.value = args.value
 
     elif cfg.command == 'up':
-        version_file_requirement = 'required'
+        if cfg.storage_type == 'file':
+            version_file_requirement = 'required'
 
         cfg.commit = args.commit
         cfg.vcs_engine = args.vcs_engine
@@ -148,7 +160,8 @@ def parse_args(args, cfg):
             cfg.up_part = 'patch'
 
     elif cfg.command == 'set':
-        version_file_requirement = 'required'
+        if cfg.storage_type == 'file':
+            version_file_requirement = 'required'
 
         cfg.commit = args.commit
         cfg.vcs_engine = args.vcs_engine
@@ -166,12 +179,14 @@ def parse_args(args, cfg):
                 p.error("Version is not specified")
 
     elif cfg.command == 'tag':
-        version_file_requirement = 'required'
+        if cfg.storage_type == 'file':
+            version_file_requirement = 'required'
 
         cfg.vcs_tag_params = args.vcs_tag_params or []
 
     elif cfg.command is None:
-        version_file_requirement = 'required'
+        if cfg.storage_type == 'file':
+            version_file_requirement = 'required'
 
     if version_file_requirement == 'required':
         if not cfg.version_file.exists():

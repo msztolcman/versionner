@@ -85,7 +85,8 @@ class Config:
         'vcs_engine',
         'vcs_tag_params',
         'verbose',
-        'version_file',
+        'storage_path',
+        'storage_type',
     )
 
     def __init__(self, files=None):
@@ -106,7 +107,8 @@ class Config:
         self.vcs_engine = 'git'
         self.vcs_tag_params = []
         self.verbose = False
-        self.version_file = defaults.DEFAULT_VERSION_FILE
+        self.storage_path = defaults.DEFAULT_STORAGE_PATH
+        self.storage_type = 'file'
 
         if files:
             self._parse_config_file(files)
@@ -124,6 +126,7 @@ class Config:
         self._parse_global_section(cfg_handler)
         self._parse_vcs_section(cfg_handler)
         self._parse_file_section(cfg_handler)
+        self._parse_storage_section(cfg_handler)
 
     def _parse_global_section(self, cfg_handler):
         """
@@ -135,7 +138,9 @@ class Config:
         if 'versionner' in cfg_handler:
             cfg = cfg_handler['versionner']
             if 'file' in cfg:
-                self.version_file = cfg['file']
+                import warnings
+                warnings.warn('"file" option in [versionner] section is deprecated. Use "path" option in section ["storage"]')
+                self.storage_path = cfg['file']
             if 'date_format' in cfg:
                 self.date_format = cfg['date_format']
             if 'up_part' in cfg:
@@ -186,6 +191,19 @@ class Config:
                         print("Incorrect configuration for file \"%s\": %s" % (project_file.filename, ex.args[0]), file=sys.stderr)
                     else:
                         self.files.append(project_file)
+
+    def _parse_storage_section(self, cfg_handler):
+        """
+        Parse [storage] section
+        :param cfg_handler:
+        :return:
+        """
+        if 'storage' in cfg_handler:
+            cfg = cfg_handler['storage']
+            if 'filename' in cfg:
+                self.storage_path = cfg['path']
+            if 'type' in cfg:
+                self.storage_type = cfg['type']
 
     def __repr__(self):
         ret = '<' + self.__class__.__name__ + ': '

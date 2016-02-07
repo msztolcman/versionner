@@ -28,7 +28,7 @@ class TestInit:
 
     def test_empty(self):
         version = self.cfg.default_init_version
-        version_file = self.root / self.cfg.version_file
+        version_file = self.root / self.cfg.storage_filename
 
         with catch_streams():
             execute('ver', ['init'])
@@ -40,7 +40,7 @@ class TestInit:
 
     def test_specified_version(self):
         version = '1.2.3+asd'
-        version_file = self.root / self.cfg.version_file
+        version_file = self.root / self.cfg.storage_filename
 
         with catch_streams():
             execute('ver', ['init', version])
@@ -61,7 +61,7 @@ class TestInit:
 
     def test_version_file_exsists(self):
         version = '1.2.3+asd'
-        version_file = self.root / self.cfg.version_file
+        version_file = self.root / self.cfg.storage_filename
 
         open(str(version_file), 'w').close()
 
