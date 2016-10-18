@@ -2,11 +2,11 @@
     Playing with versions and version file
 """
 
+from collections import abc
+import functools
 import pathlib
 import shutil
 import tempfile
-import functools
-from collections import abc
 
 import semver
 
