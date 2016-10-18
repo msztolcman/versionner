@@ -21,6 +21,3 @@ build:
 
 upload:
 	twine upload dist/versionner*
-
-register:
-	python setup.py register
