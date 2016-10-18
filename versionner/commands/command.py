@@ -9,6 +9,11 @@ from collections import namedtuple
 from versionner import config
 
 
+class CommandOutput(namedtuple('CommandOutput', ['current_version', 'modifications', 'modified_files'])):
+    def __new__(cls, current_version, modifications=None, modified_files=None):
+        return super(CommandOutput, cls).__new__(cls, current_version, modifications, modified_files)
+
+
 class Command:
     def __init__(self, cfg:config.Config):
         self.cfg = cfg
@@ -22,8 +27,3 @@ class Command:
         @return:
         """
         raise NotImplementedError("Not implemented yet...")
-
-
-class CommandOutput(namedtuple('CommandOutput', ('current_version', 'modifications', 'modified_files'))):
-    def __new__(cls, current_version, modifications=None, modified_files=None):
-        return super(CommandOutput, cls).__new__(cls, current_version, modifications, modified_files)
