@@ -318,8 +318,8 @@ def execute(prog, argv):
     cfg = config.Config(cfg_files)
     parse_args(argv, cfg)
 
-    cmd = commands.get(cfg.command)
-    result = cmd(cfg).execute()
+    cmd = commands.get(cfg.command, cfg)
+    result = cmd.execute()
 
     print("Current version: %s" % (result.current_version, ))
 

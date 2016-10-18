@@ -36,19 +36,22 @@ _manage_commands()
 del _manage_commands
 
 
-def get(name):
+def get(name, *args, **kwargs):
     """
-    Find command class for given command name
-    @param name:str
-    @return: commands.Command
+        Find command class for given command name and return it's instance
+        :param name: str
+        :param args: additional arguments for Command
+        :param kwargs: additional arguments for Command
+        :return: Command
     """
-    return COMMAND_MAPPER.get(name)
+    cmd = COMMAND_MAPPER.get(name)
+    return cmd(*args, **kwargs)
 
 
 def get_aliases_for(name):
     """
     Find aliases for given command name
-    @param name: str
-    @return: Str[]
+    :param name: str
+    :return: Str[]
     """
     return COMMAND_ALIASES[name]
