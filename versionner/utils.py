@@ -2,9 +2,10 @@
     Additional utilities
 """
 
-import pkg_resources
 import platform
 import sys
+
+import pkg_resources
 
 
 def validate_python_version():

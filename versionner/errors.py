@@ -12,5 +12,3 @@ class VersionnerError(Exception):
 class ConfigError(VersionnerError):
     """ Configuration error
     """
-
-

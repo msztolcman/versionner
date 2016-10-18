@@ -182,8 +182,8 @@ class Config:
                 if project_file.enabled:
                     try:
                         project_file.validate()
-                    except ValueError as ex:
-                        print("Incorrect configuration for file \"%s\": %s" % (project_file.filename, ex.args[0]), file=sys.stderr)
+                    except ValueError as exc:
+                        print("Incorrect configuration for file \"%s\": %s" % (project_file.filename, exc.args[0]), file=sys.stderr)
                     else:
                         self.files.append(project_file)
 

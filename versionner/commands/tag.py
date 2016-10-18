@@ -1,3 +1,7 @@
+"""
+Class for command: tag
+"""
+
 import traceback
 
 from versionner.commands import Command, CommandOutput

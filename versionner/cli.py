@@ -3,10 +3,12 @@
     Parse input options, and make all dirty jobs.
 """
 
+# pylint: disable=wrong-import-position
 from versionner import utils
 
 utils.validate_python_version()
 
+# pylint: disable=wrong-import-order
 import argparse
 import pathlib
 import os.path
@@ -16,9 +18,8 @@ import versionner
 from versionner import config
 from versionner import defaults
 from versionner import commands
+from versionner.errors import VersionnerError
 
-# pylint: disable=wildcard-import
-from versionner.errors import *
 
 # pylint: disable=too-many-branches,too-many-statements
 def parse_args(args, cfg):
@@ -112,7 +113,7 @@ def parse_args(args, cfg):
     p_tag.add_argument('--vcs-tag-param', dest='vcs_tag_params', type=str, action="append",
         help="Additional params for VCS for \"tag\" command")
 
-    p_read = sub.add_parser('read', aliases=commands.get_aliases_for('read'),
+    sub.add_parser('read', aliases=commands.get_aliases_for('read'),
         help="Read current version")
 
     args = p.parse_args(args)
@@ -198,6 +199,7 @@ def _find_project_config_file(user_config_file):
             break
 
         proj_cfg_file = None
+        # pylint: disable=redefined-variable-type
         proj_cfg_dir = proj_cfg_dir.parent
 
     if proj_cfg_file and proj_cfg_file != user_config_file:

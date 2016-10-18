@@ -1,3 +1,7 @@
+"""
+helpers for commands related to manipulating files
+"""
+
 import pathlib
 import re
 import shutil
