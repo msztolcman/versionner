@@ -117,6 +117,9 @@ def parse_args(args, cfg):
     p_tag.add_argument('--vcs-tag-param', dest='vcs_tag_params', type=str, action="append",
         help="Additional params for VCS for \"tag\" command")
 
+    p_read = sub.add_parser('read', aliases=commands.get_aliases_for('read'),
+        help="Read current version")
+
     args = p.parse_args(args)
 
     cfg.command = args.command
