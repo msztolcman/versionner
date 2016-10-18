@@ -11,6 +11,6 @@ class Up(Command):
 
         new = current.up(self.cfg.up_part, self.cfg.value)
 
-        quant = save_version_and_update_files(self.cfg, version_file, new)
+        modified_files = save_version_and_update_files(self.cfg, version_file, new)
 
-        return CommandOutput(quant, new)
+        return CommandOutput(modified_files, new)

@@ -323,8 +323,8 @@ def execute(prog, argv):
 
     print("Current version: %s" % (result.current_version, ))
 
-    if result.quant:
-        print('Changed' + (' and committed' if cfg.commit else '') + ' %(files)s files (%(changes)s changes)' % result.quant)
+    if result.modified_files:
+        print('Changed' + (' and committed' if cfg.commit else '') + ' %(files)s files (%(changes)s changes)' % result.modified_files)
 
     return 0
 

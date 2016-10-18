@@ -24,6 +24,6 @@ class Set(Command):
             except ValueError as exc:
                 raise version.InvalidVersionError("Cannot parse version string: %s" % self.cfg.value) from exc
 
-        quant = save_version_and_update_files(self.cfg, version_file, new)
+        modified_files = save_version_and_update_files(self.cfg, version_file, new)
 
-        return CommandOutput(quant, new)
+        return CommandOutput(modified_files, new)

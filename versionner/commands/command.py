@@ -24,4 +24,4 @@ class Command:
         raise NotImplementedError("Not implemented yet...")
 
 
-CommandOutput = namedtuple('CommandOutput', ('quant', 'current_version'))
+CommandOutput = namedtuple('CommandOutput', ('modified_files', 'current_version'))
