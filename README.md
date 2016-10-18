@@ -302,6 +302,24 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ChangeLog
 ---------
 
+### v1.4.0
+
+* Added explicit 'read' action
+* Search for .versionner.rc in current, but also in parents directories
+* Require at least one: --major, --minor, --patch, --prerelease or --build param for 'set' action
+* New configuration option: default_increase_value
+* Allow for '0' value for 'set' command
+* More readable error message when version is improperly formatted
+* Saving VersionFile in safe way (using temporary file)
+* Rewritten handling of configuration
+* Much better error handling
+* Using py.test in tests
+* Added more unit tests
+* Many pylint fixes
+* Version class can be comparised and sorted
+* Allow to create Version class from string (parsing)
+* Actions refactored to be derived from Command class
+
 ### v1.3.0
 
 * Allow to automatically commit changes done by commands: up, set, init
