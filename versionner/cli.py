@@ -319,7 +319,12 @@ def execute(prog, argv):
     parse_args(argv, cfg)
 
     cmd = commands.get(cfg.command, cfg)
-    result = cmd.execute()
+
+    try:
+        result = cmd.execute()
+    except VersionnerError as exc:
+        print('%s: %s' % (exc.__class__.__name__, exc), file=sys.stderr)
+        return exc.ret_code
 
     print("Current version: %s" % (result.current_version, ))
 
