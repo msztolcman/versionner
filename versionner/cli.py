@@ -321,14 +321,10 @@ def execute(prog, argv):
     cmd = commands.get(cfg.command)
     result = cmd(cfg).execute()
 
-    quant = result['quant']
-    current = result['current_version']
-    commit = result.get('commit')
+    print("Current version: %s" % (result.current_version, ))
 
-    print("Current version: %s" % current)
-
-    if quant:
-        print('Changed' + (' and committed' if commit else '') + ' %(files)s files (%(changes)s changes)' % quant)
+    if result.quant:
+        print('Changed' + (' and committed' if cfg.commit else '') + ' %(files)s files (%(changes)s changes)' % result.quant)
 
     return 0
 

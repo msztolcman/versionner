@@ -1,4 +1,4 @@
-from versionner.commands import Command
+from versionner.commands import Command, CommandOutput
 from versionner import version
 from versionner.commands.files_management import save_version_and_update_files
 
@@ -14,4 +14,4 @@ class Init(Command):
 
         quant = save_version_and_update_files(self.cfg, version_file, current)
 
-        return {'current_version': current, 'quant': quant, 'commit': self.cfg.commit}
+        return CommandOutput(quant, current)

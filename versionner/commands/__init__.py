@@ -3,7 +3,7 @@ Commands for versionner
 Module defines helpers for searching for commands and aliases for them.
 """
 
-from .command import Command
+from .command import Command, CommandOutput
 from .up import Up
 from .tag import Tag
 from .set import Set

@@ -2,10 +2,11 @@
 Abstract class for commands
 """
 
+from collections import namedtuple
+
 
 # pylint: disable=too-few-public-methods,missing-docstring
 from versionner import config
-from versionner import version
 
 
 class Command:
@@ -21,3 +22,6 @@ class Command:
         @return:
         """
         raise NotImplementedError("Not implemented yet...")
+
+
+CommandOutput = namedtuple('CommandOutput', ('quant', 'current_version'))

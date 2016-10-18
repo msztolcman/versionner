@@ -1,4 +1,4 @@
-from versionner.commands import Command
+from versionner.commands import Command, CommandOutput
 from versionner import version
 
 
@@ -9,4 +9,4 @@ class Read(Command):
 
         current = version_file.read()
 
-        return {'current_version': current, 'quant': 0}
+        return CommandOutput(0, current)

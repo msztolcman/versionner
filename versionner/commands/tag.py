@@ -1,6 +1,6 @@
 import traceback
 
-from versionner.commands import Command
+from versionner.commands import Command, CommandOutput
 from versionner import version
 from versionner import vcs
 
@@ -22,4 +22,4 @@ class Tag(Command):
         else:
             print('Git tag created')
 
-        return {'current_version': current, 'quant': 0}
+        return CommandOutput(0, current)
