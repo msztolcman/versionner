@@ -219,7 +219,7 @@ class VersionFile():
         """
         with self._path.open(mode='r') as fh:
             version = fh.read().strip()
-            return Version(version)
+        return Version(version)
 
     def write(self, version):
         """
