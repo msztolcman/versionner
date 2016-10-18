@@ -14,6 +14,3 @@ class ConfigError(VersionnerError):
     """
 
 
-class InvalidVersionError(VersionnerError):
-    """ Bad version string/value error
-    """

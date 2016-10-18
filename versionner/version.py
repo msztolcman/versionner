@@ -10,7 +10,12 @@ from collections import abc
 
 import semver
 
-from versionner.errors import InvalidVersionError
+from versionner.errors import VersionnerError
+
+
+class InvalidVersionError(VersionnerError):
+    """ Bad version string/value error
+    """
 
 
 @functools.total_ordering
