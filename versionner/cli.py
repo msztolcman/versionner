@@ -53,7 +53,7 @@ def parse_args(args, cfg):
 
     sub = p.add_subparsers(dest='command')
 
-    p_init = sub.add_parser('init',
+    p_init = sub.add_parser('init', aliases=commands.get_aliases_for('init'),
         help="Create new version file")
     p_init.add_argument('value', nargs='?', type=str,
         default=cfg.default_init_version,
@@ -67,7 +67,7 @@ def parse_args(args, cfg):
     p_init.add_argument('--commit', '-c', action='store_true',
         help="Commit changes done by `up` command (only if there is no changes in repo before)")
 
-    p_up = sub.add_parser('up',
+    p_up = sub.add_parser('up', aliases=commands.get_aliases_for('up'),
         help="Increase version")
     p_up.add_argument('--vcs-engine', type=str,
         default=cfg.vcs_engine,
@@ -89,7 +89,7 @@ def parse_args(args, cfg):
     p_up_gr.add_argument('--patch', '-p', action="store_true",
         help="increase patch part of version" + (" (project default)" if cfg.up_part == 'patch' else ""))
 
-    p_set = sub.add_parser('set',
+    p_set = sub.add_parser('set', aliases=commands.get_aliases_for('set'),
         help="Set version to specified one")
     p_set.add_argument('--major', '-j', type=int,
         help="set major part of version to MAJOR")
@@ -112,7 +112,7 @@ def parse_args(args, cfg):
     p_set.add_argument('value', nargs='?', type=str,
         help="set version to this value")
 
-    p_tag = sub.add_parser('tag',
+    p_tag = sub.add_parser('tag', aliases=commands.get_aliases_for('tag'),
         help="Create VCS tag with current version")
     p_tag.add_argument('--vcs-tag-param', dest='vcs_tag_params', type=str, action="append",
         help="Additional params for VCS for \"tag\" command")
