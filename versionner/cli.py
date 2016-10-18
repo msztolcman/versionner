@@ -238,7 +238,7 @@ def execute(prog, argv):
     if result.modified_files:
         print('Changed' + (' and committed' if cfg.commit else '') + ' %(files)s files (%(changes)s changes)' % {
             'files': result.modified_files,
-            'changes': result.changes,
+            'changes': result.modifications,
         })
 
     return 0
