@@ -15,13 +15,13 @@ import shutil
 import sys
 import tempfile
 import time
-import traceback
 
 import versionner
 from versionner import config
 from versionner import defaults
-from versionner import version
 from versionner import vcs
+from versionner import commands
+
 # pylint: disable=wildcard-import
 from versionner.errors import *
 
@@ -171,6 +171,7 @@ def parse_args(args, cfg):
         cfg.vcs_tag_params = args.vcs_tag_params or []
 
     elif cfg.command is None:
+        cfg.command = 'read'
         version_file_requirement = 'required'
 
     if version_file_requirement == 'required':
@@ -272,115 +273,6 @@ def save_version_and_update_files(cfg, version_file, version_to_save):
     return quant
 
 
-def command_up(cfg):
-    """
-    Realize tasks for 'up' command
-
-    :param cfg:
-    :return:
-    """
-
-    version_file = version.VersionFile(cfg.version_file)
-
-    current = version_file.read()
-
-    new = current.up(cfg.up_part, cfg.value)
-
-    quant = save_version_and_update_files(cfg, version_file, new)
-
-    return {'current_version': new, 'quant': quant, 'commit': cfg.commit}
-
-
-def command_set(cfg):
-    """
-    Realize tasks for 'set' command
-
-    :param cfg:
-    :return:
-    """
-
-    version_file = version.VersionFile(cfg.version_file)
-    current = version_file.read()
-
-    if isinstance(cfg.value, tuple):
-        new = version.Version(current)
-
-        try:
-            for field, value in zip(version.Version.VALID_FIELDS, cfg.value):
-                if value is not None:
-                    new = new.set(field, value)
-        except ValueError as exc:
-            raise InvalidVersionError("Cannot use \"%s\" as \"--%s\" field" % (value, field)) from exc
-    else:
-        try:
-            new = version.Version(cfg.value)
-        except ValueError as exc:
-            raise InvalidVersionError("Cannot parse version string: %s" % cfg.value) from exc
-
-    quant = save_version_and_update_files(cfg, version_file, new)
-
-    return {'current_version': new, 'quant': quant, 'commit': cfg.commit}
-
-
-def command_init(cfg):
-    """
-    Realize tasks for 'init' command
-
-    :rtype : Config :
-    :param cfg:
-    :return:
-    """
-
-    version_file = version.VersionFile(cfg.version_file)
-
-    try:
-        current = version.Version(cfg.value)
-    except ValueError as exc:
-        raise InvalidVersionError("Cannot parse version string: %s" % cfg.value) from exc
-
-    quant = save_version_and_update_files(cfg, version_file, current)
-
-    return {'current_version': current, 'quant': quant, 'commit': cfg.commit}
-
-
-def command_tag(cfg):
-    """
-    Realize tasks for 'tag' command
-
-    :param cfg:
-    :return:
-    """
-    version_file = version.VersionFile(cfg.version_file)
-
-    current = version_file.read()
-    try:
-        vcs_handler = vcs.VCS(cfg.vcs_engine)
-        vcs_handler.create_tag(current, cfg.vcs_tag_params)
-    # pylint: disable=bare-except
-    except:
-        print('Git tag failed, do it yourself')
-        if cfg.verbose:
-            traceback.print_exc()
-    else:
-        print('Git tag created')
-
-    return {'current_version': current, 'quant': 0}
-
-
-def command_default(cfg):
-    """
-    Realize tasks when no command given
-
-    :param cfg:
-    :return:
-    """
-    version_file = version.VersionFile(cfg.version_file)
-
-    current = version_file.read()
-
-    return {'current_version': current, 'quant': 0}
-
-
 def _find_project_config_file(user_config_file):
     """
     Find path to project-wide config file
@@ -426,22 +318,18 @@ def execute(prog, argv):
     cfg = config.Config(cfg_files)
     parse_args(argv, cfg)
 
-    commands = {'up': command_up, 'set': command_set, 'init': command_init, 'tag': command_tag}
+    cmd = commands.get(cfg.command, cfg)
 
     try:
-        result = commands.get(cfg.command, command_default)(cfg)
+        result = cmd.execute()
     except VersionnerError as exc:
         print('%s: %s' % (exc.__class__.__name__, exc), file=sys.stderr)
         return exc.ret_code
 
-    quant = result['quant']
-    current = result['current_version']
-    commit = result.get('commit')
+    print("Current version: %s" % (result.current_version, ))
 
-    print("Current version: %s" % current)
-
-    if quant:
-        print('Changed' + (' and committed' if commit else '') + ' %(files)s files (%(changes)s changes)' % quant)
+    if result.modified_files:
+        print('Changed' + (' and committed' if cfg.commit else '') + ' %(files)s files (%(changes)s changes)' % result.modified_files)
 
     return 0
 
