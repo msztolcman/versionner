@@ -19,6 +19,8 @@ class Version:
     Parse and manipulate version string
     """
 
+    __slots__ = ('major', 'minor', 'patch', 'prerelease', 'build')
+
     VALID_FIELDS = ('major', 'minor', 'patch', 'prerelease', 'build')
     VALID_UP_FIELDS = ('major', 'minor', 'patch')
 
@@ -192,10 +194,13 @@ class Version:
 
         return result == -1
 
+
 class VersionFile():
     """
     Manipulate project version file
     """
+
+    __slots__ = ('_path')
 
     def __init__(self, path):
         """

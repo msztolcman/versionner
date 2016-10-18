@@ -2,6 +2,7 @@
 Exceptions for versionner
 """
 
+
 class VersionnerError(Exception):
     """ Generic versionne error
     """
