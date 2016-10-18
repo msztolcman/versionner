@@ -9,4 +9,4 @@ class Read(Command):
 
         current = version_file.read()
 
-        return CommandOutput(0, current)
+        return CommandOutput(current)

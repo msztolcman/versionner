@@ -24,4 +24,6 @@ class Command:
         raise NotImplementedError("Not implemented yet...")
 
 
-CommandOutput = namedtuple('CommandOutput', ('modified_files', 'current_version'))
+class CommandOutput(namedtuple('CommandOutput', ('current_version', 'modifications', 'modified_files'))):
+    def __new__(cls, current_version, modifications=None, modified_files=None):
+        return super(CommandOutput, cls).__new__(cls, current_version, modifications, modified_files)

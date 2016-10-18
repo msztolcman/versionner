@@ -14,4 +14,4 @@ class Init(Command):
 
         modified_files = save_version_and_update_files(self.cfg, version_file, current)
 
-        return CommandOutput(modified_files, current)
+        return CommandOutput(current, modified_files['changes'], modified_files['files'])

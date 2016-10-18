@@ -13,4 +13,4 @@ class Up(Command):
 
         modified_files = save_version_and_update_files(self.cfg, version_file, new)
 
-        return CommandOutput(modified_files, new)
+        return CommandOutput(new, modified_files['changes'], modified_files['files'])

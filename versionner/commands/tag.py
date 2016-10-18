@@ -22,4 +22,4 @@ class Tag(Command):
         else:
             print('Git tag created')
 
-        return CommandOutput(0, current)
+        return CommandOutput(current)
