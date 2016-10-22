@@ -1,6 +1,4 @@
-"""
-Realize VCS action for git
-"""
+"""Realize VCS action for git"""
 
 import subprocess
 
@@ -9,13 +7,11 @@ from versionner.vcs import errors
 
 
 class VCSCommandsBuilder:
-    """ Build shell VCS command
-    """
+    """ Build shell VCS command"""
 
     @staticmethod
     def tag(version, params):
-        """
-        Build and return full command to use with subprocess.Popen for 'git tag' command
+        """Build and return full command to use with subprocess.Popen for 'git tag' command
 
         :param version:
         :param params:
@@ -29,8 +25,7 @@ class VCSCommandsBuilder:
 
     @staticmethod
     def status():
-        """
-        Build and return full command to use with subprocess.Popen for 'git status' command
+        """Build and return full command to use with subprocess.Popen for 'git status' command
 
         :return: list
         """
@@ -40,8 +35,7 @@ class VCSCommandsBuilder:
 
     @staticmethod
     def commit(message):
-        """
-        Build and return full command to use with subprocess.Popen for 'git commit' command
+        """Build and return full command to use with subprocess.Popen for 'git commit' command
 
         :param message:
         :return: list
@@ -52,8 +46,7 @@ class VCSCommandsBuilder:
 
     @staticmethod
     def add(paths):
-        """
-        Build and return full command to use with subprocess.Popen for 'git add' command
+        """Build and return full command to use with subprocess.Popen for 'git add' command
 
         :param paths:
         :return: list
@@ -64,17 +57,14 @@ class VCSCommandsBuilder:
 
 
 class VCSEngine:
-    """
-        Main class for working with VCS
-    """
+    """Main class for working with VCS"""
 
     def __init__(self):
         self._command = VCSCommandsBuilder()
 
     @staticmethod
     def _exec(cmd):
-        """
-        Execute command using subprocess.Popen
+        """Execute command using subprocess.Popen
         :param cmd:
         :return: (code, stdout, stderr)
         """
@@ -86,8 +76,7 @@ class VCSEngine:
         return process.returncode, stdout.decode(), stderr.decode()
 
     def create_tag(self, version, params):
-        """
-        Create VCS tag
+        """Create VCS tag
 
         :param version:
         :param params:
@@ -102,8 +91,7 @@ class VCSEngine:
                 version, code, stderr or stdout))
 
     def raise_if_cant_commit(self):
-        """
-        Verify VCS status and raise an error if commit is disallowed
+        """Verify VCS status and raise an error if commit is disallowed
 
         :return:
         """
@@ -121,8 +109,7 @@ class VCSEngine:
             raise errors.VCSStateError("VCS status doesn't allow to commit. Please commit or stash your changes and try again")
 
     def create_commit(self, message):
-        """
-        Create commit
+        """Create commit
 
         :param message:
         :return:
@@ -136,8 +123,7 @@ class VCSEngine:
                 code, stderr or stdout))
 
     def add_to_stage(self, paths):
-        """
-        Stage given files
+        """Stage given files
 
         :param paths:
         :return:

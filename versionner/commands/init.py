@@ -1,6 +1,5 @@
-"""
-Class for command: init
-"""
+"""Class for command: init"""
+
 from versionner.commands import Command, CommandOutput
 from versionner import version
 from versionner.commands.files_management import save_version_and_update_files

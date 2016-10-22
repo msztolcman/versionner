@@ -1,6 +1,4 @@
-"""
-    Configuration-related classes for versionner
-"""
+"""Configuration-related classes for versionner"""
 
 import codecs
 import configparser
@@ -13,9 +11,7 @@ from versionner import defaults
 
 # pylint: disable=too-many-instance-attributes,too-few-public-methods
 class FileConfig:
-    """
-    Single project file configuration
-    """
+    """Single project file configuration"""
 
     def __init__(self, filename, cfg):
         """
@@ -41,8 +37,7 @@ class FileConfig:
                 self.search_flags |= getattr(re, search_flag.upper())
 
     def validate(self):
-        """
-        Validate current file configuration
+        """Validate current file configuration
 
         :raise ValueError:
         """
@@ -68,9 +63,7 @@ class FileConfig:
 
 
 class Config:
-    """
-    Configuration
-    """
+    """Configuration"""
 
     __slots__ = (
         'command',
@@ -89,8 +82,7 @@ class Config:
     )
 
     def __init__(self, files=None):
-        """
-        Evaluate configuration
+        """Evaluate configuration
 
         :return:
         """
@@ -112,8 +104,8 @@ class Config:
             self._parse_config_file(files)
 
     def _parse_config_file(self, cfg_files):
-        """
-        Parse config file (ini) and set properties
+        """Parse config file (ini) and set properties
+
         :return:
         """
         cfg_handler = configparser.ConfigParser(interpolation=None)
@@ -126,8 +118,8 @@ class Config:
         self._parse_file_section(cfg_handler)
 
     def _parse_global_section(self, cfg_handler):
-        """
-        Parse global ([versionner]) section
+        """Parse global ([versionner]) section
+
         :param cfg_handler:
         :return:
         """
@@ -146,8 +138,8 @@ class Config:
                 self.default_increase_value = cfg.getint('default_increase_value')
 
     def _parse_vcs_section(self, cfg_handler):
-        """
-        Parse [vcs] section
+        """Parse [vcs] section
+
         :param cfg_handler:
         :return:
         """
@@ -161,8 +153,8 @@ class Config:
                 self.vcs_commit_message = cfg['commit_message']
 
     def _parse_file_section(self, cfg_handler):
-        """
-        Parse [file:*] sections
+        """Parse [file:*] sections
+
         :param cfg_handler:
         :return:
         """

@@ -1,6 +1,4 @@
-"""
-    Playing with versions and version file
-"""
+"""Playing with versions and version file"""
 
 from collections import abc
 import functools
@@ -14,15 +12,12 @@ from versionner.errors import VersionnerError
 
 
 class InvalidVersionError(VersionnerError):
-    """ Bad version string/value error
-    """
+    """Bad version string/value error"""
 
 
 @functools.total_ordering
 class Version:
-    """
-    Parse and manipulate version string
-    """
+    """Parse and manipulate version string"""
 
     __slots__ = ('major', 'minor', 'patch', 'prerelease', 'build')
 
@@ -30,8 +25,7 @@ class Version:
     VALID_UP_FIELDS = ('major', 'minor', 'patch')
 
     def __init__(self, version=None):
-        """
-        Initialise object
+        """Initialise object
 
         :param version:version data to initialize
         """
@@ -46,8 +40,8 @@ class Version:
             self._parse(version)
 
     def _parse_object(self, version):
-        """
-        Parse version as Version object and initialize self with data from version
+        """Parse version as Version object and initialize self with data from version
+
         :param version:
         :return:
         """
@@ -58,8 +52,8 @@ class Version:
         self.build = getattr(version, 'build', '')
 
     def _parse_dict(self, version):
-        """
-        Parse version as dict returned from semver.parse and initialize self with data from version
+        """Parse version as dict returned from semver.parse and initialize self with data from version
+
         :param version:
         :return:
         """
@@ -70,8 +64,8 @@ class Version:
         self.build = version.get('build', '')
 
     def _parse_str(self, version):
-        """
-        Parse version as string and initialize self with data from version
+        """Parse version as string and initialize self with data from version
+
         :param version:
         :return:
         """
@@ -79,8 +73,8 @@ class Version:
         self._parse_dict(version)
 
     def _parse(self, version):
-        """
-        Recognize version type and dispatch it to self._parse_*
+        """Recognize version type and dispatch it to self._parse_*
+
         :param version:
         :return:
         """
@@ -97,8 +91,7 @@ class Version:
 
     # pylint: disable=invalid-name
     def up(self, field, value=None):
-        """
-        Increase version and return new instance
+        """Increase version and return new instance
 
         :rtype : Version
         :param field:one of Version.VALID_UP_FIELDS
@@ -127,8 +120,7 @@ class Version:
         return version
 
     def set(self, field, value):
-        """
-        Set any field of semver to `value`
+        """Set any field of semver to `value`
 
         :rtype : Version
         :param field:type of field (one of Version.VALID_FIELDS)
@@ -151,8 +143,7 @@ class Version:
         return version
 
     def __str__(self):
-        """
-        Return version as string compatible with semver
+        """Return version as string compatible with semver
 
         :return:str
         """
@@ -167,8 +158,7 @@ class Version:
         return tpl % data
 
     def _cmp(self, other):
-        """
-        Compare versions
+        """Compare versions
 
         :rtype : any
         :param other: version as any recognizable type
@@ -201,23 +191,19 @@ class Version:
 
 
 class VersionFile():
-    """
-    Manipulate project version file
-    """
+    """Manipulate project version file"""
 
     __slots__ = ('_path')
 
     def __init__(self, path):
-        """
-        Initialisation
+        """Initialisation
 
         :param path:pathlib.Path
         """
         self._path = path
 
     def read(self):
-        """
-        Read version from version file
+        """Read version from version file
 
         :rtype : Version
         :return:
@@ -227,8 +213,7 @@ class VersionFile():
         return Version(version)
 
     def write(self, version):
-        """
-        Save new version into self._path in safe way (using temporary file)
+        """Save new version into self._path in safe way (using temporary file)
 
         :param version:Version
         """

@@ -1,6 +1,4 @@
-"""
-    Default values for some versionner options
-"""
+"""Default values for some versionner options"""
 
 RC_FILENAME = '.versionner.rc'
 DEFAULT_VERSION_FILE = './VERSION'

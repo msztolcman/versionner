@@ -1,6 +1,5 @@
-"""
-    Main CLI engine for versionner
-    Parse input options, and make all dirty jobs.
+"""Main CLI engine for versionner
+Parse input options, and make all dirty jobs.
 """
 
 # pylint: disable=wrong-import-position
@@ -23,8 +22,7 @@ from versionner.errors import VersionnerError
 
 # pylint: disable=too-many-branches,too-many-statements
 def parse_args(args, cfg):
-    """
-    Parse input arguments of script.
+    """Parse input arguments of script.
 
     :rtype : argparse.Namespace
     :param args:
@@ -182,8 +180,7 @@ def parse_args(args, cfg):
 
 
 def _find_project_config_file(user_config_file):
-    """
-    Find path to project-wide config file
+    """Find path to project-wide config file
     Search from current working directory, and traverse path up to
     directory with .versionner.rc file or root directory
 
@@ -207,8 +204,7 @@ def _find_project_config_file(user_config_file):
 
 
 def execute(prog, argv):
-    """
-    Execute whole program
+    """Execute whole program
 
     :param prog: program name
     :param argv: list: script arguments
@@ -246,8 +242,7 @@ def execute(prog, argv):
     return 0
 
 def main():
-    """
-    Main script
+    """Main script
 
     :return:
     """

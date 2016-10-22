@@ -1,6 +1,4 @@
-"""
-Class for command: set
-"""
+"""Class for command: set"""
 
 from versionner.commands import Command, CommandOutput
 from versionner import version

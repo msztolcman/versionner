@@ -1,14 +1,10 @@
-"""
-Exceptions for versionner
-"""
+"""Exceptions for versionner"""
 
 
 class VersionnerError(Exception):
-    """ Generic versionne error
-    """
+    """Generic versionne error"""
     ret_code = 2
 
 
 class ConfigError(VersionnerError):
-    """ Configuration error
-    """
+    """Configuration error"""

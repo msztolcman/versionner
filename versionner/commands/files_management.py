@@ -1,6 +1,4 @@
-"""
-helpers for commands related to manipulating files
-"""
+"""Helpers for commands related to manipulating files"""
 
 import pathlib
 import re
@@ -79,8 +77,7 @@ def update_project_files(cfg, proj_version):
 
 
 def save_version_and_update_files(cfg, version_file, version_to_save):
-    """
-    Save version to version_file and commit changes if required
+    """Save version to version_file and commit changes if required
 
     :param cfg:
     :param version_file:

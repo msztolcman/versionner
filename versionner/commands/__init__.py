@@ -1,5 +1,4 @@
-"""
-Commands for versionner
+"""Commands for versionner
 Module defines helpers for searching for commands and aliases for them.
 """
 
@@ -23,8 +22,8 @@ COMMAND_ALIASES = {}
 
 
 def _manage_commands():
-    """
-    Build COMMAND_MAPPER and COMMAND_ALIASES dictionaries using COMMANDS
+    """Build COMMAND_MAPPER and COMMAND_ALIASES dictionaries using COMMANDS
+
     @return:None
     """
     for name, (command, *aliases) in COMMANDS.items():
@@ -37,20 +36,20 @@ del _manage_commands
 
 
 def get(name, *args, **kwargs):
-    """
-        Find command class for given command name and return it's instance
-        :param name: str
-        :param args: additional arguments for Command
-        :param kwargs: additional arguments for Command
-        :return: Command
+    """Find command class for given command name and return it's instance
+
+    :param name: str
+    :param args: additional arguments for Command
+    :param kwargs: additional arguments for Command
+    :return: Command
     """
     cmd = COMMAND_MAPPER.get(name)
     return cmd(*args, **kwargs)
 
 
 def get_aliases_for(name):
-    """
-    Find aliases for given command name
+    """Find aliases for given command name
+
     :param name: str
     :return: Str[]
     """

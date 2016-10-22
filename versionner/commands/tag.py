@@ -1,6 +1,4 @@
-"""
-Class for command: tag
-"""
+"""Class for command: tag"""
 
 import traceback
 

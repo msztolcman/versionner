@@ -1,6 +1,4 @@
-"""
-    Main entry point for versionner app
-"""
+"""Main entry point for versionner app"""
 
 import sys
 

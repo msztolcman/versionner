@@ -1,6 +1,4 @@
-"""
-Class for command: read
-"""
+"""Class for command: read"""
 
 from versionner.commands import Command, CommandOutput
 from versionner import version
