@@ -24,11 +24,10 @@ from versionner.errors import VersionnerError
 def parse_args(args, cfg):
     """Parse input arguments of script.
 
-    :rtype : argparse.Namespace
-    :param args:
-    :rtype : Config
-    :param cfg:
-    :return:
+    :param args: list of parameters
+    :type: argparse.Namespace
+    :param cfg: configuration storage
+    :type: Config
     """
     prog = pathlib.Path(sys.argv[0]).parts[-1].replace('.py', '')
     prog_version = "%%(prog)s %s" % versionner.__version__
@@ -184,8 +183,9 @@ def _find_project_config_file(user_config_file):
     Search from current working directory, and traverse path up to
     directory with .versionner.rc file or root directory
 
-    :param user_config_file:pathlib.Path instance with user-wide config path
-    :return:pathlib.Path
+    :param user_config_file: instance with user-wide config path
+    :type: pathlib.Path
+    :rtype: pathlib.Path
     """
     proj_cfg_dir = pathlib.Path('.').absolute()
     proj_cfg_file = None
@@ -244,7 +244,8 @@ def execute(prog, argv):
 def main():
     """Main script
 
-    :return:
+    :return: exit code (for shell)
+    :rtype: int
     """
 
     return execute(sys.argv[0], sys.argv[1:])
