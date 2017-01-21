@@ -5,6 +5,8 @@ versionner
 
 With one command you can update all required files and git with new version.
 
+If you like this tool, just [say thanks](https://saythanks.io/to/msztolcman).
+
 Current stable version
 ----------------------
 
