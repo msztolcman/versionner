@@ -12,7 +12,7 @@ thanks <https://saythanks.io/to/msztolcman>`__.
 Current stable version
 ----------------------
 
-1.3.0
+1.4.0
 
 Features
 --------
@@ -269,29 +269,29 @@ Simplest way is to use Python's built-in package system:
 3. Using sources
 
 Download sources from
-`Github <https://github.com/msztolcman/versionner/archive/1.3.0.zip>`__:
+`Github <https://github.com/msztolcman/versionner/archive/1.4.0.zip>`__:
 
 ::
 
-    wget -O 1.3.0.zip https://github.com/msztolcman/versionner/archive/1.3.0.zip
+    wget -O 1.4.0.zip https://github.com/msztolcman/versionner/archive/1.4.0.zip
 
 or
 
 ::
 
-    curl -o 1.3.0.zip https://github.com/msztolcman/versionner/archive/1.3.0.zip
+    curl -o 1.4.0.zip https://github.com/msztolcman/versionner/archive/1.4.0.zip
 
 Unpack:
 
 ::
 
-    unzip 1.3.0.zip
+    unzip 1.4.0.zip
 
 And install
 
 ::
 
-    cd versionner-1.3.0
+    cd versionner-1.4.0
     python3 setup.py install
 
 Voila!
@@ -358,6 +358,8 @@ v1.4.0
 -  Version class can be comparised and sorted
 -  Allow to create Version class from string (parsing)
 -  Actions refactored to be derived from Command class
+-  fixed checking Python version (on Ubuntu there is Py3 in version:
+   3.5.2+ - plus sign brokes comparisign)
 
 v1.3.0
 ~~~~~~
