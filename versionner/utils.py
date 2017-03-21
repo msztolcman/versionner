@@ -3,11 +3,13 @@
 import platform
 import sys
 
-import pkg_resources
+from distutils.version import LooseVersion
 
 
 def validate_python_version():
     """Validate python interpreter version. Only 3.3+ allowed."""
-    if pkg_resources.parse_version(platform.python_version()) < pkg_resources.parse_version('3.3.0'):
+    python_version = LooseVersion(platform.python_version())
+    minimal_version = LooseVersion('3.3.0')
+    if python_version < minimal_version:
         print("Sorry, Python 3.3+ is required")
         sys.exit(1)
