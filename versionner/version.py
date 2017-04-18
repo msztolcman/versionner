@@ -193,7 +193,7 @@ class Version:
 class VersionFile():
     """Manipulate project version file"""
 
-    __slots__ = ('_path')
+    __slots__ = ('_path', )
 
     def __init__(self, path):
         """Initialisation
@@ -217,12 +217,21 @@ class VersionFile():
 
         :param version:Version
         """
-        with tempfile.NamedTemporaryFile(mode="w", delete=False) as fh:
+        with tempfile.NamedTemporaryFile(mode='w', delete=False) as fh:
             fh.write(str(version))
 
         if self._path.exists():
             shutil.copystat(str(self._path), fh.name)
-        pathlib.Path(fh.name).rename(self._path)
+
+        try:
+            pathlib.Path(fh.name).rename(self._path)
+        except OSError as exc:
+            # handling situation with tmp file on another device
+            if exc.errno == 18 and 'Invalid cross-device link' in exc.strerror:
+                with self._path.open(mode='w') as fh:
+                    fh.write(str(version))
+            else:
+                raise
 
     def __str__(self):
         return str(self._path)
