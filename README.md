@@ -304,6 +304,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ChangeLog
 ---------
 
+### (dev)
+
+* using Pipenv for managing of dependencies
+
 ### v1.4.1
 
 * Handle saving version file when temporary file is on different partition/device

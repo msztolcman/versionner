@@ -339,6 +339,11 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ChangeLog
 ---------
 
+(dev)
+~~~~~
+
+-  using Pipenv for managing of dependencies
+
 v1.4.1
 ~~~~~~
 
