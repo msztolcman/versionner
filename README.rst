@@ -1,6 +1,9 @@
 versionner
 ==========
 
+|versionner version| |versionner license| |versionner python
+compatibility| |say thanks!|
+
 ``versionner`` helps manipulating version of the project.
 
 With one command you can update all required files and git with new
@@ -462,3 +465,12 @@ v0.4.0
 ~~~~~~
 
 -  first public version
+
+.. |versionner version| image:: https://img.shields.io/pypi/v/versionner.svg
+   :target: https://pypi.python.org/pypi/versionner
+.. |versionner license| image:: https://img.shields.io/pypi/l/versionner.svg
+   :target: https://pypi.python.org/pypi/versionner
+.. |versionner python compatibility| image:: https://img.shields.io/pypi/pyversions/versionner.svg
+   :target: https://pypi.python.org/pypi/versionner
+.. |say thanks!| image:: https://img.shields.io/badge/Say%20Thanks-!-1EAEDB.svg
+   :target: https://saythanks.io/to/msztolcman
