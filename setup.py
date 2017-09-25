@@ -33,6 +33,8 @@ setup(
         'Topic :: Software Development :: Version Control',
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
     ],
     install_requires=['argparse', 'semver'],
     packages=find_packages(),
