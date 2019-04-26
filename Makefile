@@ -8,9 +8,6 @@ init: ## initialize environment
 init-dev: ## initialize dev environment
 	pip install -r requirements-dev.txt
 
-doc: ## convert documentation to RST
-	pandoc --from=markdown --to=rst --output="README.rst" "README.md"
-
 clean: ## cleanup all distro
 	-rm -fr dist
 	-rm -fr __pycache__
