@@ -2,8 +2,10 @@ from collections import namedtuple
 from io import StringIO
 import sys
 
+
 class catch_streams:
     result = namedtuple('Streams', ['out', 'err'])
+
     def __enter__(self):
         self.old_stdout = sys.stdout
         self.old_stderr = sys.stderr

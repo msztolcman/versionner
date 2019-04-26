@@ -12,6 +12,7 @@ from versionner.config import Config
 
 from test.streamcatcher import catch_streams
 
+
 def bootstrap_env():
     dir = tempfile.TemporaryDirectory()
     os.chdir(dir.name)
@@ -50,6 +51,7 @@ class TestDefault:
             execute('ver', [])
 
         assert re.search(r'(?ms).*Version file .* doesn\'t exists', streams.err.getvalue())
+
 
 if __name__ == '__main__':
     pytest.main()
