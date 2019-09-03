@@ -71,7 +71,7 @@ def update_project_files(cfg, proj_version):
             fh_out.close()
 
             shutil.copystat(project_file.filename, fh_out.name)
-            pathlib.Path(fh_out.name).rename(project_file.filename)
+            shutil.move(fh_out.name, project_file.filename)
 
     return counters
 

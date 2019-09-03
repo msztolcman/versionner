@@ -224,7 +224,7 @@ class VersionFile():
             shutil.copystat(str(self._path), fh.name)
 
         try:
-            pathlib.Path(fh.name).rename(self._path)
+            shutil.move(fh.name, self._path)
         except OSError as exc:
             # handling situation with tmp file on another device
             if exc.errno == 18 and 'Invalid cross-device link' in exc.strerror:
