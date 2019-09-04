@@ -6,9 +6,6 @@ init:
 init-dev:
 	pip install -r requirements-dev.txt
 
-doc:
-	pandoc --from=markdown --to=rst --output="README.rst" "README.md"
-
 clean:
 	-rm -fr dist
 	-rm -fr __pycache__
