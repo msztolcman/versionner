@@ -8,7 +8,7 @@ from setuptools import setup, find_packages
 
 BASE_DIR = path.abspath(path.dirname(__file__))
 
-with open(path.join(BASE_DIR, 'README.rst'), encoding='utf-8') as f:
+with open(path.join(BASE_DIR, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(
@@ -16,6 +16,7 @@ setup(
     version='1.4.1',
     description='versionner helps manipulating version of the project.',
     long_description=long_description,
+    long_description_content_type='text/markdown',
     url='http://msztolcman.github.io/versionner/',
     author='Marcin Sztolcman',
     author_email='marcin@urzenia.net',
