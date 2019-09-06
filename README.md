@@ -316,7 +316,7 @@ ChangeLog
 
 ### (dev)
 
-* Fixed working with cross-device temporary firectory  
+* Fixed working with cross-device temporary firectory (thanks to Jan Pipek)
 * Using Pipenv for managing of dependencies
 * Minor changes to dev tooling (Makefile etc)
 
