@@ -243,9 +243,9 @@ Simplest way is to use Python's built-in package system:
 
     pip3 install versionner
 
-2. Using [pipsi](https://github.com/mitsuhiko/pipsi)
+2. Using [pipx](https://github.com/pipxproject/pipx)
   
-    pipsi install --python3 versionner
+    pipx install --python3 versionner
   
 3. Using sources
 
