@@ -1,9 +1,9 @@
 versionner
 ==========
 
-[![versionner version](https://img.shields.io/pypi/v/versionner.svg)](https://pypi.python.org/pypi/versionner)
-[![versionner license](https://img.shields.io/pypi/l/versionner.svg)](https://pypi.python.org/pypi/versionner)
-[![versionner python compatibility](https://img.shields.io/pypi/pyversions/versionner.svg)](https://pypi.python.org/pypi/versionner)
+[![versionner version](https://img.shields.io/pypi/v/versionner.svg)](https://pypi.org/project/versionner/)
+[![versionner license](https://img.shields.io/pypi/l/versionner.svg)](https://pypi.org/project/versionner/)
+[![versionner python compatibility](https://img.shields.io/pypi/pyversions/versionner.svg)](https://pypi.org/project/versionner/)
 [![say thanks!](https://img.shields.io/badge/Say%20Thanks-!-1EAEDB.svg)](https://saythanks.io/to/msztolcman)
 
 `versionner` helps manipulating version of the project.
@@ -241,11 +241,15 @@ is available, it means Linux, Windows, MacOS X etc.
 
 Simplest way is to use Python's built-in package system:
 
+    python3 -m pip install versionner
+
+or
+
     pip3 install versionner
 
-2. Using [pipsi](https://github.com/mitsuhiko/pipsi)
+2. Using [pipx](https://github.com/pipxproject/pipx)
   
-    pipsi install --python3 versionner
+    pipx install --python3 versionner
   
 3. Using sources
 
@@ -271,7 +275,12 @@ Voila!
 Authors
 -------
 
-Marcin Sztolcman <marcin@urzenia.net>
+* Marcin Sztolcman <marcin@urzenia.net>
+
+Contributors
+------------
+
+* Jan Pipek <https://github.com/janpipek>
 
 Contact
 -------
@@ -311,7 +320,9 @@ ChangeLog
 
 ### (dev)
 
-* using Pipenv for managing of dependencies
+* Fixed working with cross-device temporary firectory (thanks to Jan Pipek)
+* Using Pipenv for managing of dependencies
+* Minor changes to dev tooling (Makefile etc)
 
 ### v1.4.1
 

@@ -196,7 +196,6 @@ def _find_project_config_file(user_config_file):
             break
 
         proj_cfg_file = None
-        # pylint: disable=redefined-variable-type
         proj_cfg_dir = proj_cfg_dir.parent
 
     if proj_cfg_file and proj_cfg_file != user_config_file:
