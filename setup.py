@@ -13,7 +13,7 @@ with open(path.join(BASE_DIR, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name='versionner',
-    version='1.4.1',
+    version='1.5.0',
     description='versionner helps manipulating version of the project.',
     long_description=long_description,
     long_description_content_type='text/markdown',
