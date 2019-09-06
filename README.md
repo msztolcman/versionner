@@ -316,7 +316,9 @@ ChangeLog
 
 ### (dev)
 
-* using Pipenv for managing of dependencies
+* Fixed working with cross-device temporary firectory  
+* Using Pipenv for managing of dependencies
+* Minor changes to dev tooling (Makefile etc)
 
 ### v1.4.1
 
