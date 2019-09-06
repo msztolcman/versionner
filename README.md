@@ -271,7 +271,12 @@ Voila!
 Authors
 -------
 
-Marcin Sztolcman <marcin@urzenia.net>
+* Marcin Sztolcman <marcin@urzenia.net>
+
+Contributors
+------------
+
+* Jan Pipek <https://github.com/janpipek>
 
 Contact
 -------
