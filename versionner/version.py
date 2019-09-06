@@ -223,15 +223,7 @@ class VersionFile():
         if self._path.exists():
             shutil.copystat(str(self._path), fh.name)
 
-        try:
-            pathlib.Path(fh.name).rename(self._path)
-        except OSError as exc:
-            # handling situation with tmp file on another device
-            if exc.errno == 18 and 'Invalid cross-device link' in exc.strerror:
-                with self._path.open(mode='w') as fh:
-                    fh.write(str(version))
-            else:
-                raise
+        shutil.move(fh.name, self._path)
 
     def __str__(self):
         return str(self._path)
