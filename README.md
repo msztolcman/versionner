@@ -318,7 +318,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ChangeLog
 ---------
 
-### (dev)
+### v1.5.1
 
 * Fixed working with cross-device temporary firectory (thanks to Jan Pipek)
 * Using Pipenv for managing of dependencies
