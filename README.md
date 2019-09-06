@@ -241,6 +241,10 @@ is available, it means Linux, Windows, MacOS X etc.
 
 Simplest way is to use Python's built-in package system:
 
+    python3 -m pip install versionner
+
+or
+
     pip3 install versionner
 
 2. Using [pipx](https://github.com/pipxproject/pipx)
