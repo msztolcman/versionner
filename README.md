@@ -15,7 +15,7 @@ If you like this tool, just [say thanks](https://saythanks.io/to/msztolcman).
 Current stable version
 ----------------------
 
-1.5.2
+1.5.3
 
 Features
 --------
@@ -253,21 +253,21 @@ or
   
 3. Using sources
 
-Download sources from [Github](https://github.com/msztolcman/versionner/archive/1.5.2.zip):
+Download sources from [Github](https://github.com/msztolcman/versionner/archive/1.5.3.zip):
 
-    wget -O 1.5.2.zip https://github.com/msztolcman/versionner/archive/1.5.2.zip
+    wget -O 1.5.3.zip https://github.com/msztolcman/versionner/archive/1.5.3.zip
 
 or
 
-    curl -o 1.5.2.zip https://github.com/msztolcman/versionner/archive/1.5.2.zip
+    curl -o 1.5.3.zip https://github.com/msztolcman/versionner/archive/1.5.3.zip
 
 Unpack:
 
-    unzip 1.5.2.zip
+    unzip 1.5.3.zip
 
 And install
 
-    cd versionner-1.5.2
+    cd versionner-1.5.3
     python3 setup.py install
 
 Voila!
@@ -318,7 +318,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ChangeLog
 ---------
 
-### v1.5.2
+### v1.5.3
 
 * bumped dependencies - security issues ([dependabot](https://github.com/dependabot))
 
