@@ -32,7 +32,7 @@ Features
 Python version
 --------------
 
-`versionner` works only with Python 3.3+. Older Python versions are unsupported.
+`versionner` works only with Python 3.3+. Older Python versions are not supported.
 
 Some examples
 -------------
@@ -173,6 +173,8 @@ Configuration is both: user-wide and project-wide.
 
 User-wide is stored in `~/.versionner.rc` file, and project-wide is stored in
 `<PROJECT_ROOT>/.versionner.rc`. Projects' configuration is superior to user-wide.
+Also you may specify multiple project-wide configs using environment variables:
+`export VERSIONNER_PROJECT_CONFIG_FILE=.versionner-other.rc`
 
 It allows you also to modify other files specified in configuration.
 
@@ -237,7 +239,7 @@ Installation
 1. Using PIP
 
 `versionner` should work on any platform where [Python](http://python.org)
-is available, it means Linux, Windows, MacOS X etc. 
+is available, it means Linux, Windows, MacOS X etc.
 
 Simplest way is to use Python's built-in package system:
 
@@ -317,6 +319,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ChangeLog
 ---------
+
+### v1.6.0
+
+* allow to specify project-wide config file using env variable: `VERSIONNER_PROJECT_CONFIG_FILE`
 
 ### v1.5.3
 
