@@ -7,9 +7,10 @@ name = "pypi"
 semver = "==2.8.1"
 
 [dev-packages]
-
 pylint = "*"
 pytest = "*"
 twine = "*"
 wheel = "*"
-
+versionner = {editable = true,path = "."}
+pytest-icdiff = "*"
+pytest-sugar = "*"
