@@ -8,6 +8,8 @@ import sys
 
 from versionner import defaults
 
+ENV_VERSIONNER_PROJECT_CONFIG_FILE = 'VERSIONNER_PROJECT_CONFIG_FILE'
+
 
 # pylint: disable=too-many-instance-attributes,too-few-public-methods
 class FileConfig:

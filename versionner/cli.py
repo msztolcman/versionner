@@ -187,6 +187,9 @@ def _find_project_config_file(user_config_file):
     :type: pathlib.Path
     :rtype: pathlib.Path
     """
+    if os.environ.get(config.ENV_VERSIONNER_PROJECT_CONFIG_FILE, None):
+        return pathlib.Path(os.environ[config.ENV_VERSIONNER_PROJECT_CONFIG_FILE]).absolute()
+
     proj_cfg_dir = pathlib.Path('.').absolute()
     proj_cfg_file = None
     root = pathlib.Path('/')
