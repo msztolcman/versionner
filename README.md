@@ -4,13 +4,10 @@ versionner
 [![versionner version](https://img.shields.io/pypi/v/versionner.svg)](https://pypi.org/project/versionner/)
 [![versionner license](https://img.shields.io/pypi/l/versionner.svg)](https://pypi.org/project/versionner/)
 [![versionner python compatibility](https://img.shields.io/pypi/pyversions/versionner.svg)](https://pypi.org/project/versionner/)
-[![say thanks!](https://img.shields.io/badge/Say%20Thanks-!-1EAEDB.svg)](https://saythanks.io/to/msztolcman)
 
 `versionner` helps manipulating version of the project.
 
 With one command you can update all required files and git with new version.
-
-If you like this tool, just [say thanks](https://saythanks.io/to/msztolcman).
 
 Current stable version
 ----------------------
